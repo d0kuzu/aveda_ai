@@ -21,15 +21,17 @@ type DatabaseServer struct {
 	chatRepo         repository.ChatRepository
 	messageRepo      repository.MessageRepository
 	assistantRepo    repository.AssistantRepository
+	twilioRepo       repository.TwilioRepository
 }
 
-func NewDatabaseServer(userRepo repository.UserRepository, refreshTokenRepo repository.RefreshTokenRepository, chatRepo repository.ChatRepository, messageRepo repository.MessageRepository, assistantRepo repository.AssistantRepository) *DatabaseServer {
+func NewDatabaseServer(userRepo repository.UserRepository, refreshTokenRepo repository.RefreshTokenRepository, chatRepo repository.ChatRepository, messageRepo repository.MessageRepository, assistantRepo repository.AssistantRepository, twilioRepo repository.TwilioRepository) *DatabaseServer {
 	return &DatabaseServer{
 		userRepo:         userRepo,
 		refreshTokenRepo: refreshTokenRepo,
 		chatRepo:         chatRepo,
 		messageRepo:      messageRepo,
 		assistantRepo:    assistantRepo,
+		twilioRepo:       twilioRepo,
 	}
 }
 
@@ -672,3 +674,55 @@ func (s *DatabaseServer) GetLatestChatByCustomer(ctx context.Context, req *proto
 		MessageCount: chat.MessageCount,
 	}, nil
 }
+
+func (s *DatabaseServer) SaveTwilioConfig(ctx context.Context, req *proto.SaveTwilioConfigRequest) (*proto.TwilioConfigResponse, error) {
+	config := &models.TwilioConfig{
+		AssistantID:  req.AssistantId,
+		UserID:       req.UserId,
+		TwilioNumber: req.TwilioNumber,
+		AccountSID:   req.AccountSid,
+		AuthToken:    req.AuthToken,
+	}
+
+	if err := s.twilioRepo.SaveConfig(config); err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to save twilio config: %v", err)
+	}
+
+	return &proto.TwilioConfigResponse{
+		AssistantId:  config.AssistantID,
+		UserId:       config.UserID,
+		TwilioNumber: config.TwilioNumber,
+		AccountSid:   config.AccountSID,
+		AuthToken:    config.AuthToken,
+		CreatedAt:    config.CreatedAt.Format(time.RFC3339),
+		UpdatedAt:    config.UpdatedAt.Format(time.RFC3339),
+	}, nil
+}
+
+func (s *DatabaseServer) GetTwilioConfig(ctx context.Context, req *proto.GetTwilioConfigRequest) (*proto.TwilioConfigResponse, error) {
+	config, err := s.twilioRepo.GetConfigByAssistantID(req.AssistantId)
+	if err != nil {
+		return nil, status.Errorf(codes.NotFound, "twilio config not found: %v", err)
+	}
+
+	return &proto.TwilioConfigResponse{
+		AssistantId:  config.AssistantID,
+		UserId:       config.UserID,
+		TwilioNumber: config.TwilioNumber,
+		AccountSid:   config.AccountSID,
+		AuthToken:    config.AuthToken,
+		CreatedAt:    config.CreatedAt.Format(time.RFC3339),
+		UpdatedAt:    config.UpdatedAt.Format(time.RFC3339),
+	}, nil
+}
+
+func (s *DatabaseServer) DeleteTwilioConfig(ctx context.Context, req *proto.DeleteTwilioConfigRequest) (*proto.DeleteTwilioConfigResponse, error) {
+	if err := s.twilioRepo.DeleteConfig(req.AssistantId); err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to delete twilio config: %v", err)
+	}
+
+	return &proto.DeleteTwilioConfigResponse{
+		Success: true,
+	}, nil
+}
+

@@ -5,16 +5,15 @@ import (
 )
 
 type Client struct {
-	client           *twilio.RestClient
-	twilioFromNumber string
 }
 
-func InitClient(TwilioAccountSID, TwilioAuthToken string) *Client {
-	return &Client{
-		client: twilio.NewRestClientWithParams(twilio.ClientParams{
-			Username: TwilioAccountSID,
-			Password: TwilioAuthToken,
-		}),
-		twilioFromNumber: "",
-	}
+func InitClient() *Client {
+	return &Client{}
+}
+
+func (c *Client) GetRestClient(accountSID, authToken string) *twilio.RestClient {
+	return twilio.NewRestClientWithParams(twilio.ClientParams{
+		Username: accountSID,
+		Password: authToken,
+	})
 }

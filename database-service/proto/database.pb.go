@@ -2793,6 +2793,306 @@ func (x *GetLatestChatByCustomerRequest) GetCustomerId() string {
 	return ""
 }
 
+type SaveTwilioConfigRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	AssistantId   string                 `protobuf:"bytes,1,opt,name=assistant_id,json=assistantId,proto3" json:"assistant_id,omitempty"`
+	UserId        string                 `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	TwilioNumber  string                 `protobuf:"bytes,3,opt,name=twilio_number,json=twilioNumber,proto3" json:"twilio_number,omitempty"`
+	AccountSid    string                 `protobuf:"bytes,4,opt,name=account_sid,json=accountSid,proto3" json:"account_sid,omitempty"`
+	AuthToken     string                 `protobuf:"bytes,5,opt,name=auth_token,json=authToken,proto3" json:"auth_token,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SaveTwilioConfigRequest) Reset() {
+	*x = SaveTwilioConfigRequest{}
+	mi := &file_proto_database_proto_msgTypes[49]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SaveTwilioConfigRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SaveTwilioConfigRequest) ProtoMessage() {}
+
+func (x *SaveTwilioConfigRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_database_proto_msgTypes[49]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SaveTwilioConfigRequest.ProtoReflect.Descriptor instead.
+func (*SaveTwilioConfigRequest) Descriptor() ([]byte, []int) {
+	return file_proto_database_proto_rawDescGZIP(), []int{49}
+}
+
+func (x *SaveTwilioConfigRequest) GetAssistantId() string {
+	if x != nil {
+		return x.AssistantId
+	}
+	return ""
+}
+
+func (x *SaveTwilioConfigRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *SaveTwilioConfigRequest) GetTwilioNumber() string {
+	if x != nil {
+		return x.TwilioNumber
+	}
+	return ""
+}
+
+func (x *SaveTwilioConfigRequest) GetAccountSid() string {
+	if x != nil {
+		return x.AccountSid
+	}
+	return ""
+}
+
+func (x *SaveTwilioConfigRequest) GetAuthToken() string {
+	if x != nil {
+		return x.AuthToken
+	}
+	return ""
+}
+
+type GetTwilioConfigRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	AssistantId   string                 `protobuf:"bytes,1,opt,name=assistant_id,json=assistantId,proto3" json:"assistant_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetTwilioConfigRequest) Reset() {
+	*x = GetTwilioConfigRequest{}
+	mi := &file_proto_database_proto_msgTypes[50]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetTwilioConfigRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetTwilioConfigRequest) ProtoMessage() {}
+
+func (x *GetTwilioConfigRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_database_proto_msgTypes[50]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetTwilioConfigRequest.ProtoReflect.Descriptor instead.
+func (*GetTwilioConfigRequest) Descriptor() ([]byte, []int) {
+	return file_proto_database_proto_rawDescGZIP(), []int{50}
+}
+
+func (x *GetTwilioConfigRequest) GetAssistantId() string {
+	if x != nil {
+		return x.AssistantId
+	}
+	return ""
+}
+
+type TwilioConfigResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	AssistantId   string                 `protobuf:"bytes,1,opt,name=assistant_id,json=assistantId,proto3" json:"assistant_id,omitempty"`
+	UserId        string                 `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	TwilioNumber  string                 `protobuf:"bytes,3,opt,name=twilio_number,json=twilioNumber,proto3" json:"twilio_number,omitempty"`
+	AccountSid    string                 `protobuf:"bytes,4,opt,name=account_sid,json=accountSid,proto3" json:"account_sid,omitempty"`
+	AuthToken     string                 `protobuf:"bytes,5,opt,name=auth_token,json=authToken,proto3" json:"auth_token,omitempty"`
+	CreatedAt     string                 `protobuf:"bytes,6,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt     string                 `protobuf:"bytes,7,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *TwilioConfigResponse) Reset() {
+	*x = TwilioConfigResponse{}
+	mi := &file_proto_database_proto_msgTypes[51]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TwilioConfigResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TwilioConfigResponse) ProtoMessage() {}
+
+func (x *TwilioConfigResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_database_proto_msgTypes[51]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TwilioConfigResponse.ProtoReflect.Descriptor instead.
+func (*TwilioConfigResponse) Descriptor() ([]byte, []int) {
+	return file_proto_database_proto_rawDescGZIP(), []int{51}
+}
+
+func (x *TwilioConfigResponse) GetAssistantId() string {
+	if x != nil {
+		return x.AssistantId
+	}
+	return ""
+}
+
+func (x *TwilioConfigResponse) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *TwilioConfigResponse) GetTwilioNumber() string {
+	if x != nil {
+		return x.TwilioNumber
+	}
+	return ""
+}
+
+func (x *TwilioConfigResponse) GetAccountSid() string {
+	if x != nil {
+		return x.AccountSid
+	}
+	return ""
+}
+
+func (x *TwilioConfigResponse) GetAuthToken() string {
+	if x != nil {
+		return x.AuthToken
+	}
+	return ""
+}
+
+func (x *TwilioConfigResponse) GetCreatedAt() string {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return ""
+}
+
+func (x *TwilioConfigResponse) GetUpdatedAt() string {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return ""
+}
+
+type DeleteTwilioConfigRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	AssistantId   string                 `protobuf:"bytes,1,opt,name=assistant_id,json=assistantId,proto3" json:"assistant_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteTwilioConfigRequest) Reset() {
+	*x = DeleteTwilioConfigRequest{}
+	mi := &file_proto_database_proto_msgTypes[52]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteTwilioConfigRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteTwilioConfigRequest) ProtoMessage() {}
+
+func (x *DeleteTwilioConfigRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_database_proto_msgTypes[52]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteTwilioConfigRequest.ProtoReflect.Descriptor instead.
+func (*DeleteTwilioConfigRequest) Descriptor() ([]byte, []int) {
+	return file_proto_database_proto_rawDescGZIP(), []int{52}
+}
+
+func (x *DeleteTwilioConfigRequest) GetAssistantId() string {
+	if x != nil {
+		return x.AssistantId
+	}
+	return ""
+}
+
+type DeleteTwilioConfigResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteTwilioConfigResponse) Reset() {
+	*x = DeleteTwilioConfigResponse{}
+	mi := &file_proto_database_proto_msgTypes[53]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteTwilioConfigResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteTwilioConfigResponse) ProtoMessage() {}
+
+func (x *DeleteTwilioConfigResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_database_proto_msgTypes[53]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteTwilioConfigResponse.ProtoReflect.Descriptor instead.
+func (*DeleteTwilioConfigResponse) Descriptor() ([]byte, []int) {
+	return file_proto_database_proto_rawDescGZIP(), []int{53}
+}
+
+func (x *DeleteTwilioConfigResponse) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
 var File_proto_database_proto protoreflect.FileDescriptor
 
 const file_proto_database_proto_rawDesc = "" +
@@ -2996,7 +3296,33 @@ const file_proto_database_proto_rawDesc = "" +
 	"\x1eGetLatestChatByCustomerRequest\x12!\n" +
 	"\fassistant_id\x18\x01 \x01(\tR\vassistantId\x12\x1f\n" +
 	"\vcustomer_id\x18\x02 \x01(\tR\n" +
-	"customerId2\xb7\x14\n" +
+	"customerId\"\xba\x01\n" +
+	"\x17SaveTwilioConfigRequest\x12!\n" +
+	"\fassistant_id\x18\x01 \x01(\tR\vassistantId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\tR\x06userId\x12#\n" +
+	"\rtwilio_number\x18\x03 \x01(\tR\ftwilioNumber\x12\x1f\n" +
+	"\vaccount_sid\x18\x04 \x01(\tR\n" +
+	"accountSid\x12\x1d\n" +
+	"\n" +
+	"auth_token\x18\x05 \x01(\tR\tauthToken\";\n" +
+	"\x16GetTwilioConfigRequest\x12!\n" +
+	"\fassistant_id\x18\x01 \x01(\tR\vassistantId\"\xf5\x01\n" +
+	"\x14TwilioConfigResponse\x12!\n" +
+	"\fassistant_id\x18\x01 \x01(\tR\vassistantId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\tR\x06userId\x12#\n" +
+	"\rtwilio_number\x18\x03 \x01(\tR\ftwilioNumber\x12\x1f\n" +
+	"\vaccount_sid\x18\x04 \x01(\tR\n" +
+	"accountSid\x12\x1d\n" +
+	"\n" +
+	"auth_token\x18\x05 \x01(\tR\tauthToken\x12\x1d\n" +
+	"\n" +
+	"created_at\x18\x06 \x01(\tR\tcreatedAt\x12\x1d\n" +
+	"\n" +
+	"updated_at\x18\a \x01(\tR\tupdatedAt\">\n" +
+	"\x19DeleteTwilioConfigRequest\x12!\n" +
+	"\fassistant_id\x18\x01 \x01(\tR\vassistantId\"6\n" +
+	"\x1aDeleteTwilioConfigResponse\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess2\xc4\x16\n" +
 	"\x0fDatabaseService\x12G\n" +
 	"\fGetAnalytics\x12\x1a.database.AnalyticsRequest\x1a\x1b.database.AnalyticsResponse\x12]\n" +
 	"\x17GetAnalyticsByAssistant\x12%.database.AnalyticsByAssistantRequest\x1a\x1b.database.AnalyticsResponse\x12A\n" +
@@ -3035,7 +3361,10 @@ const file_proto_database_proto_rawDesc = "" +
 	"\x19GetChatPagesCountByUserID\x12*.database.GetChatPagesCountByUserIDRequest\x1a .database.ChatPagesCountResponse\x12T\n" +
 	"\x13GetChatPageByUserID\x12$.database.GetChatPageByUserIDRequest\x1a\x17.database.ChatsResponse\x12h\n" +
 	"\x15SearchChatsByCustomer\x12&.database.SearchChatsByCustomerRequest\x1a'.database.SearchChatsByCustomerResponse\x12[\n" +
-	"\x17GetLatestChatByCustomer\x12(.database.GetLatestChatByCustomerRequest\x1a\x16.database.ChatResponseB+Z)diaxel_zerde/database-service/proto;protob\x06proto3"
+	"\x17GetLatestChatByCustomer\x12(.database.GetLatestChatByCustomerRequest\x1a\x16.database.ChatResponse\x12U\n" +
+	"\x10SaveTwilioConfig\x12!.database.SaveTwilioConfigRequest\x1a\x1e.database.TwilioConfigResponse\x12S\n" +
+	"\x0fGetTwilioConfig\x12 .database.GetTwilioConfigRequest\x1a\x1e.database.TwilioConfigResponse\x12_\n" +
+	"\x12DeleteTwilioConfig\x12#.database.DeleteTwilioConfigRequest\x1a$.database.DeleteTwilioConfigResponseB+Z)diaxel_zerde/database-service/proto;protob\x06proto3"
 
 var (
 	file_proto_database_proto_rawDescOnce sync.Once
@@ -3049,7 +3378,7 @@ func file_proto_database_proto_rawDescGZIP() []byte {
 	return file_proto_database_proto_rawDescData
 }
 
-var file_proto_database_proto_msgTypes = make([]protoimpl.MessageInfo, 49)
+var file_proto_database_proto_msgTypes = make([]protoimpl.MessageInfo, 54)
 var file_proto_database_proto_goTypes = []any{
 	(*AnalyticsRequest)(nil),                 // 0: database.AnalyticsRequest
 	(*AnalyticsByAssistantRequest)(nil),      // 1: database.AnalyticsByAssistantRequest
@@ -3100,6 +3429,11 @@ var file_proto_database_proto_goTypes = []any{
 	(*GetAssistantsByUserIDRequest)(nil),     // 46: database.GetAssistantsByUserIDRequest
 	(*AssistantsResponse)(nil),               // 47: database.AssistantsResponse
 	(*GetLatestChatByCustomerRequest)(nil),   // 48: database.GetLatestChatByCustomerRequest
+	(*SaveTwilioConfigRequest)(nil),          // 49: database.SaveTwilioConfigRequest
+	(*GetTwilioConfigRequest)(nil),           // 50: database.GetTwilioConfigRequest
+	(*TwilioConfigResponse)(nil),             // 51: database.TwilioConfigResponse
+	(*DeleteTwilioConfigRequest)(nil),        // 52: database.DeleteTwilioConfigRequest
+	(*DeleteTwilioConfigResponse)(nil),       // 53: database.DeleteTwilioConfigResponse
 }
 var file_proto_database_proto_depIdxs = []int32{
 	15, // 0: database.MessagesResponse.messages:type_name -> database.MessageResponse
@@ -3138,40 +3472,46 @@ var file_proto_database_proto_depIdxs = []int32{
 	36, // 33: database.DatabaseService.GetChatPageByUserID:input_type -> database.GetChatPageByUserIDRequest
 	37, // 34: database.DatabaseService.SearchChatsByCustomer:input_type -> database.SearchChatsByCustomerRequest
 	48, // 35: database.DatabaseService.GetLatestChatByCustomer:input_type -> database.GetLatestChatByCustomerRequest
-	2,  // 36: database.DatabaseService.GetAnalytics:output_type -> database.AnalyticsResponse
-	2,  // 37: database.DatabaseService.GetAnalyticsByAssistant:output_type -> database.AnalyticsResponse
-	5,  // 38: database.DatabaseService.CreateUser:output_type -> database.UserResponse
-	5,  // 39: database.DatabaseService.GetUser:output_type -> database.UserResponse
-	5,  // 40: database.DatabaseService.GetUserByEmail:output_type -> database.UserResponse
-	5,  // 41: database.DatabaseService.UpdateUser:output_type -> database.UserResponse
-	22, // 42: database.DatabaseService.DeleteUser:output_type -> database.DeleteUserResponse
-	7,  // 43: database.DatabaseService.SaveRefreshToken:output_type -> database.SaveRefreshTokenResponse
-	9,  // 44: database.DatabaseService.GetRefreshToken:output_type -> database.RefreshTokenResponse
-	11, // 45: database.DatabaseService.DeleteRefreshToken:output_type -> database.DeleteRefreshTokenResponse
-	40, // 46: database.DatabaseService.CreateAssistant:output_type -> database.AssistantResponse
-	40, // 47: database.DatabaseService.GetAssistant:output_type -> database.AssistantResponse
-	40, // 48: database.DatabaseService.GetAssistantByAPIToken:output_type -> database.AssistantResponse
-	40, // 49: database.DatabaseService.UpdateAssistant:output_type -> database.AssistantResponse
-	45, // 50: database.DatabaseService.DeleteAssistant:output_type -> database.DeleteAssistantResponse
-	47, // 51: database.DatabaseService.GetAssistantsByUserID:output_type -> database.AssistantsResponse
-	13, // 52: database.DatabaseService.CreateChat:output_type -> database.ChatResponse
-	13, // 53: database.DatabaseService.GetChat:output_type -> database.ChatResponse
-	25, // 54: database.DatabaseService.GetChatsByUser:output_type -> database.ChatsResponse
-	13, // 55: database.DatabaseService.UpdateChat:output_type -> database.ChatResponse
-	28, // 56: database.DatabaseService.DeleteChat:output_type -> database.DeleteChatResponse
-	15, // 57: database.DatabaseService.SaveMessage:output_type -> database.MessageResponse
-	18, // 58: database.DatabaseService.GetChatMessages:output_type -> database.MessagesResponse
-	18, // 59: database.DatabaseService.GetAllChatMessages:output_type -> database.MessagesResponse
-	15, // 60: database.DatabaseService.UpdateMessage:output_type -> database.MessageResponse
-	31, // 61: database.DatabaseService.DeleteMessage:output_type -> database.DeleteMessageResponse
-	33, // 62: database.DatabaseService.GetChatPagesCount:output_type -> database.ChatPagesCountResponse
-	25, // 63: database.DatabaseService.GetChatPage:output_type -> database.ChatsResponse
-	33, // 64: database.DatabaseService.GetChatPagesCountByUserID:output_type -> database.ChatPagesCountResponse
-	25, // 65: database.DatabaseService.GetChatPageByUserID:output_type -> database.ChatsResponse
-	38, // 66: database.DatabaseService.SearchChatsByCustomer:output_type -> database.SearchChatsByCustomerResponse
-	13, // 67: database.DatabaseService.GetLatestChatByCustomer:output_type -> database.ChatResponse
-	36, // [36:68] is the sub-list for method output_type
-	4,  // [4:36] is the sub-list for method input_type
+	49, // 36: database.DatabaseService.SaveTwilioConfig:input_type -> database.SaveTwilioConfigRequest
+	50, // 37: database.DatabaseService.GetTwilioConfig:input_type -> database.GetTwilioConfigRequest
+	52, // 38: database.DatabaseService.DeleteTwilioConfig:input_type -> database.DeleteTwilioConfigRequest
+	2,  // 39: database.DatabaseService.GetAnalytics:output_type -> database.AnalyticsResponse
+	2,  // 40: database.DatabaseService.GetAnalyticsByAssistant:output_type -> database.AnalyticsResponse
+	5,  // 41: database.DatabaseService.CreateUser:output_type -> database.UserResponse
+	5,  // 42: database.DatabaseService.GetUser:output_type -> database.UserResponse
+	5,  // 43: database.DatabaseService.GetUserByEmail:output_type -> database.UserResponse
+	5,  // 44: database.DatabaseService.UpdateUser:output_type -> database.UserResponse
+	22, // 45: database.DatabaseService.DeleteUser:output_type -> database.DeleteUserResponse
+	7,  // 46: database.DatabaseService.SaveRefreshToken:output_type -> database.SaveRefreshTokenResponse
+	9,  // 47: database.DatabaseService.GetRefreshToken:output_type -> database.RefreshTokenResponse
+	11, // 48: database.DatabaseService.DeleteRefreshToken:output_type -> database.DeleteRefreshTokenResponse
+	40, // 49: database.DatabaseService.CreateAssistant:output_type -> database.AssistantResponse
+	40, // 50: database.DatabaseService.GetAssistant:output_type -> database.AssistantResponse
+	40, // 51: database.DatabaseService.GetAssistantByAPIToken:output_type -> database.AssistantResponse
+	40, // 52: database.DatabaseService.UpdateAssistant:output_type -> database.AssistantResponse
+	45, // 53: database.DatabaseService.DeleteAssistant:output_type -> database.DeleteAssistantResponse
+	47, // 54: database.DatabaseService.GetAssistantsByUserID:output_type -> database.AssistantsResponse
+	13, // 55: database.DatabaseService.CreateChat:output_type -> database.ChatResponse
+	13, // 56: database.DatabaseService.GetChat:output_type -> database.ChatResponse
+	25, // 57: database.DatabaseService.GetChatsByUser:output_type -> database.ChatsResponse
+	13, // 58: database.DatabaseService.UpdateChat:output_type -> database.ChatResponse
+	28, // 59: database.DatabaseService.DeleteChat:output_type -> database.DeleteChatResponse
+	15, // 60: database.DatabaseService.SaveMessage:output_type -> database.MessageResponse
+	18, // 61: database.DatabaseService.GetChatMessages:output_type -> database.MessagesResponse
+	18, // 62: database.DatabaseService.GetAllChatMessages:output_type -> database.MessagesResponse
+	15, // 63: database.DatabaseService.UpdateMessage:output_type -> database.MessageResponse
+	31, // 64: database.DatabaseService.DeleteMessage:output_type -> database.DeleteMessageResponse
+	33, // 65: database.DatabaseService.GetChatPagesCount:output_type -> database.ChatPagesCountResponse
+	25, // 66: database.DatabaseService.GetChatPage:output_type -> database.ChatsResponse
+	33, // 67: database.DatabaseService.GetChatPagesCountByUserID:output_type -> database.ChatPagesCountResponse
+	25, // 68: database.DatabaseService.GetChatPageByUserID:output_type -> database.ChatsResponse
+	38, // 69: database.DatabaseService.SearchChatsByCustomer:output_type -> database.SearchChatsByCustomerResponse
+	13, // 70: database.DatabaseService.GetLatestChatByCustomer:output_type -> database.ChatResponse
+	51, // 71: database.DatabaseService.SaveTwilioConfig:output_type -> database.TwilioConfigResponse
+	51, // 72: database.DatabaseService.GetTwilioConfig:output_type -> database.TwilioConfigResponse
+	53, // 73: database.DatabaseService.DeleteTwilioConfig:output_type -> database.DeleteTwilioConfigResponse
+	39, // [39:74] is the sub-list for method output_type
+	4,  // [4:39] is the sub-list for method input_type
 	4,  // [4:4] is the sub-list for extension type_name
 	4,  // [4:4] is the sub-list for extension extendee
 	0,  // [0:4] is the sub-list for field type_name
@@ -3188,7 +3528,7 @@ func file_proto_database_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_database_proto_rawDesc), len(file_proto_database_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   49,
+			NumMessages:   54,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -6,13 +6,15 @@ import (
 	openapi "github.com/twilio/twilio-go/rest/api/v2010"
 )
 
-func (c *Client) SendMessage(ctx context.Context, to, message string) error {
+func (c *Client) SendMessage(ctx context.Context, accountSID, authToken, from, to, message string) error {
+	client := c.GetRestClient(accountSID, authToken)
+
 	params := &openapi.CreateMessageParams{}
 	params.SetTo(to)
-	params.SetFrom(c.twilioFromNumber)
+	params.SetFrom(from)
 	params.SetBody(message)
 
-	resp, err := c.client.Api.CreateMessage(params)
+	resp, err := client.Api.CreateMessage(params)
 	if err != nil {
 		return err
 	}

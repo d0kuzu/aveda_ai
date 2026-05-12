@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package database;
 
-option go_package = "diaxel_zerde/database-service/proto;proto";
+option go_package = "diaxel/proto/db;proto";
 
 service DatabaseService {
   rpc GetAnalytics(AnalyticsRequest) returns (AnalyticsResponse);
@@ -37,6 +37,9 @@ service DatabaseService {
   rpc GetChatPageByUserID(GetChatPageByUserIDRequest) returns (ChatsResponse);
   rpc SearchChatsByCustomer(SearchChatsByCustomerRequest) returns (SearchChatsByCustomerResponse);
   rpc GetLatestChatByCustomer(GetLatestChatByCustomerRequest) returns (ChatResponse);
+  rpc SaveTwilioConfig(SaveTwilioConfigRequest) returns (TwilioConfigResponse);
+  rpc GetTwilioConfig(GetTwilioConfigRequest) returns (TwilioConfigResponse);
+  rpc DeleteTwilioConfig(DeleteTwilioConfigRequest) returns (DeleteTwilioConfigResponse);
 }
 
 message AnalyticsRequest {
@@ -259,6 +262,7 @@ message CreateAssistantRequest {
   string api_token = 2;
   string user_id = 3;
   string telegram_bot_token = 4;
+  string type = 5;
 }
 
 message AssistantResponse {
@@ -270,6 +274,7 @@ message AssistantResponse {
   string updated_at = 6;
   string configuration = 7;
   string telegram_bot_token = 8;
+  string type = 9;
 }
 
 message GetAssistantRequest {
@@ -286,6 +291,7 @@ message UpdateAssistantRequest {
   string api_token = 3;
   string user_id = 4;
   string telegram_bot_token = 5;
+  string type = 6;
 }
 
 message DeleteAssistantRequest {
@@ -307,4 +313,34 @@ message AssistantsResponse {
 message GetLatestChatByCustomerRequest {
   string assistant_id = 1;
   string customer_id = 2;
+}
+
+message SaveTwilioConfigRequest {
+  string assistant_id = 1;
+  string user_id = 2;
+  string twilio_number = 3;
+  string account_sid = 4;
+  string auth_token = 5;
+}
+
+message GetTwilioConfigRequest {
+  string assistant_id = 1;
+}
+
+message TwilioConfigResponse {
+  string assistant_id = 1;
+  string user_id = 2;
+  string twilio_number = 3;
+  string account_sid = 4;
+  string auth_token = 5;
+  string created_at = 6;
+  string updated_at = 7;
+}
+
+message DeleteTwilioConfigRequest {
+  string assistant_id = 1;
+}
+
+message DeleteTwilioConfigResponse {
+  bool success = 1;
 }

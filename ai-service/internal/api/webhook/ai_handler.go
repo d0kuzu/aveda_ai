@@ -32,6 +32,13 @@ type RegisterBotRequest struct {
 	BotToken string `json:"bot_token,omitempty"`
 }
 
+type RegisterTwilioBotRequest struct {
+	Name         string `json:"name"`
+	TwilioNumber string `json:"twilio_number"`
+	AccountSID   string `json:"account_sid"`
+	AuthToken    string `json:"auth_token"`
+}
+
 func (h *AIHandler) RegisterTelegramBot(c *gin.Context) {
 	var req RegisterBotRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -140,6 +147,45 @@ func (h *AIHandler) RegisterAPIBot(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"status": "Assistant registered", "assistant_id": assistant.Id, "token": secureToken})
+}
+
+func (h *AIHandler) RegisterTwilioBot(c *gin.Context) {
+	var req RegisterTwilioBotRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON"})
+		return
+	}
+
+	if req.Name == "" || req.TwilioNumber == "" || req.AccountSID == "" || req.AuthToken == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "all fields (name, twilio_number, account_sid, auth_token) are required"})
+		return
+	}
+
+	userId := c.GetHeader("X-User-Id")
+	if userId == "" {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized request from gateway"})
+		return
+	}
+
+	assistant, err := h.db.CreateAssistant(req.Name, "", userId, "", "twilio")
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create assistant in database"})
+		return
+	}
+
+	_, err = h.db.SaveTwilioConfig(assistant.Id, userId, req.TwilioNumber, req.AccountSID, req.AuthToken)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save Twilio configuration"})
+		return
+	}
+
+	webhookURL := fmt.Sprintf("%s/twilio/webhook/%s", h.cfg.BaseURL, assistant.Id)
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":       "Twilio assistant registered",
+		"assistant_id": assistant.Id,
+		"webhook_url":  webhookURL,
+	})
 }
 
 type TelegramUpdate struct {

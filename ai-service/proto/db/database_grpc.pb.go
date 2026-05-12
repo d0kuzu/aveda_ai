@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.6.1
 // - protoc             v7.34.0
-// source: proto/database.proto
+// source: proto/db/database.proto
 
 package proto
 
@@ -51,6 +51,9 @@ const (
 	DatabaseService_GetChatPageByUserID_FullMethodName       = "/database.DatabaseService/GetChatPageByUserID"
 	DatabaseService_SearchChatsByCustomer_FullMethodName     = "/database.DatabaseService/SearchChatsByCustomer"
 	DatabaseService_GetLatestChatByCustomer_FullMethodName   = "/database.DatabaseService/GetLatestChatByCustomer"
+	DatabaseService_SaveTwilioConfig_FullMethodName          = "/database.DatabaseService/SaveTwilioConfig"
+	DatabaseService_GetTwilioConfig_FullMethodName           = "/database.DatabaseService/GetTwilioConfig"
+	DatabaseService_DeleteTwilioConfig_FullMethodName        = "/database.DatabaseService/DeleteTwilioConfig"
 )
 
 // DatabaseServiceClient is the client API for DatabaseService service.
@@ -89,6 +92,9 @@ type DatabaseServiceClient interface {
 	GetChatPageByUserID(ctx context.Context, in *GetChatPageByUserIDRequest, opts ...grpc.CallOption) (*ChatsResponse, error)
 	SearchChatsByCustomer(ctx context.Context, in *SearchChatsByCustomerRequest, opts ...grpc.CallOption) (*SearchChatsByCustomerResponse, error)
 	GetLatestChatByCustomer(ctx context.Context, in *GetLatestChatByCustomerRequest, opts ...grpc.CallOption) (*ChatResponse, error)
+	SaveTwilioConfig(ctx context.Context, in *SaveTwilioConfigRequest, opts ...grpc.CallOption) (*TwilioConfigResponse, error)
+	GetTwilioConfig(ctx context.Context, in *GetTwilioConfigRequest, opts ...grpc.CallOption) (*TwilioConfigResponse, error)
+	DeleteTwilioConfig(ctx context.Context, in *DeleteTwilioConfigRequest, opts ...grpc.CallOption) (*DeleteTwilioConfigResponse, error)
 }
 
 type databaseServiceClient struct {
@@ -419,6 +425,36 @@ func (c *databaseServiceClient) GetLatestChatByCustomer(ctx context.Context, in 
 	return out, nil
 }
 
+func (c *databaseServiceClient) SaveTwilioConfig(ctx context.Context, in *SaveTwilioConfigRequest, opts ...grpc.CallOption) (*TwilioConfigResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(TwilioConfigResponse)
+	err := c.cc.Invoke(ctx, DatabaseService_SaveTwilioConfig_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *databaseServiceClient) GetTwilioConfig(ctx context.Context, in *GetTwilioConfigRequest, opts ...grpc.CallOption) (*TwilioConfigResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(TwilioConfigResponse)
+	err := c.cc.Invoke(ctx, DatabaseService_GetTwilioConfig_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *databaseServiceClient) DeleteTwilioConfig(ctx context.Context, in *DeleteTwilioConfigRequest, opts ...grpc.CallOption) (*DeleteTwilioConfigResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteTwilioConfigResponse)
+	err := c.cc.Invoke(ctx, DatabaseService_DeleteTwilioConfig_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // DatabaseServiceServer is the server API for DatabaseService service.
 // All implementations must embed UnimplementedDatabaseServiceServer
 // for forward compatibility.
@@ -455,6 +491,9 @@ type DatabaseServiceServer interface {
 	GetChatPageByUserID(context.Context, *GetChatPageByUserIDRequest) (*ChatsResponse, error)
 	SearchChatsByCustomer(context.Context, *SearchChatsByCustomerRequest) (*SearchChatsByCustomerResponse, error)
 	GetLatestChatByCustomer(context.Context, *GetLatestChatByCustomerRequest) (*ChatResponse, error)
+	SaveTwilioConfig(context.Context, *SaveTwilioConfigRequest) (*TwilioConfigResponse, error)
+	GetTwilioConfig(context.Context, *GetTwilioConfigRequest) (*TwilioConfigResponse, error)
+	DeleteTwilioConfig(context.Context, *DeleteTwilioConfigRequest) (*DeleteTwilioConfigResponse, error)
 	mustEmbedUnimplementedDatabaseServiceServer()
 }
 
@@ -560,6 +599,15 @@ func (UnimplementedDatabaseServiceServer) SearchChatsByCustomer(context.Context,
 }
 func (UnimplementedDatabaseServiceServer) GetLatestChatByCustomer(context.Context, *GetLatestChatByCustomerRequest) (*ChatResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetLatestChatByCustomer not implemented")
+}
+func (UnimplementedDatabaseServiceServer) SaveTwilioConfig(context.Context, *SaveTwilioConfigRequest) (*TwilioConfigResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SaveTwilioConfig not implemented")
+}
+func (UnimplementedDatabaseServiceServer) GetTwilioConfig(context.Context, *GetTwilioConfigRequest) (*TwilioConfigResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetTwilioConfig not implemented")
+}
+func (UnimplementedDatabaseServiceServer) DeleteTwilioConfig(context.Context, *DeleteTwilioConfigRequest) (*DeleteTwilioConfigResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method DeleteTwilioConfig not implemented")
 }
 func (UnimplementedDatabaseServiceServer) mustEmbedUnimplementedDatabaseServiceServer() {}
 func (UnimplementedDatabaseServiceServer) testEmbeddedByValue()                         {}
@@ -1158,6 +1206,60 @@ func _DatabaseService_GetLatestChatByCustomer_Handler(srv interface{}, ctx conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _DatabaseService_SaveTwilioConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SaveTwilioConfigRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DatabaseServiceServer).SaveTwilioConfig(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DatabaseService_SaveTwilioConfig_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DatabaseServiceServer).SaveTwilioConfig(ctx, req.(*SaveTwilioConfigRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DatabaseService_GetTwilioConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetTwilioConfigRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DatabaseServiceServer).GetTwilioConfig(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DatabaseService_GetTwilioConfig_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DatabaseServiceServer).GetTwilioConfig(ctx, req.(*GetTwilioConfigRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DatabaseService_DeleteTwilioConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteTwilioConfigRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DatabaseServiceServer).DeleteTwilioConfig(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DatabaseService_DeleteTwilioConfig_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DatabaseServiceServer).DeleteTwilioConfig(ctx, req.(*DeleteTwilioConfigRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // DatabaseService_ServiceDesc is the grpc.ServiceDesc for DatabaseService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1293,7 +1395,19 @@ var DatabaseService_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "GetLatestChatByCustomer",
 			Handler:    _DatabaseService_GetLatestChatByCustomer_Handler,
 		},
+		{
+			MethodName: "SaveTwilioConfig",
+			Handler:    _DatabaseService_SaveTwilioConfig_Handler,
+		},
+		{
+			MethodName: "GetTwilioConfig",
+			Handler:    _DatabaseService_GetTwilioConfig_Handler,
+		},
+		{
+			MethodName: "DeleteTwilioConfig",
+			Handler:    _DatabaseService_DeleteTwilioConfig_Handler,
+		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "proto/database.proto",
+	Metadata: "proto/db/database.proto",
 }
