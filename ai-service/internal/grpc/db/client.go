@@ -346,5 +346,3 @@ func (c *Client) SaveTwilioConfig(assistantID, userID, twilioNumber, accountSID,
 
 	return c.DB.SaveTwilioConfig(ctx, req)
 }
-
-

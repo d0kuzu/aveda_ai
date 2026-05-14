@@ -70,15 +70,12 @@ func (h *AssistantHandler) UpdateAssistant(c *gin.Context) {
 		return
 	}
 
-	// Fetch existing assistant to keep other fields (like tokens, etc.)
-	// because database service's UpdateAssistant overwrites everything.
 	existing, err := h.db.GetAssistant(id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch existing assistant", "details": err.Error()})
 		return
 	}
 
-	// Update only name and configuration, keep others
 	resp, err := h.db.UpdateAssistant(
 		id,
 		req.Name,
