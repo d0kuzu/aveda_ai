@@ -112,32 +112,35 @@ func (c *Client) SaveMessages(assistantId, customerId string, messages []openai.
 		messageCount = 0
 	}
 
-	var filteredMessages []openai.ChatCompletionMessage
-	for _, msg := range messages {
-		if msg.Role == openai.ChatMessageRoleSystem {
-			continue
-		}
-		if msg.Role == openai.ChatMessageRoleTool {
-			continue
-		}
-		if msg.Role == openai.ChatMessageRoleAssistant && msg.Content == " " && len(msg.ToolCalls) > 0 {
-			continue
-		}
+	// Определяем, сколько сообщений уже было (системные + те, что в базе)
+	// Нам нужно знать, сколько системных сообщений добавляет StartMessages.
+	// Обычно это 1 сообщение.
+	systemMessages, _ := c.StartMessages(assistantId)
+	systemCount := len(systemMessages)
+	
+	totalExistingCount := systemCount + int(messageCount)
 
-		filteredMessages = append(filteredMessages, msg)
-	}
-
-	if int(messageCount) >= len(filteredMessages) {
+	// Если новых сообщений в принципе нет, выходим
+	if len(messages) <= totalExistingCount {
 		return nil
 	}
 
-	newMessages := filteredMessages[messageCount:]
+	// Берем только те, которые реально новые
+	newCandidateMessages := messages[totalExistingCount:]
+	
+	for _, msg := range newCandidateMessages {
+		// Фильтруем системные и технические сообщения (на всякий случай)
+		if msg.Role == openai.ChatMessageRoleSystem || 
+		   msg.Role == openai.ChatMessageRoleTool ||
+		   (msg.Role == openai.ChatMessageRoleAssistant && (msg.Content == "" || msg.Content == " ") && len(msg.ToolCalls) > 0) {
+			continue
+		}
 
-	for _, msg := range newMessages {
 		content := msg.Content
 		if content == "" {
 			content = " "
 		}
+
 		_, err := c.db.SaveMessage(chatID, msg.Role, content, "openai")
 		if err != nil {
 			log.Printf("Failed to save message: %v", err)
