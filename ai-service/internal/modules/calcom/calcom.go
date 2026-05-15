@@ -12,8 +12,7 @@ import (
 )
 
 const (
-	baseURL       = "https://api.cal.com/v2"
-	calAPIVersion = "2024-06-11" // Попробуем эту версию, она более универсальна
+	baseURL = "https://api.cal.com/v2"
 )
 
 type Client struct {
@@ -91,7 +90,7 @@ func (c *Client) GetAvailableSlots(ctx context.Context, date string, timezone st
 	}
 
 	req.Header.Set("Authorization", "Bearer "+c.apiKey)
-	req.Header.Set("cal-api-version", calAPIVersion)
+	req.Header.Set("cal-api-version", "2024-09-04") // Эта версия работает для слотов
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
@@ -118,22 +117,17 @@ func (c *Client) GetAvailableSlots(ctx context.Context, date string, timezone st
 	// Extract all slot times from the response
 	var availableSlots []string
 	for dateKey, slots := range slotsResp.Data {
-		// Filter only the requested date to be sure
 		if !strings.HasPrefix(dateKey, date) {
 			continue
 		}
 
 		for _, slot := range slots {
-			// Cal.com returns: "2026-05-18T00:00:00.000-05:00"
-			// We try to parse it to show a clean time to the user
 			t, err := time.Parse(time.RFC3339, slot.Start)
 			if err != nil {
-				// Fallback to raw string if parsing fails
 				availableSlots = append(availableSlots, slot.Start)
 				continue
 			}
 
-			// Format: "14:30" (or whatever the local time is)
 			availableSlots = append(availableSlots, fmt.Sprintf("%s (UTC: %s)", t.Format("15:04"), slot.Start))
 		}
 	}
@@ -168,7 +162,7 @@ func (c *Client) CreateBooking(ctx context.Context, startTime, attendeeName, att
 
 	req.Header.Set("Authorization", "Bearer "+c.apiKey)
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("cal-api-version", calAPIVersion)
+	req.Header.Set("cal-api-version", "2024-08-13") // Эта версия работает для создания броней
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
