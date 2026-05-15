@@ -34,7 +34,7 @@ type SlotsResponse struct {
 }
 
 type SlotsEntry struct {
-	Time string `json:"time"`
+	Start string `json:"start"`
 }
 
 // BookingRequest is sent to POST /v2/bookings
@@ -117,24 +117,25 @@ func (c *Client) GetAvailableSlots(ctx context.Context, date string, timezone st
 	}
 
 	// Extract all slot times from the response
-	// The data is a map where keys are dates and values are arrays of slots
 	var availableSlots []string
-	for _, slots := range slotsResp.Data {
+	for dateKey, slots := range slotsResp.Data {
+		// Filter only the requested date to be sure
+		if !strings.HasPrefix(dateKey, date) {
+			continue
+		}
+
 		for _, slot := range slots {
-			// Parse the time and format it nicely for the AI
-			t, err := time.Parse(time.RFC3339, slot.Time)
+			// Cal.com returns: "2026-05-18T00:00:00.000-05:00"
+			// We try to parse it to show a clean time to the user
+			t, err := time.Parse(time.RFC3339, slot.Start)
 			if err != nil {
-				availableSlots = append(availableSlots, slot.Time)
+				// Fallback to raw string if parsing fails
+				availableSlots = append(availableSlots, slot.Start)
 				continue
 			}
-			// Load timezone
-			loc, err := time.LoadLocation(timezone)
-			if err != nil {
-				availableSlots = append(availableSlots, slot.Time)
-				continue
-			}
-			localTime := t.In(loc)
-			availableSlots = append(availableSlots, fmt.Sprintf("%s (UTC: %s)", localTime.Format("15:04"), slot.Time))
+
+			// Format: "14:30" (or whatever the local time is)
+			availableSlots = append(availableSlots, fmt.Sprintf("%s (UTC: %s)", t.Format("15:04"), slot.Start))
 		}
 	}
 
