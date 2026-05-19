@@ -30,6 +30,10 @@ func SetupRoutes(r *gin.Engine, cfg *config.Config, db *db.Client) {
 		public.Any("/twilio/webhook/*any",
 			proxy.NewReverseProxy(cfg.AIServiceURL, ""),
 		)
+
+		public.Any("/campuslogin/test",
+			proxy.NewReverseProxy(cfg.AIServiceURL, ""),
+		)
 	}
 
 	userPrivate := r.Group("/")
