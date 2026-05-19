@@ -1,112 +1,122 @@
 package campuslogin
 
 import (
-	"bytes"
 	"diaxel/internal/config"
 	"diaxel/internal/grpc/db"
-	"encoding/json"
-	"io"
+	"diaxel/internal/modules/llm"
+	twilio "diaxel/internal/modules/twilio"
+	"fmt"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
 
 type CampusLoginHandler struct {
-	cfg *config.Settings
-	db  *db.Client
+	cfg    *config.Settings
+	db     *db.Client
+	twilio *twilio.Client
+	LLM    *llm.Client
 }
 
-func NewCampusLoginHandler(cfg *config.Settings, db *db.Client) *CampusLoginHandler {
-	return &CampusLoginHandler{cfg: cfg, db: db}
+func NewCampusLoginHandler(cfg *config.Settings, db *db.Client, twilioClient *twilio.Client, llmClient *llm.Client) *CampusLoginHandler {
+	return &CampusLoginHandler{
+		cfg:    cfg,
+		db:     db,
+		twilio: twilioClient,
+		LLM:    llmClient,
+	}
 }
 
-func (h *CampusLoginHandler) HandleTest(c *gin.Context) {
-	// Read request body
-	var bodyBytes []byte
-	if c.Request.Body != nil {
-		var err error
-		bodyBytes, err = io.ReadAll(c.Request.Body)
-		if err != nil {
-			log.Printf("[CAMPUSLOGIN TEST] Failed to read request body: %v", err)
-		} else {
-			// Restore the body so it can be read again if needed
-			c.Request.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
-		}
+type CampusWebhookRequest struct {
+	ContactID      string `form:"ContactID" json:"ContactID"`
+	CampusID       string `form:"CampusID" json:"CampusID"`
+	FirstName      string `form:"FirstName" json:"FirstName"`
+	LastName       string `form:"Lastname" json:"Lastname"`
+	AlternatePhone string `form:"alternatephone" json:"alternatephone"`
+	Email          string `form:"Email" json:"Email"`
+	StudentNumber  string `form:"StudentNumber" json:"StudentNumber"`
+	ID             string `form:"ID" json:"ID"`
+	ProgramID      string `form:"ProgramID" json:"ProgramID"`
+}
+
+func (h *CampusLoginHandler) HandleTriggerTwilio(c *gin.Context) {
+	assistantID := c.Param("assistant_id")
+	if assistantID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "assistant_id parameter is required"})
+		return
 	}
 
-	// Format headers for logging
-	headersLog := ""
-	for name, values := range c.Request.Header {
-		for _, value := range values {
-			headersLog += "  " + name + ": " + value + "\n"
-		}
+	var req CampusWebhookRequest
+	if err := c.ShouldBind(&req); err != nil {
+		log.Printf("[CampusLogin Trigger] Binding error: %v", err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request data: " + err.Error()})
+		return
 	}
 
-	// Format body for logging
-	bodyLog := ""
-	if len(bodyBytes) > 0 {
-		// Try to pretty-print JSON
-		var prettyJSON bytes.Buffer
-		if err := json.Indent(&prettyJSON, bodyBytes, "", "  "); err == nil {
-			bodyLog = prettyJSON.String()
-		} else {
-			bodyLog = string(bodyBytes)
-		}
-	} else {
-		bodyLog = "<empty body>"
+	toPhone := req.AlternatePhone
+	if toPhone == "" {
+		log.Printf("[CampusLogin Trigger] Alternate phone number is missing")
+		c.JSON(http.StatusBadRequest, gin.H{"error": "alternatephone is required"})
+		return
 	}
 
-	// Log all request details clearly
-	log.Printf(`
-============================================================
-[CAMPUSLOGIN WEBHOOK TEST] New Request Received
-------------------------------------------------------------
-Method:      %s
-URI:         %s
-Client IP:   %s
-Headers:
-%s
-Query Params: %s
-Raw Body Length: %d bytes
-Body Content:
-%s
-============================================================`,
-		c.Request.Method,
-		c.Request.RequestURI,
-		c.ClientIP(),
-		headersLog,
-		c.Request.URL.RawQuery,
-		len(bodyBytes),
-		bodyLog,
+	if !strings.HasPrefix(toPhone, "+") {
+		toPhone = "+" + toPhone
+	}
+
+	if toPhone != "+16692430929" && toPhone != "+77002744195" {
+		log.Printf("[CampusLogin Trigger] Ignoring message from unknown number %s", toPhone)
+		c.JSON(http.StatusOK, gin.H{"status": "ignored", "message": "phone number not in allowed list"})
+		return
+	}
+
+	_, err := h.db.GetAssistant(assistantID)
+	if err != nil {
+		log.Printf("Error getting assistant %s: %v", assistantID, err)
+		c.JSON(http.StatusNotFound, gin.H{"error": "assistant not found"})
+		return
+	}
+
+	twilioConfig, err := h.db.GetTwilioConfig(assistantID)
+	if err != nil {
+		log.Printf("Error getting twilio config for assistant %s: %v", assistantID, err)
+		c.JSON(http.StatusNotFound, gin.H{"error": "twilio configuration not found for this assistant"})
+		return
+	}
+
+	systemPrompt := fmt.Sprintf(
+		"This is a new lead. Name: %s %s, program: %s. Greet them by name and mention the program they chose.",
+		req.FirstName,
+		req.LastName,
+		req.ProgramID,
 	)
 
-	// Return a 200 OK status with the incoming data in response for easy debugging
-	// We can try to return the body parse structure or just raw string/json
-	var jsonBody interface{}
-	if err := json.Unmarshal(bodyBytes, &jsonBody); err == nil {
-		c.JSON(http.StatusOK, gin.H{
-			"status":  "ok",
-			"message": "Data received and logged successfully",
-			"received_data": gin.H{
-				"method":       c.Request.Method,
-				"uri":          c.Request.RequestURI,
-				"headers":      c.Request.Header,
-				"query_params": c.Request.URL.Query(),
-				"body":         jsonBody,
-			},
-		})
-	} else {
-		c.JSON(http.StatusOK, gin.H{
-			"status":  "ok",
-			"message": "Data received and logged successfully",
-			"received_data": gin.H{
-				"method":       c.Request.Method,
-				"uri":          c.Request.RequestURI,
-				"headers":      c.Request.Header,
-				"query_params": c.Request.URL.Query(),
-				"body":         string(bodyBytes),
-			},
-		})
+	answer, err := h.LLM.Conversation(c, toPhone, assistantID, "", llm.WithSystemMessage(systemPrompt))
+	if err != nil {
+		log.Printf("LLM Conversation error for assistant %s: %v", assistantID, err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
 	}
+
+	err = h.twilio.SendMessage(c,
+		twilioConfig.AccountSid,
+		twilioConfig.AuthToken,
+		twilioConfig.TwilioNumber,
+		toPhone,
+		answer,
+	)
+	if err != nil {
+		log.Printf("Error sending Twilio message to %s: %v", toPhone, err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("failed to send message: %v", err)})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  "ok",
+		"message": "Triggered successfully",
+		"to":      toPhone,
+		"answer":  answer,
+	})
 }

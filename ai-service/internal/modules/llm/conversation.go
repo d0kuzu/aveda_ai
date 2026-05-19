@@ -12,32 +12,53 @@ import (
 
 const defaultTimezone = "America/Winnipeg"
 
-func (c *Client) Conversation(ctx context.Context, userId, assistantId, userMessage string) (string, error) {
-	log.Printf("Сообщение от пользователя %s: %s", userId, userMessage)
+type ConversationOption func(*conversationOptions)
+
+type conversationOptions struct {
+	SystemMessage string
+}
+
+func WithSystemMessage(msg string) ConversationOption {
+	return func(o *conversationOptions) {
+		o.SystemMessage = msg
+	}
+}
+
+func (c *Client) Conversation(ctx context.Context, userId, assistantId, userMessage string, opts ...ConversationOption) (string, error) {
+	var optsConfig conversationOptions
+	for _, opt := range opts {
+		opt(&optsConfig)
+	}
+
+	if optsConfig.SystemMessage != "" {
+		log.Printf("[LLM Trigger] Системный промпт для пользователя %s: %s", userId, optsConfig.SystemMessage)
+	} else {
+		log.Printf("Сообщение от пользователя %s: %s", userId, userMessage)
+	}
+
 	messages, err := c.GetMessages(assistantId, userId)
 	if err != nil {
 		return "", err
 	}
 
-	c.AddMessage(&messages, "user", userMessage)
+	if optsConfig.SystemMessage != "" {
+		c.AddMessage(&messages, openai.ChatMessageRoleSystem, optsConfig.SystemMessage)
+	} else {
+		c.AddMessage(&messages, openai.ChatMessageRoleUser, userMessage)
+	}
 
 	response, err := c.GetAnswer(ctx, messages)
 	if err != nil {
 		return "", err
 	}
 
-	// Tool call loop: keep processing until AI returns a text response
 	for len(response.Choices) > 0 && len(response.Choices[0].Message.ToolCalls) > 0 {
-		// Add the assistant message with tool calls to the conversation
 		assistantMsg := response.Choices[0].Message
-		// go-openai uses `json:"content,omitempty"` — empty string is dropped to null in JSON.
-		// OpenAI API rejects null content on assistant messages, so we must ensure it's non-empty.
 		if assistantMsg.Content == "" && len(assistantMsg.ToolCalls) > 0 {
 			assistantMsg.Content = " "
 		}
 		messages = append(messages, assistantMsg)
 
-		// Process each tool call
 		for _, toolCall := range assistantMsg.ToolCalls {
 			log.Printf("Функция вызвана: %s", toolCall.Function.Name)
 			log.Printf("Аргументы: %s", toolCall.Function.Arguments)
@@ -50,7 +71,6 @@ func (c *Client) Conversation(ctx context.Context, userId, assistantId, userMess
 
 			log.Printf("Результат функции %s: %s", toolCall.Function.Name, result)
 
-			// Add tool response message
 			messages = append(messages, openai.ChatCompletionMessage{
 				Role:       openai.ChatMessageRoleTool,
 				Content:    result,
@@ -58,7 +78,6 @@ func (c *Client) Conversation(ctx context.Context, userId, assistantId, userMess
 			})
 		}
 
-		// Make another request to OpenAI so it can generate a text response based on the function results
 		response, err = c.GetAnswer(ctx, messages)
 		if err != nil {
 			return "", err
@@ -79,7 +98,6 @@ func (c *Client) Conversation(ctx context.Context, userId, assistantId, userMess
 	return assistantResponse, nil
 }
 
-// executeFunction dispatches tool calls to the appropriate handler
 func (c *Client) executeFunction(ctx context.Context, functionName, argsJSON string) (string, error) {
 	switch functionName {
 	case "get_available_slots":
@@ -91,7 +109,6 @@ func (c *Client) executeFunction(ctx context.Context, functionName, argsJSON str
 	}
 }
 
-// handleGetAvailableSlots processes the get_available_slots function call
 func (c *Client) handleGetAvailableSlots(ctx context.Context, argsJSON string) (string, error) {
 	var args struct {
 		Date string `json:"date"`
@@ -116,7 +133,6 @@ func (c *Client) handleGetAvailableSlots(ctx context.Context, argsJSON string) (
 	return fmt.Sprintf("Available time slots for %s:\n%s", args.Date, strings.Join(slots, "\n")), nil
 }
 
-// handleCreateBooking processes the create_booking function call
 func (c *Client) handleCreateBooking(ctx context.Context, argsJSON string) (string, error) {
 	var args struct {
 		StartTime     string `json:"start_time"`
