@@ -49,7 +49,7 @@ func (h *TwilioWebhookHandler) HandleWebhook(c *gin.Context) {
 
 	log.Printf("[Twilio Webhook] Received message from %s: %s", from, body)
 
-	if from != "+16692430929" && from != "+12048176146" {
+	if from != "+12048176146" && from != "+12045909711" && from != "+12045589015" {
 		log.Printf("[Twilio Webhook] Ignoring message from unknown number %s", from)
 		c.Header("Content-Type", "text/xml")
 		c.String(http.StatusOK, `<?xml version="1.0" encoding="UTF-8"?><Response></Response>`)
