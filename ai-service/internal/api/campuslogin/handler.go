@@ -116,11 +116,21 @@ func (h *CampusLoginHandler) HandleTriggerTwilio(c *gin.Context) {
 		return
 	}
 
+	programName := req.ProgramID
+	switch req.ProgramID {
+	case "41346":
+		programName = "Hairstyling"
+	case "41664":
+		programName = "Hairstyling (evening)"
+	case "42013":
+		programName = "Makeup Artistry"
+	}
+
 	systemPrompt := fmt.Sprintf(
 		"This is a new lead. Name: %s %s, program: %s. Greet them by name and mention the program they chose.",
 		req.FirstName,
 		req.LastName,
-		req.ProgramID,
+		programName,
 	)
 
 	answer, err := h.LLM.Conversation(c, toPhone, assistantID, "", llm.WithSystemMessage(systemPrompt))
