@@ -52,6 +52,32 @@ func (h *CampusLoginHandler) HandleTriggerTwilio(c *gin.Context) {
 		return
 	}
 
+	// --- ДОБАВЛЕННЫЙ БЛОК ДЛЯ ЛОГИРОВАНИЯ ВСЕХ ПОЛЕЙ ---
+	// Парсим форму, если она еще не была распарсена
+	if err := c.Request.ParseForm(); err == nil {
+		log.Printf("[CampusLogin Debug] === НАЧАЛО ПРИНЯТЫХ ДАННЫХ ===")
+
+		// Выводим всё, что пришло в URL (Query параметры)
+		if len(c.Request.URL.Query()) > 0 {
+			log.Printf("[CampusLogin Debug] URL Query параметры:")
+			for key, values := range c.Request.URL.Query() {
+				log.Printf("  %s: %s", key, strings.Join(values, ", "))
+			}
+		}
+
+		// Выводим всё, что пришло в теле (Form/Post-Form параметры)
+		if len(c.Request.PostForm) > 0 {
+			log.Printf("[CampusLogin Debug] Form/Post параметры:")
+			for key, values := range c.Request.PostForm {
+				log.Printf("  %s: %s", key, strings.Join(values, ", "))
+			}
+		}
+		log.Printf("[CampusLogin Debug] === КОНЕЦ ПРИНЯТЫХ ДАННЫХ ===")
+	} else {
+		log.Printf("[CampusLogin Debug] Не удалось распарсить форму для логирования: %v", err)
+	}
+	// ---------------------------------------------------
+
 	if assistantID == "test" {
 		client := campusloginModule.NewClient(h.cfg.CampusLoginAPI)
 		err := client.SendAppointment(c.Request.Context(), "2026-05-25T11:30:00", "2026-05-25T12:30:00", 5972449, 1, "Test appointment from API endpoint")
