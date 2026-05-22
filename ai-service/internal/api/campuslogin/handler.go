@@ -42,6 +42,7 @@ type CampusWebhookRequest struct {
 	StudentNumber  string `form:"StudentNumber" json:"StudentNumber"`
 	ID             string `form:"ID" json:"ID"`
 	ProgramID      string `form:"ProgramID" json:"ProgramID"`
+	International  string `form:"ProgramID" json:"International"`
 }
 
 func (h *CampusLoginHandler) HandleTriggerTwilio(c *gin.Context) {
@@ -145,11 +146,12 @@ func (h *CampusLoginHandler) HandleTriggerTwilio(c *gin.Context) {
 	if name, ok := constants.ProgramIDToName[req.ProgramID]; ok {
 		programName = name
 	}
-
+	log.Printf("Triger data: Name: %s, Program: %s, IsInternational: %s", req.FirstName, programName, req.International)
 	systemPrompt := fmt.Sprintf(
-		"This is a new lead. Name: %s, program: %s. Greet them by name and mention the program they chose.",
+		"This is a new lead. Name: %s, program: %s, IsInternational: %s. Greet them by name and mention the program they chose.",
 		req.FirstName,
 		programName,
+		req.International,
 	)
 
 	answer, err := h.LLM.Conversation(c, toPhone, assistantID, "", llm.WithSystemMessage(systemPrompt))
