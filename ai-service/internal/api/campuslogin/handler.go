@@ -94,12 +94,6 @@ func (h *CampusLoginHandler) HandleTriggerTwilio(c *gin.Context) {
 		return
 	}
 
-	if req.AttributeID_2577 != nil {
-		log.Printf("Have AttributeID_2577")
-	} else {
-		log.Printf("do not have AttributeID_2577")
-	}
-
 	toPhone := req.AlternatePhone
 	if toPhone == "" {
 		log.Printf("[CampusLogin Trigger] Alternate phone number is missing")
@@ -177,11 +171,19 @@ func (h *CampusLoginHandler) HandleTriggerTwilio(c *gin.Context) {
 		programName = name
 	}
 
+	isInternational := "no"
+	if req.AttributeID_2577 != nil {
+		isInternational = "yes"
+	}
+
 	systemPrompt := fmt.Sprintf(
-		"This is a new lead. Name: %s, program: %s. Greet them by name and mention the program they chose.",
+		"This is a new lead. Name: %s, program: %s, International: %s. Greet them by name and mention the program they chose.",
 		req.FirstName,
 		programName,
+		isInternational,
 	)
+
+	log.Printf("[CampusLogin Trigger] Generated System Prompt: %s", systemPrompt)
 
 	answer, err := h.LLM.Conversation(c, toPhone, assistantID, "", llm.WithSystemMessage(systemPrompt))
 	if err != nil {
