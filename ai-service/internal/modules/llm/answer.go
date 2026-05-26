@@ -2,7 +2,6 @@ package llm
 
 import (
 	"context"
-	"diaxel/internal/constants"
 	"github.com/sashabaranov/go-openai"
 )
 
