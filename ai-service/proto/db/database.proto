@@ -42,6 +42,8 @@ service DatabaseService {
   rpc DeleteTwilioConfig(DeleteTwilioConfigRequest) returns (DeleteTwilioConfigResponse);
   rpc DeleteAllChatsAndMessages(DeleteAllChatsAndMessagesRequest) returns (DeleteAllChatsAndMessagesResponse);
   rpc DeleteChatAndMessages(DeleteChatAndMessagesRequest) returns (DeleteChatAndMessagesResponse);
+  rpc GetCampusloginByUserId(CampusloginRequest) returns (CampusloginResponse);
+  rpc UpsertCampuslogin(UpsertCampusloginRequest) returns (UpsertCampusloginResponse);
 }
 
 message AnalyticsRequest {
@@ -358,5 +360,25 @@ message DeleteChatAndMessagesRequest {
 }
 
 message DeleteChatAndMessagesResponse {
+  bool success = 1;
+}
+
+message CampusloginRequest {
+  string user_id = 1;
+}
+
+message UpsertCampusloginRequest {
+  string user_id = 1;
+  int32 contact_id = 2;
+  int32 program_id = 3;
+}
+
+message CampusloginResponse {
+  string user_id = 1;
+  int32 contact_id = 2;
+  int32 program_id = 3;
+}
+
+message UpsertCampusloginResponse {
   bool success = 1;
 }

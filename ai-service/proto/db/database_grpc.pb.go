@@ -56,6 +56,8 @@ const (
 	DatabaseService_DeleteTwilioConfig_FullMethodName        = "/database.DatabaseService/DeleteTwilioConfig"
 	DatabaseService_DeleteAllChatsAndMessages_FullMethodName = "/database.DatabaseService/DeleteAllChatsAndMessages"
 	DatabaseService_DeleteChatAndMessages_FullMethodName     = "/database.DatabaseService/DeleteChatAndMessages"
+	DatabaseService_GetCampusloginByUserId_FullMethodName    = "/database.DatabaseService/GetCampusloginByUserId"
+	DatabaseService_UpsertCampuslogin_FullMethodName         = "/database.DatabaseService/UpsertCampuslogin"
 )
 
 // DatabaseServiceClient is the client API for DatabaseService service.
@@ -99,6 +101,8 @@ type DatabaseServiceClient interface {
 	DeleteTwilioConfig(ctx context.Context, in *DeleteTwilioConfigRequest, opts ...grpc.CallOption) (*DeleteTwilioConfigResponse, error)
 	DeleteAllChatsAndMessages(ctx context.Context, in *DeleteAllChatsAndMessagesRequest, opts ...grpc.CallOption) (*DeleteAllChatsAndMessagesResponse, error)
 	DeleteChatAndMessages(ctx context.Context, in *DeleteChatAndMessagesRequest, opts ...grpc.CallOption) (*DeleteChatAndMessagesResponse, error)
+	GetCampusloginByUserId(ctx context.Context, in *CampusloginRequest, opts ...grpc.CallOption) (*CampusloginResponse, error)
+	UpsertCampuslogin(ctx context.Context, in *UpsertCampusloginRequest, opts ...grpc.CallOption) (*UpsertCampusloginResponse, error)
 }
 
 type databaseServiceClient struct {
@@ -479,6 +483,26 @@ func (c *databaseServiceClient) DeleteChatAndMessages(ctx context.Context, in *D
 	return out, nil
 }
 
+func (c *databaseServiceClient) GetCampusloginByUserId(ctx context.Context, in *CampusloginRequest, opts ...grpc.CallOption) (*CampusloginResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CampusloginResponse)
+	err := c.cc.Invoke(ctx, DatabaseService_GetCampusloginByUserId_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *databaseServiceClient) UpsertCampuslogin(ctx context.Context, in *UpsertCampusloginRequest, opts ...grpc.CallOption) (*UpsertCampusloginResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpsertCampusloginResponse)
+	err := c.cc.Invoke(ctx, DatabaseService_UpsertCampuslogin_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // DatabaseServiceServer is the server API for DatabaseService service.
 // All implementations must embed UnimplementedDatabaseServiceServer
 // for forward compatibility.
@@ -520,6 +544,8 @@ type DatabaseServiceServer interface {
 	DeleteTwilioConfig(context.Context, *DeleteTwilioConfigRequest) (*DeleteTwilioConfigResponse, error)
 	DeleteAllChatsAndMessages(context.Context, *DeleteAllChatsAndMessagesRequest) (*DeleteAllChatsAndMessagesResponse, error)
 	DeleteChatAndMessages(context.Context, *DeleteChatAndMessagesRequest) (*DeleteChatAndMessagesResponse, error)
+	GetCampusloginByUserId(context.Context, *CampusloginRequest) (*CampusloginResponse, error)
+	UpsertCampuslogin(context.Context, *UpsertCampusloginRequest) (*UpsertCampusloginResponse, error)
 	mustEmbedUnimplementedDatabaseServiceServer()
 }
 
@@ -640,6 +666,12 @@ func (UnimplementedDatabaseServiceServer) DeleteAllChatsAndMessages(context.Cont
 }
 func (UnimplementedDatabaseServiceServer) DeleteChatAndMessages(context.Context, *DeleteChatAndMessagesRequest) (*DeleteChatAndMessagesResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method DeleteChatAndMessages not implemented")
+}
+func (UnimplementedDatabaseServiceServer) GetCampusloginByUserId(context.Context, *CampusloginRequest) (*CampusloginResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetCampusloginByUserId not implemented")
+}
+func (UnimplementedDatabaseServiceServer) UpsertCampuslogin(context.Context, *UpsertCampusloginRequest) (*UpsertCampusloginResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpsertCampuslogin not implemented")
 }
 func (UnimplementedDatabaseServiceServer) mustEmbedUnimplementedDatabaseServiceServer() {}
 func (UnimplementedDatabaseServiceServer) testEmbeddedByValue()                         {}
@@ -1328,6 +1360,42 @@ func _DatabaseService_DeleteChatAndMessages_Handler(srv interface{}, ctx context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _DatabaseService_GetCampusloginByUserId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CampusloginRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DatabaseServiceServer).GetCampusloginByUserId(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DatabaseService_GetCampusloginByUserId_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DatabaseServiceServer).GetCampusloginByUserId(ctx, req.(*CampusloginRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DatabaseService_UpsertCampuslogin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpsertCampusloginRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DatabaseServiceServer).UpsertCampuslogin(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DatabaseService_UpsertCampuslogin_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DatabaseServiceServer).UpsertCampuslogin(ctx, req.(*UpsertCampusloginRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // DatabaseService_ServiceDesc is the grpc.ServiceDesc for DatabaseService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1482,6 +1550,14 @@ var DatabaseService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteChatAndMessages",
 			Handler:    _DatabaseService_DeleteChatAndMessages_Handler,
+		},
+		{
+			MethodName: "GetCampusloginByUserId",
+			Handler:    _DatabaseService_GetCampusloginByUserId_Handler,
+		},
+		{
+			MethodName: "UpsertCampuslogin",
+			Handler:    _DatabaseService_UpsertCampuslogin_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
