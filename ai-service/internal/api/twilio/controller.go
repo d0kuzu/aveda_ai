@@ -49,8 +49,16 @@ func (h *TwilioWebhookHandler) HandleWebhook(c *gin.Context) {
 
 	log.Printf("[Twilio Webhook] Received message from %s: %s", from, body)
 
-	if from != "+12048176146" && from != "+12045909711" && from != "+12045589015" {
-		log.Printf("[Twilio Webhook] Ignoring message from unknown number %s", from)
+	chat, err := h.db.GetLatestChatByCustomer(assistantID, from)
+	if err != nil {
+		log.Printf("[Twilio Webhook] Error checking chat existence for %s: %v", from, err)
+		c.Header("Content-Type", "text/xml")
+		c.String(http.StatusOK, `<?xml version="1.0" encoding="UTF-8"?><Response></Response>`)
+		return
+	}
+
+	if chat == nil || chat.Id == "" {
+		log.Printf("[Twilio Webhook] Ignoring message from %s: no active chat found. Must be triggered via CampusLogin first.", from)
 		c.Header("Content-Type", "text/xml")
 		c.String(http.StatusOK, `<?xml version="1.0" encoding="UTF-8"?><Response></Response>`)
 		return
