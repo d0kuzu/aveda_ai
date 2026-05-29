@@ -24,7 +24,7 @@ func NewListener(dbClient *db.Client, twilioClient *twilio.Client) *Listener {
 }
 
 func (l *Listener) Start(ctx context.Context) {
-	ticker := time.NewTicker(6 * time.Minute)
+	ticker := time.NewTicker(2 * time.Minute)
 	defer ticker.Stop()
 	log.Println("[Followup Listener] Started.")
 	for {

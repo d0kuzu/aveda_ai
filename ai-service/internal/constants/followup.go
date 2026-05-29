@@ -11,8 +11,8 @@ type FollowupConfig struct {
 // to a sequence of followups (1-indexed map for stages).
 var FollowupSchedules = map[string]map[int]FollowupConfig{
 	"Hairstyling": {
-		1: {Delay: 5 * time.Minute, Text: "We have flexible schedules for hairstyling: both in-house and hybrid options! Which works better for you?"},
-		2: {Delay: 5 * time.Minute, Text: "Quick question - are you familiar with Manitoba Student Aid? Many of our students get their full program covered at 0% interest!"},
+		1: {Delay: 1 * time.Minute, Text: "We have flexible schedules for hairstyling: both in-house and hybrid options! Which works better for you?"},
+		2: {Delay: 1 * time.Minute, Text: "Quick question - are you familiar with Manitoba Student Aid? Many of our students get their full program covered at 0% interest!"},
 		3: {Delay: 84 * time.Hour, Text: "{FirstName}, enrolling at Aveda is a simple process. When are you looking to start school: right away or in the near future?"},
 		4: {Delay: 96 * time.Hour, Text: "Not sure what you’re doing for work now, but there are so many career paths when you graduate with us! What are you hoping to do: work at a salon, or maybe for yourself?"},
 	},
