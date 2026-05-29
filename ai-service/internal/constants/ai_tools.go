@@ -108,4 +108,26 @@ var Tools = []openai.Tool{
 			},
 		},
 	},
+	{
+		Type: openai.ToolTypeFunction,
+		Function: &openai.FunctionDefinition{
+			Name:        "mark_grade_11_or_lower",
+			Description: "Call this function if the user mentions that they are in Grade 11 or lower (e.g. 'I am in grade 11', 'grade 10'). This marks them as unqualified for certain programs.",
+			Parameters: map[string]interface{}{
+				"type":       "object",
+				"properties": map[string]interface{}{},
+			},
+		},
+	},
+	{
+		Type: openai.ToolTypeFunction,
+		Function: &openai.FunctionDefinition{
+			Name:        "mark_international_student",
+			Description: "Call this function when the user confirms they are on a visa or an International Student, specifically in response to the question 'Are you a Canadian citizen, permanent resident, or on a visa?' and they choose the visa/international route. This marks them as unqualified for follow-ups.",
+			Parameters: map[string]interface{}{
+				"type":       "object",
+				"properties": map[string]interface{}{},
+			},
+		},
+	},
 }

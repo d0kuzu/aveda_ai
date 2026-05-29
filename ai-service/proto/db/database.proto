@@ -40,12 +40,14 @@ service DatabaseService {
   rpc SaveTwilioConfig(SaveTwilioConfigRequest) returns (TwilioConfigResponse);
   rpc GetTwilioConfig(GetTwilioConfigRequest) returns (TwilioConfigResponse);
   rpc DeleteTwilioConfig(DeleteTwilioConfigRequest) returns (DeleteTwilioConfigResponse);
+  rpc GetChatsForFollowup(GetChatsForFollowupRequest) returns (ChatsResponse);
+  rpc UpdateChatFollowupStage(UpdateChatFollowupStageRequest) returns (ChatResponse);
   rpc GetCampusloginByUserId(CampusloginRequest) returns (CampusloginResponse);
   rpc UpsertCampuslogin(UpsertCampusloginRequest) returns (UpsertCampusloginResponse);
+  rpc SetCampusloginFlags(SetCampusloginFlagsRequest) returns (SetCampusloginFlagsResponse);
   rpc DeleteAllChatsAndMessages(DeleteAllChatsAndMessagesRequest) returns (DeleteAllChatsAndMessagesResponse);
   rpc DeleteChatAndMessages(DeleteChatAndMessagesRequest) returns (DeleteChatAndMessagesResponse);
   rpc UpdateChatIsEnd(UpdateChatIsEndRequest) returns (ChatResponse);
-  rpc GetChatsForFollowup(GetChatsForFollowupRequest) returns (ChatsResponse);
 }
 
 message DeleteAllChatsAndMessagesRequest {}
@@ -134,9 +136,10 @@ message ChatResponse {
   string customer_id = 3;
   string platform = 4;
   string created_at = 5;
-  string updated_at = 6;
-  int32 message_count = 7;
-  bool is_end = 8;
+  string updated_at = 8;
+  int32 message_count = 9;
+  bool is_end = 10;
+  int32 followup_stage = 11;
 }
 
 message SaveMessageRequest {
@@ -372,6 +375,23 @@ message CampusloginResponse {
   string user_id = 1;
   int32 contact_id = 2;
   int32 program_id = 3;
+  bool is_grade11_or_lower = 4;
+  bool is_international_student = 5;
+}
+
+message SetCampusloginFlagsRequest {
+  string user_id = 1;
+  bool is_grade11_or_lower = 2;
+  bool is_international_student = 3;
+}
+
+message SetCampusloginFlagsResponse {
+  bool success = 1;
+}
+
+message UpdateChatFollowupStageRequest {
+  string id = 1;
+  int32 stage = 2;
 }
 
 message UpsertCampusloginResponse {

@@ -737,9 +737,11 @@ func (s *DatabaseServer) GetCampusloginByUserId(ctx context.Context, req *proto.
 	}
 
 	return &proto.CampusloginResponse{
-		UserId:    record.UserId,
-		ContactId: int32(record.ContactID),
-		ProgramId: int32(record.ProgramID),
+		UserId:                 record.UserId,
+		ContactId:              int32(record.ContactID),
+		ProgramId:              int32(record.ProgramID),
+		IsGrade11OrLower:       record.IsGrade11OrLower,
+		IsInternationalStudent: record.IsInternationalStudent,
 	}, nil
 }
 
@@ -807,9 +809,41 @@ func (s *DatabaseServer) UpdateChatIsEnd(ctx context.Context, req *proto.UpdateC
 	}, nil
 }
 
+func (s *DatabaseServer) SetCampusloginFlags(ctx context.Context, req *proto.SetCampusloginFlagsRequest) (*proto.SetCampusloginFlagsResponse, error) {
+	if err := s.campusloginRepo.SetFlags(req.UserId, req.IsGrade11OrLower, req.IsInternationalStudent); err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to set campuslogin flags: %v", err)
+	}
+
+	return &proto.SetCampusloginFlagsResponse{
+		Success: true,
+	}, nil
+}
+
+func (s *DatabaseServer) UpdateChatFollowupStage(ctx context.Context, req *proto.UpdateChatFollowupStageRequest) (*proto.ChatResponse, error) {
+	chat, err := s.chatRepo.UpdateChatFollowupStage(ctx, req.Id, int(req.Stage))
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to update chat followup stage: %v", err)
+	}
+
+	return &proto.ChatResponse{
+		Id:          chat.ID,
+		AssistantId: chat.AssistantID,
+		CustomerId: func() string {
+			if chat.CustomerID != nil {
+				return *chat.CustomerID
+			}
+			return ""
+		}(),
+		CreatedAt:     chat.CreatedAt.Format(time.RFC3339),
+		UpdatedAt:     chat.UpdatedAt.Format(time.RFC3339),
+		MessageCount:  chat.MessageCount,
+		IsEnd:         chat.IsEnd,
+		FollowupStage: int32(chat.FollowupStage),
+	}, nil
+}
+
 func (s *DatabaseServer) GetChatsForFollowup(ctx context.Context, req *proto.GetChatsForFollowupRequest) (*proto.ChatsResponse, error) {
-	inactiveDuration := time.Duration(req.InactiveDurationSeconds) * time.Second
-	chats, err := s.chatRepo.GetChatsForFollowup(ctx, inactiveDuration)
+	chats, err := s.chatRepo.GetChatsForFollowup(ctx)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to get chats for followup: %v", err)
 	}
@@ -822,13 +856,14 @@ func (s *DatabaseServer) GetChatsForFollowup(ctx context.Context, req *proto.Get
 		}
 
 		protoChats = append(protoChats, &proto.ChatResponse{
-			Id:           chat.ID,
-			AssistantId:  chat.AssistantID,
-			CustomerId:   customerId,
-			CreatedAt:    chat.CreatedAt.Format(time.RFC3339),
-			UpdatedAt:    chat.UpdatedAt.Format(time.RFC3339),
-			MessageCount: chat.MessageCount,
-			IsEnd:        chat.IsEnd,
+			Id:            chat.ID,
+			AssistantId:   chat.AssistantID,
+			CustomerId:    customerId,
+			CreatedAt:     chat.CreatedAt.Format(time.RFC3339),
+			UpdatedAt:     chat.UpdatedAt.Format(time.RFC3339),
+			MessageCount:  chat.MessageCount,
+			IsEnd:         chat.IsEnd,
+			FollowupStage: int32(chat.FollowupStage),
 		})
 	}
 

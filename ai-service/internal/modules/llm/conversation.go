@@ -109,6 +109,10 @@ func (c *Client) executeFunction(ctx context.Context, functionName, argsJSON, us
 		return c.handleCreateCampusAppointment(ctx, argsJSON, userId)
 	case "send_summary":
 		return c.handleSendSummary(ctx, argsJSON, userId, assistantId)
+	case "mark_grade_11_or_lower":
+		return c.handleMarkGrade11OrLower(ctx, userId)
+	case "mark_international_student":
+		return c.handleMarkInternationalStudent(ctx, userId)
 	default:
 		return "", fmt.Errorf("unknown function: %s", functionName)
 	}
@@ -180,13 +184,16 @@ func (c *Client) handleCreateCampusAppointment(ctx context.Context, argsJSON, us
 		return "Error: start_time and end_time are both required", nil
 	}
 
-	contactID, programID, err := c.db.GetCampusloginByUserId(userId)
+	campusRecord, err := c.db.GetCampusloginByUserId(userId)
+	var contactID int
+	var programID int
 	if err != nil {
 		log.Printf("Failed to get ContactID/ProgramID for user %s: %v", userId, err)
-		// Fallback to a default or return an error if you want to be strict
-		// return "Error: Contact information not found. Please provide contact details.", nil
 		contactID = 5972449 // using the default one for fallback just in case
 		programID = 1
+	} else {
+		contactID = int(campusRecord.ContactId)
+		programID = int(campusRecord.ProgramId)
 	}
 
 	err = c.campuslogin.SendAppointment(ctx, args.StartTime, args.EndTime, contactID, programID, args.Description)
@@ -209,10 +216,13 @@ func (c *Client) handleSendSummary(ctx context.Context, argsJSON, userId, assist
 		return "Error: summary parameter is required", nil
 	}
 
-	contactID, _, err := c.db.GetCampusloginByUserId(userId)
+	campusRecord, err := c.db.GetCampusloginByUserId(userId)
+	var contactID int
 	if err != nil {
 		log.Printf("Failed to get ContactID for user %s: %v", userId, err)
 		contactID = 5972449 // default fallback
+	} else {
+		contactID = int(campusRecord.ContactId)
 	}
 
 	err = c.campuslogin.AddNewNote(ctx, contactID, args.Summary)
@@ -231,4 +241,35 @@ func (c *Client) handleSendSummary(ctx context.Context, argsJSON, userId, assist
 	}
 
 	return "Summary successfully sent to CampusLogin.", nil
+}
+
+func (c *Client) handleMarkGrade11OrLower(ctx context.Context, userId string) (string, error) {
+	// Let's fetch it first.
+	record, err := c.db.GetCampusloginByUserId(userId)
+	if err != nil {
+		log.Printf("Failed to get campuslogin for user %s: %v", userId, err)
+		return "Failed to mark grade 11 or lower.", err
+	}
+
+	err = c.db.SetCampusloginFlags(userId, true, record.IsInternationalStudent)
+	if err != nil {
+		log.Printf("Failed to set campuslogin flags for user %s: %v", userId, err)
+		return "Failed to mark grade 11 or lower.", err
+	}
+	return "Successfully marked user as in Grade 11 or lower. The user is now disqualified from certain follow-ups.", nil
+}
+
+func (c *Client) handleMarkInternationalStudent(ctx context.Context, userId string) (string, error) {
+	record, err := c.db.GetCampusloginByUserId(userId)
+	if err != nil {
+		log.Printf("Failed to get campuslogin for user %s: %v", userId, err)
+		return "Failed to mark international student.", err
+	}
+
+	err = c.db.SetCampusloginFlags(userId, record.IsGrade11OrLower, true)
+	if err != nil {
+		log.Printf("Failed to set campuslogin flags for user %s: %v", userId, err)
+		return "Failed to mark international student.", err
+	}
+	return "Successfully marked user as an international student or on a visa. The user is now disqualified from certain follow-ups.", nil
 }

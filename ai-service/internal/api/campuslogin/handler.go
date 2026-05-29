@@ -4,7 +4,6 @@ import (
 	"diaxel/internal/config"
 	"diaxel/internal/constants"
 	"diaxel/internal/grpc/db"
-	campusloginModule "diaxel/internal/modules/campuslogin"
 	"diaxel/internal/modules/llm"
 	twilio "diaxel/internal/modules/twilio"
 	"fmt"
@@ -33,12 +32,12 @@ func NewCampusLoginHandler(cfg *config.Settings, db *db.Client, twilioClient *tw
 }
 
 type CampusWebhookRequest struct {
-	ContactID      string `form:"ContactID" json:"ContactID"`
-	CampusID       string `form:"CampusID" json:"CampusID"`
-	FirstName      string `form:"FirstName" json:"FirstName"`
-	LastName       string `form:"Lastname" json:"Lastname"`
-	AlternatePhone string `form:"alternatephone" json:"alternatephone"`
-	Email          string `form:"Email" json:"Email"`
+	ContactID        string  `form:"ContactID" json:"ContactID"`
+	CampusID         string  `form:"CampusID" json:"CampusID"`
+	FirstName        string  `form:"FirstName" json:"FirstName"`
+	LastName         string  `form:"Lastname" json:"Lastname"`
+	AlternatePhone   string  `form:"alternatephone" json:"alternatephone"`
+	Email            string  `form:"Email" json:"Email"`
 	StudentNumber    string  `form:"StudentNumber" json:"StudentNumber"`
 	ID               string  `form:"ID" json:"ID"`
 	ProgramID        string  `form:"ProgramID" json:"ProgramID"`
@@ -76,16 +75,16 @@ func (h *CampusLoginHandler) HandleTriggerTwilio(c *gin.Context) {
 	}
 	// ---------------------------------------------------
 
-	if assistantID == "test" {
-		client := campusloginModule.NewClient(h.cfg.CampusLoginAPI)
-		err := client.SendAppointment(c.Request.Context(), "2026-05-25T11:30:00", "2026-05-25T12:30:00", 5972449, 1, "Test appointment from API endpoint")
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Test failed: %v", err)})
-			return
-		}
-		c.JSON(http.StatusOK, gin.H{"status": "success", "message": "Test appointment successfully sent to CampusLogin"})
-		return
-	}
+	//if assistantID == "test" {
+	//	client := campusloginModule.NewClient(h.cfg.CampusLoginAPI)
+	//	err := client.SendAppointment(c.Request.Context(), "2026-05-25T11:30:00", "2026-05-25T12:30:00", 5972449, 1, "Test appointment from API endpoint")
+	//	if err != nil {
+	//		c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Test failed: %v", err)})
+	//		return
+	//	}
+	//	c.JSON(http.StatusOK, gin.H{"status": "success", "message": "Test appointment successfully sent to CampusLogin"})
+	//	return
+	//}
 
 	var req CampusWebhookRequest
 	if err := c.ShouldBind(&req); err != nil {
@@ -252,4 +251,3 @@ func (h *CampusLoginHandler) HandleTriggerTwilioReinquiry(c *gin.Context) {
 		"params":       queryParams,
 	})
 }
-

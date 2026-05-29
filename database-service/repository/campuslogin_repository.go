@@ -29,3 +29,12 @@ func (r *CampusloginRepository) Upsert(campuslogin *models.Campuslogin) error {
 		DoUpdates: clause.AssignmentColumns([]string{"contact_id", "program_id"}),
 	}).Create(campuslogin).Error
 }
+
+func (r *CampusloginRepository) SetFlags(userId string, isGrade11OrLower bool, isInternationalStudent bool) error {
+	return r.db.Model(&models.Campuslogin{}).
+		Where("user_id = ?", userId).
+		Updates(map[string]interface{}{
+			"is_grade11_or_lower":      isGrade11OrLower,
+			"is_international_student": isInternationalStudent,
+		}).Error
+}

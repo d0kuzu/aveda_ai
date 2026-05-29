@@ -347,7 +347,7 @@ func (c *Client) SaveTwilioConfig(assistantID, userID, twilioNumber, accountSID,
 	return c.DB.SaveTwilioConfig(ctx, req)
 }
 
-func (c *Client) GetCampusloginByUserId(userID string) (int, int, error) {
+func (c *Client) GetCampusloginByUserId(userID string) (*dbpb.CampusloginResponse, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -357,10 +357,10 @@ func (c *Client) GetCampusloginByUserId(userID string) (int, int, error) {
 
 	resp, err := c.DB.GetCampusloginByUserId(ctx, req)
 	if err != nil {
-		return 0, 0, err
+		return nil, err
 	}
 
-	return int(resp.ContactId), int(resp.ProgramId), nil
+	return resp, nil
 }
 
 func (c *Client) UpsertCampuslogin(userID string, contactID int, programID int) error {
@@ -409,22 +409,42 @@ func (c *Client) UpdateChatIsEnd(chatID string, isEnd bool) (*dbpb.ChatResponse,
 	return c.DB.UpdateChatIsEnd(ctx, req)
 }
 
-func (c *Client) GetChatsForFollowup(inactiveDurationSeconds int64) ([]*dbpb.ChatResponse, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+func (c *Client) GetChatsForFollowup() ([]*dbpb.ChatResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	req := &dbpb.GetChatsForFollowupRequest{
-		InactiveDurationSeconds: inactiveDurationSeconds,
-	}
+	req := &dbpb.GetChatsForFollowupRequest{}
 
 	resp, err := c.DB.GetChatsForFollowup(ctx, req)
 	if err != nil {
 		return nil, err
 	}
 
-	if resp.Chats == nil {
-		return []*dbpb.ChatResponse{}, nil
+	return resp.Chats, nil
+}
+
+func (c *Client) UpdateChatFollowupStage(chatID string, stage int32) (*dbpb.ChatResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	req := &dbpb.UpdateChatFollowupStageRequest{
+		Id:    chatID,
+		Stage: stage,
 	}
 
-	return resp.Chats, nil
+	return c.DB.UpdateChatFollowupStage(ctx, req)
+}
+
+func (c *Client) SetCampusloginFlags(userID string, isGrade11OrLower bool, isInternationalStudent bool) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	req := &dbpb.SetCampusloginFlagsRequest{
+		UserId:                 userID,
+		IsGrade11OrLower:       isGrade11OrLower,
+		IsInternationalStudent: isInternationalStudent,
+	}
+
+	_, err := c.DB.SetCampusloginFlags(ctx, req)
+	return err
 }

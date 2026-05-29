@@ -28,7 +28,8 @@ type ChatRepository interface {
 	SearchChatsByCustomer(ctx context.Context, assistantIDs []string, search string) ([]*models.Chat, int32, error)
 	GetLatestChatByCustomer(ctx context.Context, assistantID, customerID string) (*models.Chat, error)
 	UpdateMessageCount(ctx context.Context, chatID string) error
-	GetChatsForFollowup(ctx context.Context, inactiveDuration time.Duration) ([]*models.Chat, error)
+	GetChatsForFollowup(ctx context.Context) ([]*models.Chat, error)
+	UpdateChatFollowupStage(ctx context.Context, id string, stage int) (*models.Chat, error)
 }
 
 type chatRepository struct {
@@ -301,21 +302,32 @@ func (r *chatRepository) UpdateChatIsEnd(ctx context.Context, id string, isEnd b
 	return &chat, nil
 }
 
-func (r *chatRepository) GetChatsForFollowup(ctx context.Context, inactiveDuration time.Duration) ([]*models.Chat, error) {
-	loc, err := time.LoadLocation("America/Winnipeg")
-	if err != nil {
-		return nil, fmt.Errorf("failed to load timezone America/Winnipeg: %w", err)
-	}
-
+func (r *chatRepository) GetChatsForFollowup(ctx context.Context) ([]*models.Chat, error) {
 	var chats []*models.Chat
-	cutoffTime := time.Now().In(loc).Add(-inactiveDuration)
 
 	if err := r.db.WithContext(ctx).
-		Where("is_end = ? AND updated_at < ?", false, cutoffTime).
+		Where("is_end = ?", false).
 		Order("updated_at ASC").
 		Find(&chats).Error; err != nil {
 		return nil, fmt.Errorf("failed to get chats for followup: %w", err)
 	}
 
 	return chats, nil
+}
+
+func (r *chatRepository) UpdateChatFollowupStage(ctx context.Context, id string, stage int) (*models.Chat, error) {
+	var chat models.Chat
+	if err := r.db.WithContext(ctx).Where("id = ?", id).First(&chat).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, fmt.Errorf("chat not found")
+		}
+		return nil, fmt.Errorf("failed to get chat: %w", err)
+	}
+
+	chat.FollowupStage = stage
+	if err := r.db.WithContext(ctx).Save(&chat).Error; err != nil {
+		return nil, fmt.Errorf("failed to update chat followup stage: %w", err)
+	}
+
+	return &chat, nil
 }
