@@ -369,6 +369,8 @@ message UpsertCampusloginRequest {
   string user_id = 1;
   int32 contact_id = 2;
   int32 program_id = 3;
+  bool is_grade11_or_lower = 4;
+  bool is_international_student = 5;
 }
 
 message CampusloginResponse {

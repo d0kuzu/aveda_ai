@@ -747,9 +747,11 @@ func (s *DatabaseServer) GetCampusloginByUserId(ctx context.Context, req *proto.
 
 func (s *DatabaseServer) UpsertCampuslogin(ctx context.Context, req *proto.UpsertCampusloginRequest) (*proto.UpsertCampusloginResponse, error) {
 	campuslogin := &models.Campuslogin{
-		UserId:    req.UserId,
-		ContactID: int(req.ContactId),
-		ProgramID: int(req.ProgramId),
+		UserId:                 req.UserId,
+		ContactID:              int(req.ContactId),
+		ProgramID:              int(req.ProgramId),
+		IsGrade11OrLower:       req.IsGrade11OrLower,
+		IsInternationalStudent: req.IsInternationalStudent,
 	}
 
 	if err := s.campusloginRepo.Upsert(campuslogin); err != nil {
