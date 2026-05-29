@@ -6,6 +6,8 @@ import (
 	"net"
 	"os"
 
+	_ "time/tzdata"
+
 	_ "github.com/lib/pq"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
