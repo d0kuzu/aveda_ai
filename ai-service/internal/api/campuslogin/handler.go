@@ -37,6 +37,7 @@ type CampusWebhookRequest struct {
 	FirstName        string  `form:"FirstName" json:"FirstName"`
 	LastName         string  `form:"Lastname" json:"Lastname"`
 	AlternatePhone   string  `form:"alternatephone" json:"alternatephone"`
+	Telephone        string  `form:"Telephone" json:"Telephone"`
 	Email            string  `form:"Email" json:"Email"`
 	StudentNumber    string  `form:"StudentNumber" json:"StudentNumber"`
 	ID               string  `form:"ID" json:"ID"`
@@ -95,8 +96,11 @@ func (h *CampusLoginHandler) HandleTriggerTwilio(c *gin.Context) {
 
 	toPhone := req.AlternatePhone
 	if toPhone == "" {
-		log.Printf("[CampusLogin Trigger] Alternate phone number is missing")
-		c.JSON(http.StatusBadRequest, gin.H{"error": "alternatephone is required"})
+		toPhone = req.Telephone
+	}
+	if toPhone == "" {
+		log.Printf("[CampusLogin Trigger] Alternate phone and telephone numbers are missing")
+		c.JSON(http.StatusBadRequest, gin.H{"error": "alternatephone or telephone is required"})
 		return
 	}
 
