@@ -405,20 +405,20 @@ func (r *chatRepository) GetWeeklyChatsStarted(ctx context.Context, assistantID 
 	var rows *sql.Rows
 	if assistantID != "" {
 		rows, err = sqlDB.QueryContext(ctx,
-			`SELECT DATE(started_at AT TIME ZONE $1) AS day, COUNT(*) AS count
+			`SELECT TO_CHAR(started_at AT TIME ZONE $1, 'YYYY-MM-DD') AS day, COUNT(*) AS count
 			 FROM chats
 			 WHERE started_at >= $2 AND started_at < $3
 			   AND assistant_id::text = $4
-			 GROUP BY DATE(started_at AT TIME ZONE $1)
+			 GROUP BY TO_CHAR(started_at AT TIME ZONE $1, 'YYYY-MM-DD')
 			 ORDER BY day ASC`,
 			timezone, startTime, endTime, assistantID,
 		)
 	} else {
 		rows, err = sqlDB.QueryContext(ctx,
-			`SELECT DATE(started_at AT TIME ZONE $1) AS day, COUNT(*) AS count
+			`SELECT TO_CHAR(started_at AT TIME ZONE $1, 'YYYY-MM-DD') AS day, COUNT(*) AS count
 			 FROM chats
 			 WHERE started_at >= $2 AND started_at < $3
-			 GROUP BY DATE(started_at AT TIME ZONE $1)
+			 GROUP BY TO_CHAR(started_at AT TIME ZONE $1, 'YYYY-MM-DD')
 			 ORDER BY day ASC`,
 			timezone, startTime, endTime,
 		)
