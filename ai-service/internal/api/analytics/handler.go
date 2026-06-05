@@ -1,6 +1,7 @@
 package analytics
 
 import (
+	"log"
 	"net/http"
 	"time"
 
@@ -149,7 +150,7 @@ func GetAnalytics(application *app.App) gin.HandlerFunc {
 		for i, day := range weeklyResp.Days {
 			weeklyDays[i] = DailyCount{Date: day.Date, Count: day.Count}
 		}
-
+		log.Printf("Weekly days: %v\n", weeklyDays)
 		c.JSON(http.StatusOK, AnalyticsResponse{
 			Today:                      today,
 			Days7:                      d7,
