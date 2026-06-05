@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"log"
 	"time"
@@ -394,47 +395,55 @@ type DailyCount struct {
 }
 
 func (r *chatRepository) GetWeeklyChatsStarted(ctx context.Context, assistantID string, startTime time.Time, timezone string) ([]DailyCount, error) {
-	type result struct {
-		Day   string
-		Count int64
-	}
-
-	var results []result
 	endTime := startTime.AddDate(0, 0, 7)
 
-	var err error
-	if assistantID != "" {
-		err = r.db.WithContext(ctx).Raw(`
-			SELECT DATE(started_at AT TIME ZONE ?) AS day, COUNT(*) AS count
-			FROM chats
-			WHERE started_at >= ? AND started_at < ?
-			  AND assistant_id::text = ?
-			GROUP BY DATE(started_at AT TIME ZONE ?)
-			ORDER BY day ASC
-		`, timezone, startTime, endTime, assistantID, timezone).Scan(&results).Error
-	} else {
-		err = r.db.WithContext(ctx).Raw(`
-			SELECT DATE(started_at AT TIME ZONE ?) AS day, COUNT(*) AS count
-			FROM chats
-			WHERE started_at >= ? AND started_at < ?
-			GROUP BY DATE(started_at AT TIME ZONE ?)
-			ORDER BY day ASC
-		`, timezone, startTime, endTime, timezone).Scan(&results).Error
-	}
-
+	sqlDB, err := r.db.DB()
 	if err != nil {
-		return nil, fmt.Errorf("failed to get weekly chats: %w", err)
+		return nil, fmt.Errorf("failed to get sql.DB: %w", err)
 	}
 
-	// Build a full 7-day slice, filling zeros for missing days
+	var rows *sql.Rows
+	if assistantID != "" {
+		rows, err = sqlDB.QueryContext(ctx,
+			`SELECT DATE(started_at AT TIME ZONE $1) AS day, COUNT(*) AS count
+			 FROM chats
+			 WHERE started_at >= $2 AND started_at < $3
+			   AND assistant_id::text = $4
+			 GROUP BY DATE(started_at AT TIME ZONE $1)
+			 ORDER BY day ASC`,
+			timezone, startTime, endTime, assistantID,
+		)
+	} else {
+		rows, err = sqlDB.QueryContext(ctx,
+			`SELECT DATE(started_at AT TIME ZONE $1) AS day, COUNT(*) AS count
+			 FROM chats
+			 WHERE started_at >= $2 AND started_at < $3
+			 GROUP BY DATE(started_at AT TIME ZONE $1)
+			 ORDER BY day ASC`,
+			timezone, startTime, endTime,
+		)
+	}
+	if err != nil {
+		return nil, fmt.Errorf("failed to query weekly chats: %w", err)
+	}
+	defer rows.Close()
+
+	countMap := make(map[string]int32)
+	for rows.Next() {
+		var day string
+		var count int32
+		if err := rows.Scan(&day, &count); err != nil {
+			return nil, fmt.Errorf("failed to scan weekly chats row: %w", err)
+		}
+		countMap[day] = count
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("weekly chats rows error: %w", err)
+	}
+
 	loc, err := time.LoadLocation(timezone)
 	if err != nil {
 		loc = time.UTC
-	}
-
-	countMap := make(map[string]int32)
-	for _, r := range results {
-		countMap[r.Day] = int32(r.Count)
 	}
 
 	days := make([]DailyCount, 7)
