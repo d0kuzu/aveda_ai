@@ -51,6 +51,7 @@ service DatabaseService {
   rpc UpdateChatIsReviewed(UpdateChatIsReviewedRequest) returns (ChatResponse);
   rpc GetUnreviewedActiveChats(GetUnreviewedActiveChatsRequest) returns (ChatsResponse);
   rpc GetPeriodMetrics(GetPeriodMetricsRequest) returns (GetPeriodMetricsResponse);
+  rpc GetWeeklyChatsStarted(GetWeeklyChatsStartedRequest) returns (GetWeeklyChatsStartedResponse);
 }
 
 message DeleteAllChatsAndMessagesRequest {}
@@ -437,5 +438,19 @@ message GetPeriodMetricsRequest {
 message GetPeriodMetricsResponse {
   int32 started_chats = 1;
   int32 completed_chats = 2;
+}
+
+message DailyCount {
+  string date = 1;
+  int32 count = 2;
+}
+
+message GetWeeklyChatsStartedRequest {
+  string assistant_id = 1;
+  string start_time = 2;
+}
+
+message GetWeeklyChatsStartedResponse {
+  repeated DailyCount days = 1;
 }
 

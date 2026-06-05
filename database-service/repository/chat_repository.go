@@ -33,6 +33,7 @@ type ChatRepository interface {
 	GetChatsForFollowup(ctx context.Context) ([]*models.Chat, error)
 	UpdateChatFollowupStage(ctx context.Context, id string, stage int) (*models.Chat, error)
 	GetPeriodMetrics(ctx context.Context, assistantID string, startTime, endTime time.Time) (int32, int32, error)
+	GetWeeklyChatsStarted(ctx context.Context, assistantID string, startTime time.Time) ([]DailyCount, error)
 }
 
 type chatRepository struct {
@@ -385,4 +386,50 @@ func (r *chatRepository) GetPeriodMetrics(ctx context.Context, assistantID strin
 	}
 
 	return int32(startedCount), int32(completedCount), nil
+}
+
+type DailyCount struct {
+	Date  string
+	Count int32
+}
+
+func (r *chatRepository) GetWeeklyChatsStarted(ctx context.Context, assistantID string, startTime time.Time) ([]DailyCount, error) {
+	type result struct {
+		Day   string
+		Count int64
+	}
+
+	var results []result
+
+	query := r.db.WithContext(ctx).Model(&models.Chat{}).
+		Select("DATE(started_at) as day, COUNT(*) as count").
+		Where("started_at >= ? AND started_at < ?", startTime, startTime.AddDate(0, 0, 7)).
+		Group("DATE(started_at)").
+		Order("day ASC")
+
+	if assistantID != "" {
+		query = query.Where("assistant_id = ?", assistantID)
+	}
+
+	if err := query.Scan(&results).Error; err != nil {
+		return nil, fmt.Errorf("failed to get weekly chats: %w", err)
+	}
+
+	// Build a full 7-day map, filling zeros for missing days
+	countMap := make(map[string]int32)
+	for _, r := range results {
+		countMap[r.Day] = int32(r.Count)
+	}
+
+	days := make([]DailyCount, 7)
+	for i := 0; i < 7; i++ {
+		day := startTime.AddDate(0, 0, i)
+		dayStr := day.Format("2006-01-02")
+		days[i] = DailyCount{
+			Date:  dayStr,
+			Count: countMap[dayStr],
+		}
+	}
+
+	return days, nil
 }

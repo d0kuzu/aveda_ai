@@ -833,6 +833,29 @@ func (s *DatabaseServer) GetPeriodMetrics(ctx context.Context, req *proto.GetPer
 	}, nil
 }
 
+func (s *DatabaseServer) GetWeeklyChatsStarted(ctx context.Context, req *proto.GetWeeklyChatsStartedRequest) (*proto.GetWeeklyChatsStartedResponse, error) {
+	startTime, err := time.Parse(time.RFC3339, req.StartTime)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "invalid start_time: %v", err)
+	}
+
+	days, err := s.chatRepo.GetWeeklyChatsStarted(ctx, req.AssistantId, startTime)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to get weekly chats: %v", err)
+	}
+
+	protoDays := make([]*proto.DailyCount, len(days))
+	for i, d := range days {
+		protoDays[i] = &proto.DailyCount{
+			Date:  d.Date,
+			Count: d.Count,
+		}
+	}
+
+	return &proto.GetWeeklyChatsStartedResponse{
+		Days: protoDays,
+	}, nil
+}
 
 func (s *DatabaseServer) UpdateChatIsReviewed(ctx context.Context, req *proto.UpdateChatIsReviewedRequest) (*proto.ChatResponse, error) {
 	chat, err := s.chatRepo.UpdateChatIsReviewed(ctx, req.Id, req.IsReviewed)

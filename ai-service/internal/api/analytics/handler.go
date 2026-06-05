@@ -21,12 +21,18 @@ type PeriodMetrics struct {
 	ConversionChange float64 `json:"conversion_change_pct"`
 }
 
+type DailyCount struct {
+	Date  string `json:"date"`
+	Count int32  `json:"count"`
+}
+
 type AnalyticsResponse struct {
-	Today  PeriodMetrics `json:"today"`
-	Days7  PeriodMetrics `json:"7_days"`
-	Days30 PeriodMetrics `json:"30_days"`
-	Days60 PeriodMetrics `json:"60_days"`
-	Days90 PeriodMetrics `json:"90_days"`
+	Today                      PeriodMetrics `json:"today"`
+	Days7                      PeriodMetrics `json:"7_days"`
+	Days30                     PeriodMetrics `json:"30_days"`
+	Days60                     PeriodMetrics `json:"60_days"`
+	Days90                     PeriodMetrics `json:"90_days"`
+	WeeklyConversationsStarted []DailyCount  `json:"weekly_conversations_started"`
 }
 
 func GetAnalytics(application *app.App) gin.HandlerFunc {
@@ -130,12 +136,27 @@ func GetAnalytics(application *app.App) gin.HandlerFunc {
 			return
 		}
 
+		// Weekly chart data — last 7 days starting from 7 days ago
+		y, m, d := now.Date()
+		weekStart := time.Date(y, m, d, 0, 0, 0, 0, location).AddDate(0, 0, -6)
+		weeklyResp, err := application.Db.GetWeeklyChatsStarted(assistantID, weekStart.Format(time.RFC3339))
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
+		weeklyDays := make([]DailyCount, len(weeklyResp.Days))
+		for i, day := range weeklyResp.Days {
+			weeklyDays[i] = DailyCount{Date: day.Date, Count: day.Count}
+		}
+
 		c.JSON(http.StatusOK, AnalyticsResponse{
-			Today:  today,
-			Days7:  d7,
-			Days30: d30,
-			Days60: d60,
-			Days90: d90,
+			Today:                      today,
+			Days7:                      d7,
+			Days30:                     d30,
+			Days60:                     d60,
+			Days90:                     d90,
+			WeeklyConversationsStarted: weeklyDays,
 		})
 	}
 }

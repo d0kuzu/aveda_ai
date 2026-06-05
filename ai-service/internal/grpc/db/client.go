@@ -489,3 +489,15 @@ func (c *Client) GetPeriodMetrics(assistantID, startTime, endTime string) (*dbpb
 
 	return c.DB.GetPeriodMetrics(ctx, req)
 }
+
+func (c *Client) GetWeeklyChatsStarted(assistantID, startTime string) (*dbpb.GetWeeklyChatsStartedResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	req := &dbpb.GetWeeklyChatsStartedRequest{
+		AssistantId: assistantID,
+		StartTime:   startTime,
+	}
+
+	return c.DB.GetWeeklyChatsStarted(ctx, req)
+}

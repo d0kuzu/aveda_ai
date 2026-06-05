@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.6.2
 // - protoc             v4.25.2
-// source: proto/db/database.proto
+// source: database.proto
 
 package proto
 
@@ -65,6 +65,7 @@ const (
 	DatabaseService_UpdateChatIsReviewed_FullMethodName      = "/database.DatabaseService/UpdateChatIsReviewed"
 	DatabaseService_GetUnreviewedActiveChats_FullMethodName  = "/database.DatabaseService/GetUnreviewedActiveChats"
 	DatabaseService_GetPeriodMetrics_FullMethodName          = "/database.DatabaseService/GetPeriodMetrics"
+	DatabaseService_GetWeeklyChatsStarted_FullMethodName     = "/database.DatabaseService/GetWeeklyChatsStarted"
 )
 
 // DatabaseServiceClient is the client API for DatabaseService service.
@@ -117,6 +118,7 @@ type DatabaseServiceClient interface {
 	UpdateChatIsReviewed(ctx context.Context, in *UpdateChatIsReviewedRequest, opts ...grpc.CallOption) (*ChatResponse, error)
 	GetUnreviewedActiveChats(ctx context.Context, in *GetUnreviewedActiveChatsRequest, opts ...grpc.CallOption) (*ChatsResponse, error)
 	GetPeriodMetrics(ctx context.Context, in *GetPeriodMetricsRequest, opts ...grpc.CallOption) (*GetPeriodMetricsResponse, error)
+	GetWeeklyChatsStarted(ctx context.Context, in *GetWeeklyChatsStartedRequest, opts ...grpc.CallOption) (*GetWeeklyChatsStartedResponse, error)
 }
 
 type databaseServiceClient struct {
@@ -587,6 +589,16 @@ func (c *databaseServiceClient) GetPeriodMetrics(ctx context.Context, in *GetPer
 	return out, nil
 }
 
+func (c *databaseServiceClient) GetWeeklyChatsStarted(ctx context.Context, in *GetWeeklyChatsStartedRequest, opts ...grpc.CallOption) (*GetWeeklyChatsStartedResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetWeeklyChatsStartedResponse)
+	err := c.cc.Invoke(ctx, DatabaseService_GetWeeklyChatsStarted_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // DatabaseServiceServer is the server API for DatabaseService service.
 // All implementations must embed UnimplementedDatabaseServiceServer
 // for forward compatibility.
@@ -637,6 +649,7 @@ type DatabaseServiceServer interface {
 	UpdateChatIsReviewed(context.Context, *UpdateChatIsReviewedRequest) (*ChatResponse, error)
 	GetUnreviewedActiveChats(context.Context, *GetUnreviewedActiveChatsRequest) (*ChatsResponse, error)
 	GetPeriodMetrics(context.Context, *GetPeriodMetricsRequest) (*GetPeriodMetricsResponse, error)
+	GetWeeklyChatsStarted(context.Context, *GetWeeklyChatsStartedRequest) (*GetWeeklyChatsStartedResponse, error)
 	mustEmbedUnimplementedDatabaseServiceServer()
 }
 
@@ -784,6 +797,9 @@ func (UnimplementedDatabaseServiceServer) GetUnreviewedActiveChats(context.Conte
 }
 func (UnimplementedDatabaseServiceServer) GetPeriodMetrics(context.Context, *GetPeriodMetricsRequest) (*GetPeriodMetricsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetPeriodMetrics not implemented")
+}
+func (UnimplementedDatabaseServiceServer) GetWeeklyChatsStarted(context.Context, *GetWeeklyChatsStartedRequest) (*GetWeeklyChatsStartedResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetWeeklyChatsStarted not implemented")
 }
 func (UnimplementedDatabaseServiceServer) mustEmbedUnimplementedDatabaseServiceServer() {}
 func (UnimplementedDatabaseServiceServer) testEmbeddedByValue()                         {}
@@ -1634,6 +1650,24 @@ func _DatabaseService_GetPeriodMetrics_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _DatabaseService_GetWeeklyChatsStarted_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetWeeklyChatsStartedRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DatabaseServiceServer).GetWeeklyChatsStarted(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DatabaseService_GetWeeklyChatsStarted_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DatabaseServiceServer).GetWeeklyChatsStarted(ctx, req.(*GetWeeklyChatsStartedRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // DatabaseService_ServiceDesc is the grpc.ServiceDesc for DatabaseService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1825,7 +1859,11 @@ var DatabaseService_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "GetPeriodMetrics",
 			Handler:    _DatabaseService_GetPeriodMetrics_Handler,
 		},
+		{
+			MethodName: "GetWeeklyChatsStarted",
+			Handler:    _DatabaseService_GetWeeklyChatsStarted_Handler,
+		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "proto/db/database.proto",
+	Metadata: "database.proto",
 }
