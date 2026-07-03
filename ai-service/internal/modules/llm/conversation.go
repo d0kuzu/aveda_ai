@@ -113,6 +113,10 @@ func (c *Client) executeFunction(ctx context.Context, functionName, argsJSON, us
 		return c.handleMarkGrade11OrLower(ctx, userId)
 	case "mark_international_student":
 		return c.handleMarkInternationalStudent(ctx, userId)
+	case "google_calendar_get_slots":
+		return c.handleGoogleCalendarGetSlots(ctx, argsJSON)
+	case "google_calendar_create_event":
+		return c.handleGoogleCalendarCreateEvent(ctx, argsJSON)
 	default:
 		return "", fmt.Errorf("unknown function: %s", functionName)
 	}
@@ -272,4 +276,59 @@ func (c *Client) handleMarkInternationalStudent(ctx context.Context, userId stri
 		return "Failed to mark international student.", err
 	}
 	return "Successfully marked user as an international student or on a visa. The user is now disqualified from certain follow-ups.", nil
+}
+
+func (c *Client) handleGoogleCalendarGetSlots(ctx context.Context, argsJSON string) (string, error) {
+	var args struct {
+		TimeMin string `json:"time_min"`
+		TimeMax string `json:"time_max"`
+	}
+	if err := json.Unmarshal([]byte(argsJSON), &args); err != nil {
+		return "", fmt.Errorf("failed to parse arguments: %w", err)
+	}
+
+	tMin, err := time.Parse(time.RFC3339, args.TimeMin)
+	if err != nil {
+		return "Error: time_min must be in RFC3339 format", nil
+	}
+	tMax, err := time.Parse(time.RFC3339, args.TimeMax)
+	if err != nil {
+		return "Error: time_max must be in RFC3339 format", nil
+	}
+
+	resp, err := c.gc.GetFreeBusy("", tMin, tMax)
+	if err != nil {
+		return "", fmt.Errorf("failed to get free/busy from Google Calendar: %w", err)
+	}
+
+	// Just return raw JSON for now, or format it
+	bytes, _ := json.Marshal(resp)
+	return string(bytes), nil
+}
+
+func (c *Client) handleGoogleCalendarCreateEvent(ctx context.Context, argsJSON string) (string, error) {
+	var args struct {
+		Title string `json:"title"`
+		Start string `json:"start"`
+		End   string `json:"end"`
+	}
+	if err := json.Unmarshal([]byte(argsJSON), &args); err != nil {
+		return "", fmt.Errorf("failed to parse arguments: %w", err)
+	}
+
+	tMin, err := time.Parse(time.RFC3339, args.Start)
+	if err != nil {
+		return "Error: start must be in RFC3339 format", nil
+	}
+	tMax, err := time.Parse(time.RFC3339, args.End)
+	if err != nil {
+		return "Error: end must be in RFC3339 format", nil
+	}
+
+	event, err := c.gc.CreateSimpleEvent(args.Title, tMin, tMax)
+	if err != nil {
+		return "", fmt.Errorf("failed to create event: %w", err)
+	}
+
+	return fmt.Sprintf("Event created successfully! Link: %s", event.HtmlLink), nil
 }

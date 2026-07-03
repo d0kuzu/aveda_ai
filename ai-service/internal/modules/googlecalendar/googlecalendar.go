@@ -1,0 +1,114 @@
+package googlecalendar
+
+import (
+	"context"
+	"encoding/json"
+	"fmt"
+	"os"
+	"time"
+
+	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/google"
+	"google.golang.org/api/calendar/v3"
+	"google.golang.org/api/option"
+)
+
+type Client struct {
+	srv *calendar.Service
+}
+
+// NewClient создает нового клиента Google Calendar, используя файлы credentials и token.
+func NewClient(credentialsFile, tokenFile string) (*Client, error) {
+	ctx := context.Background()
+
+	// Читаем файл credentials.json
+	b, err := os.ReadFile(credentialsFile)
+	if err != nil {
+		return nil, fmt.Errorf("ошибка чтения файла credentials: %w", err)
+	}
+
+	// Парсим конфигурацию (нужен скоуп CalendarEvents для чтения/записи ивентов, или CalendarScope для полного доступа)
+	config, err := google.ConfigFromJSON(b, calendar.CalendarScope)
+	if err != nil {
+		return nil, fmt.Errorf("ошибка парсинга файла credentials: %w", err)
+	}
+
+	// Читаем файл token.json
+	tokBytes, err := os.ReadFile(tokenFile)
+	if err != nil {
+		return nil, fmt.Errorf("ошибка чтения файла token: %w", err)
+	}
+
+	var tok oauth2.Token
+	if err := json.Unmarshal(tokBytes, &tok); err != nil {
+		return nil, fmt.Errorf("ошибка парсинга файла token: %w", err)
+	}
+
+	// Создаем http клиент с токеном
+	httpClient := config.Client(ctx, &tok)
+
+	// Инициализируем сервис календаря
+	srv, err := calendar.NewService(ctx, option.WithHTTPClient(httpClient))
+	if err != nil {
+		return nil, fmt.Errorf("ошибка создания сервиса Calendar: %w", err)
+	}
+
+	return &Client{srv: srv}, nil
+}
+
+// CreateEvent создает новую запись (ивент) в календаре.
+// calendarID - обычно "primary" для основного календаря пользователя.
+func (c *Client) CreateEvent(calendarID string, event *calendar.Event) (*calendar.Event, error) {
+	if calendarID == "" {
+		calendarID = "primary"
+	}
+	
+	// Выполняем запрос на добавление ивента
+	createdEvent, err := c.srv.Events.Insert(calendarID, event).Do()
+	if err != nil {
+		return nil, fmt.Errorf("ошибка создания ивента: %w", err)
+	}
+
+	return createdEvent, nil
+}
+
+// GetFreeBusy возвращает информацию о занятости (свободных слотах) в заданном промежутке времени.
+// calendarID - ID календаря (обычно "primary" или email пользователя).
+func (c *Client) GetFreeBusy(calendarID string, timeMin, timeMax time.Time) (*calendar.FreeBusyResponse, error) {
+	if calendarID == "" {
+		calendarID = "primary"
+	}
+
+	req := &calendar.FreeBusyRequest{
+		TimeMin: timeMin.Format(time.RFC3339),
+		TimeMax: timeMax.Format(time.RFC3339),
+		Items: []*calendar.FreeBusyRequestItem{
+			{Id: calendarID},
+		},
+	}
+
+	// Запрашиваем информацию о занятости
+	freeBusyResponse, err := c.srv.Freebusy.Query(req).Do()
+	if err != nil {
+		return nil, fmt.Errorf("ошибка запроса freebusy: %w", err)
+	}
+
+	return freeBusyResponse, nil
+}
+
+// CreateSimpleEvent - упрощенная обертка для создания записи (в основном календаре).
+func (c *Client) CreateSimpleEvent(title string, start, end time.Time) (*calendar.Event, error) {
+	event := &calendar.Event{
+		Summary: title,
+		Start: &calendar.EventDateTime{
+			DateTime: start.Format(time.RFC3339),
+			TimeZone: start.Location().String(),
+		},
+		End: &calendar.EventDateTime{
+			DateTime: end.Format(time.RFC3339),
+			TimeZone: end.Location().String(),
+		},
+	}
+	return c.CreateEvent("", event)
+}
+
