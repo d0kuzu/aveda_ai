@@ -130,4 +130,42 @@ var Tools = []openai.Tool{
 			},
 		},
 	},
+	{
+		Type: openai.ToolTypeFunction,
+		Function: &openai.FunctionDefinition{
+			Name:        "google_calendar_get_slots",
+			Description: "Get available time slots for a specific date from Google Calendar. Call this when the user mentions a day or date they want to visit.",
+			Parameters: map[string]interface{}{
+				"type": "object",
+				"properties": map[string]interface{}{
+					"date": map[string]interface{}{
+						"type":        "string",
+						"description": "The date to check availability for, in YYYY-MM-DD format (e.g. 2026-05-16)",
+					},
+				},
+				"required": []string{"date"},
+			},
+		},
+	},
+	{
+		Type: openai.ToolTypeFunction,
+		Function: &openai.FunctionDefinition{
+			Name:        "google_calendar_create_event",
+			Description: "Create a calendar event at a specific time (duration is automatically 30 minutes). Call this only after the user has confirmed the exact date and time (e.g. '3 March at 2PM, is it correct?').",
+			Parameters: map[string]interface{}{
+				"type": "object",
+				"properties": map[string]interface{}{
+					"title": map[string]interface{}{
+						"type":        "string",
+						"description": "The title or summary of the event (e.g. 'Campus Tour for [Name]')",
+					},
+					"start": map[string]interface{}{
+						"type":        "string",
+						"description": "The start time of the event in RFC3339 format (e.g. 2026-05-25T11:30:00Z)",
+					},
+				},
+				"required": []string{"title", "start"},
+			},
+		},
+	},
 }

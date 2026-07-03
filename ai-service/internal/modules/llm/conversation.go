@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"strings"
+	"time"
 
 	"diaxel/internal/constants"
 	"github.com/sashabaranov/go-openai"
@@ -280,21 +281,24 @@ func (c *Client) handleMarkInternationalStudent(ctx context.Context, userId stri
 
 func (c *Client) handleGoogleCalendarGetSlots(ctx context.Context, argsJSON string) (string, error) {
 	var args struct {
-		TimeMin string `json:"time_min"`
-		TimeMax string `json:"time_max"`
+		Date string `json:"date"`
 	}
 	if err := json.Unmarshal([]byte(argsJSON), &args); err != nil {
 		return "", fmt.Errorf("failed to parse arguments: %w", err)
 	}
 
-	tMin, err := time.Parse(time.RFC3339, args.TimeMin)
+	loc, err := time.LoadLocation(constants.DefaultTimezone)
 	if err != nil {
-		return "Error: time_min must be in RFC3339 format", nil
+		return "", fmt.Errorf("failed to load timezone: %w", err)
 	}
-	tMax, err := time.Parse(time.RFC3339, args.TimeMax)
+
+	// Parse date in YYYY-MM-DD
+	tMin, err := time.ParseInLocation("2006-01-02", args.Date, loc)
 	if err != nil {
-		return "Error: time_max must be in RFC3339 format", nil
+		return "Error: date must be in YYYY-MM-DD format", nil
 	}
+
+	tMax := tMin.Add(24 * time.Hour)
 
 	resp, err := c.gc.GetFreeBusy("", tMin, tMax)
 	if err != nil {
@@ -310,7 +314,6 @@ func (c *Client) handleGoogleCalendarCreateEvent(ctx context.Context, argsJSON s
 	var args struct {
 		Title string `json:"title"`
 		Start string `json:"start"`
-		End   string `json:"end"`
 	}
 	if err := json.Unmarshal([]byte(argsJSON), &args); err != nil {
 		return "", fmt.Errorf("failed to parse arguments: %w", err)
@@ -320,10 +323,7 @@ func (c *Client) handleGoogleCalendarCreateEvent(ctx context.Context, argsJSON s
 	if err != nil {
 		return "Error: start must be in RFC3339 format", nil
 	}
-	tMax, err := time.Parse(time.RFC3339, args.End)
-	if err != nil {
-		return "Error: end must be in RFC3339 format", nil
-	}
+	tMax := tMin.Add(30 * time.Minute)
 
 	event, err := c.gc.CreateSimpleEvent(args.Title, tMin, tMax)
 	if err != nil {
