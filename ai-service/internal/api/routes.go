@@ -8,6 +8,7 @@ import (
 	"diaxel/internal/api/webhook"
 	"diaxel/internal/api/ws"
 	"diaxel/internal/api/analytics"
+	"diaxel/internal/api/test"
 	appModule "diaxel/internal/app"
 	"log"
 
@@ -32,6 +33,7 @@ func RouterStart(app *appModule.App) {
 	assistant.AssistantRoutes(r, app)
 	campuslogin.CampusLoginRoutes(r, app)
 	analytics.AnalyticsRoutes(r, app)
+	test.TestRoutes(r, app)
 
 	err := r.Run(":" + app.Cfg.HTTPPort)
 	if err != nil {
