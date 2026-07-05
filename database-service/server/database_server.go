@@ -336,9 +336,13 @@ func (s *DatabaseServer) UpdateChat(ctx context.Context, req *proto.UpdateChatRe
 			}
 			return ""
 		}(),
-		CreatedAt:    chat.CreatedAt.Format(time.RFC3339),
-		UpdatedAt:    chat.UpdatedAt.Format(time.RFC3339),
-		MessageCount: chat.MessageCount,
+		CreatedAt:     chat.CreatedAt.Format(time.RFC3339),
+		UpdatedAt:     chat.UpdatedAt.Format(time.RFC3339),
+		MessageCount:  chat.MessageCount,
+		IsEnd:         chat.IsEnd,
+		IsReviewed:    chat.IsReviewed,
+		IsBooked:      chat.IsBooked,
+		FollowupStage: int32(chat.FollowupStage),
 	}, nil
 }
 
@@ -683,9 +687,13 @@ func (s *DatabaseServer) GetLatestChatByCustomer(ctx context.Context, req *proto
 			}
 			return ""
 		}(),
-		CreatedAt:    chat.CreatedAt.Format(time.RFC3339),
-		UpdatedAt:    chat.UpdatedAt.Format(time.RFC3339),
-		MessageCount: chat.MessageCount,
+		CreatedAt:     chat.CreatedAt.Format(time.RFC3339),
+		UpdatedAt:     chat.UpdatedAt.Format(time.RFC3339),
+		MessageCount:  chat.MessageCount,
+		IsEnd:         chat.IsEnd,
+		IsReviewed:    chat.IsReviewed,
+		IsBooked:      chat.IsBooked,
+		FollowupStage: int32(chat.FollowupStage),
 	}, nil
 }
 
