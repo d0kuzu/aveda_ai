@@ -305,9 +305,36 @@ func (c *Client) handleGoogleCalendarGetSlots(ctx context.Context, argsJSON stri
 		return "", fmt.Errorf("failed to get free/busy from Google Calendar: %w", err)
 	}
 
-	// Just return raw JSON for now, or format it
-	bytes, _ := json.Marshal(resp)
-	return string(bytes), nil
+	freeSlots := make([]string, 0)
+	startOfDay := time.Date(tMin.Year(), tMin.Month(), tMin.Day(), 8, 0, 0, 0, loc)
+	endOfDay := time.Date(tMin.Year(), tMin.Month(), tMin.Day(), 18, 0, 0, 0, loc)
+
+	for current := startOfDay; current.Before(endOfDay); current = current.Add(30 * time.Minute) {
+		slotStart := current
+		slotEnd := current.Add(30 * time.Minute)
+		isBusy := false
+
+		if cal, ok := resp.Calendars["primary"]; ok {
+			for _, busy := range cal.Busy {
+				bStart, err1 := time.Parse(time.RFC3339, busy.Start)
+				bEnd, err2 := time.Parse(time.RFC3339, busy.End)
+				if err1 == nil && err2 == nil {
+					// Check if the 30-min slot overlaps with the busy period
+					if slotStart.Before(bEnd) && bStart.Before(slotEnd) {
+						isBusy = true
+						break
+					}
+				}
+			}
+		}
+
+		if !isBusy {
+			freeSlots = append(freeSlots, slotStart.Format("15:04"))
+		}
+	}
+
+	slotsJSON, _ := json.Marshal(freeSlots)
+	return "free slots: " + string(slotsJSON), nil
 }
 
 func (c *Client) handleGoogleCalendarCreateEvent(ctx context.Context, argsJSON string) (string, error) {
