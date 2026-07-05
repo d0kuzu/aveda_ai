@@ -9,6 +9,7 @@ type Chat struct {
 	CustomerID   *string   `json:"customer_id" db:"customer_id"`
 	MessageCount int32     `json:"message_count" db:"message_count" gorm:"default:0"`
 	IsEnd        bool      `json:"is_end" db:"is_end" gorm:"default:false"`
+	IsBooked     bool      `json:"is_booked" db:"is_booked" gorm:"default:false"`
 	IsReviewed   bool      `json:"is_reviewed" db:"is_reviewed" gorm:"default:false"`
 	FollowupStage int      `json:"followup_stage" db:"followup_stage" gorm:"default:1"`
 	StartedAt    time.Time `json:"started_at" db:"started_at" gorm:"default:now()"`

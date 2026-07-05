@@ -48,6 +48,7 @@ service DatabaseService {
   rpc DeleteAllChatsAndMessages(DeleteAllChatsAndMessagesRequest) returns (DeleteAllChatsAndMessagesResponse);
   rpc DeleteChatAndMessages(DeleteChatAndMessagesRequest) returns (DeleteChatAndMessagesResponse);
   rpc UpdateChatIsEnd(UpdateChatIsEndRequest) returns (ChatResponse);
+  rpc UpdateChatIsBooked(UpdateChatIsBookedRequest) returns (ChatResponse);
   rpc UpdateChatIsReviewed(UpdateChatIsReviewedRequest) returns (ChatResponse);
   rpc GetUnreviewedActiveChats(GetUnreviewedActiveChatsRequest) returns (ChatsResponse);
   rpc GetPeriodMetrics(GetPeriodMetricsRequest) returns (GetPeriodMetricsResponse);
@@ -146,6 +147,7 @@ message ChatResponse {
   bool is_end = 10;
   int32 followup_stage = 11;
   bool is_reviewed = 12;
+  bool is_booked = 13;
 }
 
 message SaveMessageRequest {
@@ -421,6 +423,11 @@ message UpdateChatIsEndRequest {
   bool is_end = 2;
 }
 
+message UpdateChatIsBookedRequest {
+  string id = 1;
+  bool is_booked = 2;
+}
+
 message GetChatsForFollowupRequest {
   int64 inactive_duration_seconds = 1;
 }
@@ -441,6 +448,7 @@ message GetPeriodMetricsRequest {
 message GetPeriodMetricsResponse {
   int32 started_chats = 1;
   int32 completed_chats = 2;
+  int32 booked_chats = 3;
 }
 
 message DailyCount {

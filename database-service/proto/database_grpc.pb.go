@@ -62,6 +62,7 @@ const (
 	DatabaseService_DeleteAllChatsAndMessages_FullMethodName = "/database.DatabaseService/DeleteAllChatsAndMessages"
 	DatabaseService_DeleteChatAndMessages_FullMethodName     = "/database.DatabaseService/DeleteChatAndMessages"
 	DatabaseService_UpdateChatIsEnd_FullMethodName           = "/database.DatabaseService/UpdateChatIsEnd"
+	DatabaseService_UpdateChatIsBooked_FullMethodName        = "/database.DatabaseService/UpdateChatIsBooked"
 	DatabaseService_UpdateChatIsReviewed_FullMethodName      = "/database.DatabaseService/UpdateChatIsReviewed"
 	DatabaseService_GetUnreviewedActiveChats_FullMethodName  = "/database.DatabaseService/GetUnreviewedActiveChats"
 	DatabaseService_GetPeriodMetrics_FullMethodName          = "/database.DatabaseService/GetPeriodMetrics"
@@ -116,6 +117,7 @@ type DatabaseServiceClient interface {
 	DeleteAllChatsAndMessages(ctx context.Context, in *DeleteAllChatsAndMessagesRequest, opts ...grpc.CallOption) (*DeleteAllChatsAndMessagesResponse, error)
 	DeleteChatAndMessages(ctx context.Context, in *DeleteChatAndMessagesRequest, opts ...grpc.CallOption) (*DeleteChatAndMessagesResponse, error)
 	UpdateChatIsEnd(ctx context.Context, in *UpdateChatIsEndRequest, opts ...grpc.CallOption) (*ChatResponse, error)
+	UpdateChatIsBooked(ctx context.Context, in *UpdateChatIsBookedRequest, opts ...grpc.CallOption) (*ChatResponse, error)
 	UpdateChatIsReviewed(ctx context.Context, in *UpdateChatIsReviewedRequest, opts ...grpc.CallOption) (*ChatResponse, error)
 	GetUnreviewedActiveChats(ctx context.Context, in *GetUnreviewedActiveChatsRequest, opts ...grpc.CallOption) (*ChatsResponse, error)
 	GetPeriodMetrics(ctx context.Context, in *GetPeriodMetricsRequest, opts ...grpc.CallOption) (*GetPeriodMetricsResponse, error)
@@ -561,6 +563,16 @@ func (c *databaseServiceClient) UpdateChatIsEnd(ctx context.Context, in *UpdateC
 	return out, nil
 }
 
+func (c *databaseServiceClient) UpdateChatIsBooked(ctx context.Context, in *UpdateChatIsBookedRequest, opts ...grpc.CallOption) (*ChatResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ChatResponse)
+	err := c.cc.Invoke(ctx, DatabaseService_UpdateChatIsBooked_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *databaseServiceClient) UpdateChatIsReviewed(ctx context.Context, in *UpdateChatIsReviewedRequest, opts ...grpc.CallOption) (*ChatResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ChatResponse)
@@ -658,6 +670,7 @@ type DatabaseServiceServer interface {
 	DeleteAllChatsAndMessages(context.Context, *DeleteAllChatsAndMessagesRequest) (*DeleteAllChatsAndMessagesResponse, error)
 	DeleteChatAndMessages(context.Context, *DeleteChatAndMessagesRequest) (*DeleteChatAndMessagesResponse, error)
 	UpdateChatIsEnd(context.Context, *UpdateChatIsEndRequest) (*ChatResponse, error)
+	UpdateChatIsBooked(context.Context, *UpdateChatIsBookedRequest) (*ChatResponse, error)
 	UpdateChatIsReviewed(context.Context, *UpdateChatIsReviewedRequest) (*ChatResponse, error)
 	GetUnreviewedActiveChats(context.Context, *GetUnreviewedActiveChatsRequest) (*ChatsResponse, error)
 	GetPeriodMetrics(context.Context, *GetPeriodMetricsRequest) (*GetPeriodMetricsResponse, error)
@@ -801,6 +814,9 @@ func (UnimplementedDatabaseServiceServer) DeleteChatAndMessages(context.Context,
 }
 func (UnimplementedDatabaseServiceServer) UpdateChatIsEnd(context.Context, *UpdateChatIsEndRequest) (*ChatResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateChatIsEnd not implemented")
+}
+func (UnimplementedDatabaseServiceServer) UpdateChatIsBooked(context.Context, *UpdateChatIsBookedRequest) (*ChatResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateChatIsBooked not implemented")
 }
 func (UnimplementedDatabaseServiceServer) UpdateChatIsReviewed(context.Context, *UpdateChatIsReviewedRequest) (*ChatResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateChatIsReviewed not implemented")
@@ -1612,6 +1628,24 @@ func _DatabaseService_UpdateChatIsEnd_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _DatabaseService_UpdateChatIsBooked_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateChatIsBookedRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DatabaseServiceServer).UpdateChatIsBooked(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DatabaseService_UpdateChatIsBooked_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DatabaseServiceServer).UpdateChatIsBooked(ctx, req.(*UpdateChatIsBookedRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _DatabaseService_UpdateChatIsReviewed_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateChatIsReviewedRequest)
 	if err := dec(in); err != nil {
@@ -1880,6 +1914,10 @@ var DatabaseService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateChatIsEnd",
 			Handler:    _DatabaseService_UpdateChatIsEnd_Handler,
+		},
+		{
+			MethodName: "UpdateChatIsBooked",
+			Handler:    _DatabaseService_UpdateChatIsBooked_Handler,
 		},
 		{
 			MethodName: "UpdateChatIsReviewed",

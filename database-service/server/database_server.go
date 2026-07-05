@@ -821,6 +821,31 @@ func (s *DatabaseServer) UpdateChatIsEnd(ctx context.Context, req *proto.UpdateC
 		MessageCount: chat.MessageCount,
 		IsEnd:        chat.IsEnd,
 		IsReviewed:   chat.IsReviewed,
+		IsBooked:     chat.IsBooked,
+	}, nil
+}
+
+func (s *DatabaseServer) UpdateChatIsBooked(ctx context.Context, req *proto.UpdateChatIsBookedRequest) (*proto.ChatResponse, error) {
+	chat, err := s.chatRepo.UpdateChatIsBooked(ctx, req.Id, req.IsBooked)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to update chat is_booked: %v", err)
+	}
+
+	return &proto.ChatResponse{
+		Id:          chat.ID,
+		AssistantId: chat.AssistantID,
+		CustomerId: func() string {
+			if chat.CustomerID != nil {
+				return *chat.CustomerID
+			}
+			return ""
+		}(),
+		CreatedAt:    chat.CreatedAt.Format(time.RFC3339),
+		UpdatedAt:    chat.UpdatedAt.Format(time.RFC3339),
+		MessageCount: chat.MessageCount,
+		IsEnd:        chat.IsEnd,
+		IsReviewed:   chat.IsReviewed,
+		IsBooked:     chat.IsBooked,
 	}, nil
 }
 
@@ -834,7 +859,7 @@ func (s *DatabaseServer) GetPeriodMetrics(ctx context.Context, req *proto.GetPer
 		return nil, status.Errorf(codes.InvalidArgument, "invalid end_time: %v", err)
 	}
 
-	started, completed, err := s.chatRepo.GetPeriodMetrics(ctx, req.AssistantId, startTime, endTime)
+	started, completed, booked, err := s.chatRepo.GetPeriodMetrics(ctx, req.AssistantId, startTime, endTime)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to get period metrics: %v", err)
 	}
@@ -842,6 +867,7 @@ func (s *DatabaseServer) GetPeriodMetrics(ctx context.Context, req *proto.GetPer
 	return &proto.GetPeriodMetricsResponse{
 		StartedChats: started,
 		CompletedChats: completed,
+		BookedChats: booked,
 	}, nil
 }
 

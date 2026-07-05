@@ -81,12 +81,12 @@ func GetAnalytics(application *app.App) gin.HandlerFunc {
 
 			currConversion := 0.0
 			if currentResp.StartedChats > 0 {
-				currConversion = float64(currentResp.CompletedChats) / float64(currentResp.StartedChats) * 100
+				currConversion = float64(currentResp.BookedChats) / float64(currentResp.StartedChats) * 100
 			}
 
 			prevConversion := 0.0
 			if prevResp.StartedChats > 0 {
-				prevConversion = float64(prevResp.CompletedChats) / float64(prevResp.StartedChats) * 100
+				prevConversion = float64(prevResp.BookedChats) / float64(prevResp.StartedChats) * 100
 			}
 
 			calcChange := func(curr, prev float64) float64 {
@@ -102,11 +102,11 @@ func GetAnalytics(application *app.App) gin.HandlerFunc {
 			return PeriodMetrics{
 				StartedChats:     currentResp.StartedChats,
 				CompletedChats:   currentResp.CompletedChats,
-				BookedMeetings:   currentResp.CompletedChats, // Currently the same as completed chats per logic
+				BookedMeetings:   currentResp.BookedChats,
 				ConversionRate:   currConversion,
 				StartedChange:    calcChange(float64(currentResp.StartedChats), float64(prevResp.StartedChats)),
 				CompletedChange:  calcChange(float64(currentResp.CompletedChats), float64(prevResp.CompletedChats)),
-				BookedChange:     calcChange(float64(currentResp.CompletedChats), float64(prevResp.CompletedChats)),
+				BookedChange:     calcChange(float64(currentResp.BookedChats), float64(prevResp.BookedChats)),
 				ConversionChange: currConversion - prevConversion,
 			}, nil
 		}

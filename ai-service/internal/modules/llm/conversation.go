@@ -359,6 +359,10 @@ func (c *Client) handleGoogleCalendarCreateEvent(ctx context.Context, argsJSON, 
 		if chatErr != nil {
 			log.Printf("Failed to update chat is_end for chat %s: %v", chat.Id, chatErr)
 		}
+		_, chatErr = c.db.UpdateChatIsBooked(chat.Id, true)
+		if chatErr != nil {
+			log.Printf("Failed to update chat is_booked for chat %s: %v", chat.Id, chatErr)
+		}
 	} else {
 		log.Printf("Failed to get latest chat for customer %s to set isEnd: %v", userId, chatErr)
 	}

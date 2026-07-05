@@ -20,6 +20,7 @@ type ChatRepository interface {
 	GetChatsByUserID(ctx context.Context, assistantIDs []string, limit, offset int32) ([]*models.Chat, error)
 	UpdateChat(ctx context.Context, id, assistantID, customerID string) (*models.Chat, error)
 	UpdateChatIsEnd(ctx context.Context, id string, isEnd bool) (*models.Chat, error)
+	UpdateChatIsBooked(ctx context.Context, id string, isBooked bool) (*models.Chat, error)
 	UpdateChatIsReviewed(ctx context.Context, id string, isReviewed bool) (*models.Chat, error)
 	GetUnreviewedActiveChats(ctx context.Context) ([]*models.Chat, error)
 	DeleteChat(ctx context.Context, id string) error
@@ -33,7 +34,7 @@ type ChatRepository interface {
 	UpdateMessageCount(ctx context.Context, chatID string) error
 	GetChatsForFollowup(ctx context.Context) ([]*models.Chat, error)
 	UpdateChatFollowupStage(ctx context.Context, id string, stage int) (*models.Chat, error)
-	GetPeriodMetrics(ctx context.Context, assistantID string, startTime, endTime time.Time) (int32, int32, error)
+	GetPeriodMetrics(ctx context.Context, assistantID string, startTime, endTime time.Time) (int32, int32, int32, error)
 	GetWeeklyChatsStarted(ctx context.Context, assistantID string, startTime time.Time, timezone string) ([]DailyCount, error)
 }
 
@@ -307,6 +308,25 @@ func (r *chatRepository) UpdateChatIsEnd(ctx context.Context, id string, isEnd b
 	return &chat, nil
 }
 
+func (r *chatRepository) UpdateChatIsBooked(ctx context.Context, id string, isBooked bool) (*models.Chat, error) {
+	var chat models.Chat
+	if err := r.db.WithContext(ctx).Where("id = ?", id).First(&chat).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, fmt.Errorf("chat not found")
+		}
+		return nil, fmt.Errorf("failed to get chat: %w", err)
+	}
+
+	chat.IsBooked = isBooked
+	chat.UpdatedAt = time.Now()
+
+	if err := r.db.WithContext(ctx).Save(&chat).Error; err != nil {
+		return nil, fmt.Errorf("failed to update chat is_booked: %w", err)
+	}
+
+	return &chat, nil
+}
+
 func (r *chatRepository) UpdateChatIsReviewed(ctx context.Context, id string, isReviewed bool) (*models.Chat, error) {
 	var chat models.Chat
 	if err := r.db.WithContext(ctx).Where("id = ?", id).First(&chat).Error; err != nil {
@@ -369,9 +389,10 @@ func (r *chatRepository) UpdateChatFollowupStage(ctx context.Context, id string,
 	return &chat, nil
 }
 
-func (r *chatRepository) GetPeriodMetrics(ctx context.Context, assistantID string, startTime, endTime time.Time) (int32, int32, error) {
+func (r *chatRepository) GetPeriodMetrics(ctx context.Context, assistantID string, startTime, endTime time.Time) (int32, int32, int32, error) {
 	var startedCount int64
 	var completedCount int64
+	var bookedCount int64
 
 	query := r.db.WithContext(ctx).Model(&models.Chat{}).Where("started_at >= ? AND started_at < ?", startTime, endTime)
 	if assistantID != "" {
@@ -379,14 +400,27 @@ func (r *chatRepository) GetPeriodMetrics(ctx context.Context, assistantID strin
 	}
 
 	if err := query.Count(&startedCount).Error; err != nil {
-		return 0, 0, fmt.Errorf("failed to get started chats count: %w", err)
+		return 0, 0, 0, fmt.Errorf("failed to get started chats count: %w", err)
 	}
 
-	if err := query.Where("is_end = ?", true).Count(&completedCount).Error; err != nil {
-		return 0, 0, fmt.Errorf("failed to get completed chats count: %w", err)
+	// Use a fresh query for completed Count since the previous Where might mutate
+	completedQuery := r.db.WithContext(ctx).Model(&models.Chat{}).Where("started_at >= ? AND started_at < ?", startTime, endTime)
+	if assistantID != "" {
+		completedQuery = completedQuery.Where("assistant_id = ?", assistantID)
+	}
+	if err := completedQuery.Where("is_end = ?", true).Count(&completedCount).Error; err != nil {
+		return 0, 0, 0, fmt.Errorf("failed to get completed chats count: %w", err)
 	}
 
-	return int32(startedCount), int32(completedCount), nil
+	bookedQuery := r.db.WithContext(ctx).Model(&models.Chat{}).Where("started_at >= ? AND started_at < ?", startTime, endTime)
+	if assistantID != "" {
+		bookedQuery = bookedQuery.Where("assistant_id = ?", assistantID)
+	}
+	if err := bookedQuery.Where("is_booked = ?", true).Count(&bookedCount).Error; err != nil {
+		return 0, 0, 0, fmt.Errorf("failed to get booked chats count: %w", err)
+	}
+
+	return int32(startedCount), int32(completedCount), int32(bookedCount), nil
 }
 
 type DailyCount struct {
