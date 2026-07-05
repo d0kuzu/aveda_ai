@@ -163,8 +163,12 @@ var Tools = []openai.Tool{
 						"type":        "string",
 						"description": "The start time of the event in RFC3339 format (e.g. 2026-05-25T11:30:00Z)",
 					},
+					"description": map[string]interface{}{
+						"type":        "string",
+						"description": "Brief description of the lead",
+					},
 				},
-				"required": []string{"title", "start"},
+				"required": []string{"title", "start", "description"},
 			},
 		},
 	},

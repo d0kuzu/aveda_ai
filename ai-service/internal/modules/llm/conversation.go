@@ -117,7 +117,7 @@ func (c *Client) executeFunction(ctx context.Context, functionName, argsJSON, us
 	case "google_calendar_get_slots":
 		return c.handleGoogleCalendarGetSlots(ctx, argsJSON)
 	case "google_calendar_create_event":
-		return c.handleGoogleCalendarCreateEvent(ctx, argsJSON)
+		return c.handleGoogleCalendarCreateEvent(ctx, argsJSON, userId)
 	default:
 		return "", fmt.Errorf("unknown function: %s", functionName)
 	}
@@ -189,19 +189,7 @@ func (c *Client) handleCreateCampusAppointment(ctx context.Context, argsJSON, us
 		return "Error: start_time and end_time are both required", nil
 	}
 
-	campusRecord, err := c.db.GetCampusloginByUserId(userId)
-	var contactID int
-	var programID int
-	if err != nil {
-		log.Printf("Failed to get ContactID/ProgramID for user %s: %v", userId, err)
-		contactID = 5972449 // using the default one for fallback just in case
-		programID = 1
-	} else {
-		contactID = int(campusRecord.ContactId)
-		programID = int(campusRecord.ProgramId)
-	}
-
-	err = c.campuslogin.SendAppointment(ctx, args.StartTime, args.EndTime, contactID, programID, args.Description)
+	err := c.createCampusLoginAppointmentInternal(ctx, args.StartTime, args.EndTime, args.Description, userId)
 	if err != nil {
 		return "", fmt.Errorf("failed to create appointment on CampusLogin: %w", err)
 	}
@@ -337,10 +325,11 @@ func (c *Client) handleGoogleCalendarGetSlots(ctx context.Context, argsJSON stri
 	return "free slots: " + string(slotsJSON), nil
 }
 
-func (c *Client) handleGoogleCalendarCreateEvent(ctx context.Context, argsJSON string) (string, error) {
+func (c *Client) handleGoogleCalendarCreateEvent(ctx context.Context, argsJSON, userId string) (string, error) {
 	var args struct {
-		Title string `json:"title"`
-		Start string `json:"start"`
+		Title       string `json:"title"`
+		Start       string `json:"start"`
+		Description string `json:"description"`
 	}
 	if err := json.Unmarshal([]byte(argsJSON), &args); err != nil {
 		return "", fmt.Errorf("failed to parse arguments: %w", err)
@@ -352,10 +341,44 @@ func (c *Client) handleGoogleCalendarCreateEvent(ctx context.Context, argsJSON s
 	}
 	tMax := tMin.Add(30 * time.Minute)
 
-	event, err := c.gc.CreateSimpleEvent(args.Title, tMin, tMax)
+	eventLink, err := c.createGoogleCalendarEventInternal(args.Title, tMin, tMax)
 	if err != nil {
-		return "", fmt.Errorf("failed to create event: %w", err)
+		return "", fmt.Errorf("failed to create google calendar event: %w", err)
 	}
 
-	return fmt.Sprintf("Event created successfully! Link: %s", event.HtmlLink), nil
+	err = c.createCampusLoginAppointmentInternal(ctx, tMin.Format(time.RFC3339), tMax.Format(time.RFC3339), args.Description, userId)
+	if err != nil {
+		log.Printf("Warning: failed to create campus login appointment for user %s: %v", userId, err)
+		return fmt.Sprintf("Event created successfully! Link: %s (Note: CampusLogin sync failed)", eventLink), nil
+	}
+
+	return fmt.Sprintf("Event and appointment created successfully! Link: %s", eventLink), nil
+}
+
+func (c *Client) createGoogleCalendarEventInternal(title string, start, end time.Time) (string, error) {
+	event, err := c.gc.CreateSimpleEvent(title, start, end)
+	if err != nil {
+		return "", err
+	}
+	return event.HtmlLink, nil
+}
+
+func (c *Client) createCampusLoginAppointmentInternal(ctx context.Context, startTime, endTime, description, userId string) error {
+	campusRecord, err := c.db.GetCampusloginByUserId(userId)
+	var contactID int
+	var programID int
+	if err != nil {
+		log.Printf("Failed to get ContactID/ProgramID for user %s: %v", userId, err)
+		contactID = 5972449 // using the default one for fallback just in case
+		programID = 1
+	} else {
+		contactID = int(campusRecord.ContactId)
+		programID = int(campusRecord.ProgramId)
+	}
+
+	err = c.campuslogin.SendAppointment(ctx, startTime, endTime, contactID, programID, description)
+	if err != nil {
+		return err
+	}
+	return nil
 }
