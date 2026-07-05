@@ -335,10 +335,19 @@ func (c *Client) handleGoogleCalendarCreateEvent(ctx context.Context, argsJSON, 
 		return "", fmt.Errorf("failed to parse arguments: %w", err)
 	}
 
+	winnipegLoc, err := time.LoadLocation("America/Winnipeg")
+	if err != nil {
+		log.Printf("Failed to load America/Winnipeg timezone: %v", err)
+		winnipegLoc = time.FixedZone("CST", -5*3600)
+	}
+
 	tMin, err := time.Parse(time.RFC3339, args.Start)
 	if err != nil {
 		return "Error: start must be in RFC3339 format", nil
 	}
+	
+	// Force Winnipeg timezone. Treat the provided clock time as local Winnipeg time.
+	tMin = time.Date(tMin.Year(), tMin.Month(), tMin.Day(), tMin.Hour(), tMin.Minute(), tMin.Second(), 0, winnipegLoc)
 	tMax := tMin.Add(30 * time.Minute)
 
 	eventLink, err := c.createGoogleCalendarEventInternal(args.Title, tMin, tMax)
@@ -346,7 +355,8 @@ func (c *Client) handleGoogleCalendarCreateEvent(ctx context.Context, argsJSON, 
 		return "", fmt.Errorf("failed to create google calendar event: %w", err)
 	}
 
-	err = c.createCampusLoginAppointmentInternal(ctx, tMin.Format(time.RFC3339), tMax.Format(time.RFC3339), args.Description, userId)
+	// Format without timezone offset for CampusLogin, which assumes local time
+	err = c.createCampusLoginAppointmentInternal(ctx, tMin.Format("2006-01-02T15:04:05"), tMax.Format("2006-01-02T15:04:05"), args.Description, userId)
 	var warningMsg string
 	if err != nil {
 		log.Printf("Warning: failed to create campus login appointment for user %s: %v", userId, err)
