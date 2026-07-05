@@ -34,6 +34,10 @@ func SetupRoutes(r *gin.Engine, cfg *config.Config, db *db.Client) {
 		public.Any("/campuslogin/triger-twilio/*any",
 			proxy.NewReverseProxy(cfg.AIServiceURL, ""),
 		)
+
+		public.Any("/test/*any",
+			proxy.NewReverseProxy(cfg.AIServiceURL, ""),
+		)
 	}
 
 	userPrivate := r.Group("/")
