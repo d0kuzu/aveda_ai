@@ -12,5 +12,6 @@ func TestRoutes(router *gin.Engine, app *appModule.App) {
 	group := router.Group("test")
 	{
 		group.GET("/calendar", h.TestCalendar)
+		group.POST("/calendar/event", h.TestCreateEvent)
 	}
 }
