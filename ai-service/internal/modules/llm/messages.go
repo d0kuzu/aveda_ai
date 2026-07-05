@@ -1,9 +1,9 @@
 package llm
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
-	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -133,16 +133,31 @@ func (c *Client) SaveMessages(assistantId, customerId string, messages []openai.
 	newCandidateMessages := messages[totalExistingCount:]
 	
 	for _, msg := range newCandidateMessages {
-		// Фильтруем системные и технические сообщения (на всякий случай)
-		if msg.Role == openai.ChatMessageRoleSystem || 
-		   msg.Role == openai.ChatMessageRoleTool ||
-		   (msg.Role == openai.ChatMessageRoleAssistant && (msg.Content == "" || msg.Content == " ") && len(msg.ToolCalls) > 0) {
+		// Фильтруем системные сообщения
+		if msg.Role == openai.ChatMessageRoleSystem {
 			continue
 		}
 
 		content := msg.Content
 		if content == "" {
 			content = " "
+		}
+
+		// Если это вызов функции или ответ функции, сохраняем расширенные данные в JSON
+		if msg.Role == openai.ChatMessageRoleTool || (msg.Role == openai.ChatMessageRoleAssistant && len(msg.ToolCalls) > 0) {
+			type extendedMsg struct {
+				Content    string             `json:"content"`
+				ToolCallID string             `json:"tool_call_id,omitempty"`
+				ToolCalls  []openai.ToolCall  `json:"tool_calls,omitempty"`
+			}
+			b, err := json.Marshal(extendedMsg{
+				Content:    msg.Content,
+				ToolCallID: msg.ToolCallID,
+				ToolCalls:  msg.ToolCalls,
+			})
+			if err == nil {
+				content = string(b)
+			}
 		}
 
 		_, err := c.db.SaveMessage(chatID, msg.Role, content, "openai")
@@ -174,26 +189,37 @@ func (c *Client) ConvertToOpenaiMessage(arrayMessages []Message) ([]openai.ChatC
 
 	for _, message := range arrayMessages {
 		content := message.Content
-		if content == "" {
-			content = " "
-		}
-		messages = append(messages, openai.ChatCompletionMessage{
+
+		msg := openai.ChatCompletionMessage{
 			Role:    message.Role,
 			Content: content,
-		})
+		}
+
+		// Декодируем ToolCallID и ToolCalls, если это tool/assistant сообщение
+		if message.Role == openai.ChatMessageRoleTool || message.Role == openai.ChatMessageRoleAssistant {
+			type extendedMsg struct {
+				Content    string             `json:"content"`
+				ToolCallID string             `json:"tool_call_id,omitempty"`
+				ToolCalls  []openai.ToolCall  `json:"tool_calls,omitempty"`
+			}
+			var em extendedMsg
+			if err := json.Unmarshal([]byte(content), &em); err == nil {
+				if message.Role == openai.ChatMessageRoleTool && em.ToolCallID != "" {
+					msg.ToolCallID = em.ToolCallID
+					msg.Content = em.Content
+				} else if message.Role == openai.ChatMessageRoleAssistant && len(em.ToolCalls) > 0 {
+					msg.ToolCalls = em.ToolCalls
+					msg.Content = em.Content
+				}
+			}
+		}
+
+		if msg.Content == "" {
+			msg.Content = " "
+		}
+
+		messages = append(messages, msg)
 	}
 
 	return messages, nil
-}
-
-func (c *Client) RemoveSystemMessages(messages *[]openai.ChatCompletionMessage) {
-	var otherMessages []openai.ChatCompletionMessage
-
-	for _, message := range *messages {
-		if message.Role != "system" || strings.Contains(message.Content, "#function_call") {
-			otherMessages = append(otherMessages, message)
-		}
-	}
-
-	*messages = otherMessages
 }
