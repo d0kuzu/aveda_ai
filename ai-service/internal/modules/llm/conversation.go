@@ -117,7 +117,7 @@ func (c *Client) executeFunction(ctx context.Context, functionName, argsJSON, us
 	case "google_calendar_get_slots":
 		return c.handleGoogleCalendarGetSlots(ctx, argsJSON)
 	case "google_calendar_create_event":
-		return c.handleGoogleCalendarCreateEvent(ctx, argsJSON, userId)
+		return c.handleGoogleCalendarCreateEvent(ctx, argsJSON, userId, assistantId)
 	default:
 		return "", fmt.Errorf("unknown function: %s", functionName)
 	}
@@ -325,7 +325,7 @@ func (c *Client) handleGoogleCalendarGetSlots(ctx context.Context, argsJSON stri
 	return "free slots: " + string(slotsJSON), nil
 }
 
-func (c *Client) handleGoogleCalendarCreateEvent(ctx context.Context, argsJSON, userId string) (string, error) {
+func (c *Client) handleGoogleCalendarCreateEvent(ctx context.Context, argsJSON, userId, assistantId string) (string, error) {
 	var args struct {
 		Title       string `json:"title"`
 		Start       string `json:"start"`
@@ -347,11 +347,25 @@ func (c *Client) handleGoogleCalendarCreateEvent(ctx context.Context, argsJSON, 
 	}
 
 	err = c.createCampusLoginAppointmentInternal(ctx, tMin.Format(time.RFC3339), tMax.Format(time.RFC3339), args.Description, userId)
+	var warningMsg string
 	if err != nil {
 		log.Printf("Warning: failed to create campus login appointment for user %s: %v", userId, err)
-		return fmt.Sprintf("Event created successfully! Link: %s (Note: CampusLogin sync failed)", eventLink), nil
+		warningMsg = " (Note: CampusLogin sync failed)"
 	}
 
+	chat, chatErr := c.db.GetLatestChatByCustomer(assistantId, userId)
+	if chatErr == nil && chat != nil {
+		_, chatErr = c.db.UpdateChatIsEnd(chat.Id, true)
+		if chatErr != nil {
+			log.Printf("Failed to update chat is_end for chat %s: %v", chat.Id, chatErr)
+		}
+	} else {
+		log.Printf("Failed to get latest chat for customer %s to set isEnd: %v", userId, chatErr)
+	}
+
+	if warningMsg != "" {
+		return fmt.Sprintf("Event created successfully! Link: %s%s", eventLink, warningMsg), nil
+	}
 	return fmt.Sprintf("Event and appointment created successfully! Link: %s", eventLink), nil
 }
 

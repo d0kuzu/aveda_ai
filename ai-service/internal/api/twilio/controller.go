@@ -93,6 +93,13 @@ func (h *TwilioWebhookHandler) HandleWebhook(c *gin.Context) {
 		return
 	}
 
+	if chat != nil && chat.IsEnd {
+		log.Printf("[Twilio Webhook] Ignoring message from %s: chat is ended.", from)
+		c.Header("Content-Type", "text/xml")
+		c.String(http.StatusOK, `<?xml version="1.0" encoding="UTF-8"?><Response></Response>`)
+		return
+	}
+
 	if (chat == nil || chat.Id == "") && !strings.Contains(body, "3000") {
 		log.Printf("[Twilio Webhook] Ignoring message from %s: no active chat found. Must be triggered via CampusLogin first.", from)
 		c.Header("Content-Type", "text/xml")
