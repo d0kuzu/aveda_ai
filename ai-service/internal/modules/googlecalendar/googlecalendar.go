@@ -13,6 +13,12 @@ import (
 	"google.golang.org/api/option"
 )
 
+// NotificationEmails — список email-адресов, которым отправляются уведомления при создании ивентов.
+var NotificationEmails = []string{
+	"cali@avedainstitutewinnipeg.ca",
+	"dkobdabaev@mail.ru",
+}
+
 type Client struct {
 	srv *calendar.Service
 }
@@ -62,9 +68,16 @@ func (c *Client) CreateEvent(calendarID string, event *calendar.Event) (*calenda
 	if calendarID == "" {
 		calendarID = "primary"
 	}
-	
-	// Выполняем запрос на добавление ивента
-	createdEvent, err := c.srv.Events.Insert(calendarID, event).Do()
+
+	// Добавляем attendees для рассылки уведомлений
+	for _, email := range NotificationEmails {
+		event.Attendees = append(event.Attendees, &calendar.EventAttendee{
+			Email: email,
+		})
+	}
+
+	// Выполняем запрос на добавление ивента с отправкой уведомлений участникам
+	createdEvent, err := c.srv.Events.Insert(calendarID, event).SendUpdates("all").Do()
 	if err != nil {
 		return nil, fmt.Errorf("ошибка создания ивента: %w", err)
 	}
