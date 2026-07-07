@@ -3265,6 +3265,7 @@ type UpsertCampusloginRequest struct {
 	IsGrade11OrLower       bool                   `protobuf:"varint,4,opt,name=is_grade11_or_lower,json=isGrade11OrLower,proto3" json:"is_grade11_or_lower,omitempty"`
 	IsInternationalStudent bool                   `protobuf:"varint,5,opt,name=is_international_student,json=isInternationalStudent,proto3" json:"is_international_student,omitempty"`
 	FirstName              string                 `protobuf:"bytes,6,opt,name=first_name,json=firstName,proto3" json:"first_name,omitempty"`
+	Email                  string                 `protobuf:"bytes,7,opt,name=email,proto3" json:"email,omitempty"`
 	unknownFields          protoimpl.UnknownFields
 	sizeCache              protoimpl.SizeCache
 }
@@ -3341,6 +3342,13 @@ func (x *UpsertCampusloginRequest) GetFirstName() string {
 	return ""
 }
 
+func (x *UpsertCampusloginRequest) GetEmail() string {
+	if x != nil {
+		return x.Email
+	}
+	return ""
+}
+
 type CampusloginResponse struct {
 	state                  protoimpl.MessageState `protogen:"open.v1"`
 	UserId                 string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -3349,6 +3357,7 @@ type CampusloginResponse struct {
 	IsGrade11OrLower       bool                   `protobuf:"varint,4,opt,name=is_grade11_or_lower,json=isGrade11OrLower,proto3" json:"is_grade11_or_lower,omitempty"`
 	IsInternationalStudent bool                   `protobuf:"varint,5,opt,name=is_international_student,json=isInternationalStudent,proto3" json:"is_international_student,omitempty"`
 	FirstName              string                 `protobuf:"bytes,6,opt,name=first_name,json=firstName,proto3" json:"first_name,omitempty"`
+	Email                  string                 `protobuf:"bytes,7,opt,name=email,proto3" json:"email,omitempty"`
 	unknownFields          protoimpl.UnknownFields
 	sizeCache              protoimpl.SizeCache
 }
@@ -3421,6 +3430,13 @@ func (x *CampusloginResponse) GetIsInternationalStudent() bool {
 func (x *CampusloginResponse) GetFirstName() string {
 	if x != nil {
 		return x.FirstName
+	}
+	return ""
+}
+
+func (x *CampusloginResponse) GetEmail() string {
+	if x != nil {
+		return x.Email
 	}
 	return ""
 }
@@ -4554,7 +4570,7 @@ const file_proto_database_proto_rawDesc = "" +
 	"\x1aDeleteTwilioConfigResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\"-\n" +
 	"\x12CampusloginRequest\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\tR\x06userId\"\xf9\x01\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\"\x8f\x02\n" +
 	"\x18UpsertCampusloginRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x1d\n" +
 	"\n" +
@@ -4564,7 +4580,8 @@ const file_proto_database_proto_rawDesc = "" +
 	"\x13is_grade11_or_lower\x18\x04 \x01(\bR\x10isGrade11OrLower\x128\n" +
 	"\x18is_international_student\x18\x05 \x01(\bR\x16isInternationalStudent\x12\x1d\n" +
 	"\n" +
-	"first_name\x18\x06 \x01(\tR\tfirstName\"\xf4\x01\n" +
+	"first_name\x18\x06 \x01(\tR\tfirstName\x12\x14\n" +
+	"\x05email\x18\a \x01(\tR\x05email\"\x8a\x02\n" +
 	"\x13CampusloginResponse\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x1d\n" +
 	"\n" +
@@ -4574,7 +4591,8 @@ const file_proto_database_proto_rawDesc = "" +
 	"\x13is_grade11_or_lower\x18\x04 \x01(\bR\x10isGrade11OrLower\x128\n" +
 	"\x18is_international_student\x18\x05 \x01(\bR\x16isInternationalStudent\x12\x1d\n" +
 	"\n" +
-	"first_name\x18\x06 \x01(\tR\tfirstName\"\x9e\x01\n" +
+	"first_name\x18\x06 \x01(\tR\tfirstName\x12\x14\n" +
+	"\x05email\x18\a \x01(\tR\x05email\"\x9e\x01\n" +
 	"\x1aSetCampusloginFlagsRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\x12-\n" +
 	"\x13is_grade11_or_lower\x18\x02 \x01(\bR\x10isGrade11OrLower\x128\n" +

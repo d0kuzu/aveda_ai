@@ -350,7 +350,14 @@ func (c *Client) handleGoogleCalendarCreateEvent(ctx context.Context, argsJSON, 
 	tMin = time.Date(tMin.Year(), tMin.Month(), tMin.Day(), tMin.Hour(), tMin.Minute(), tMin.Second(), 0, winnipegLoc)
 	tMax := tMin.Add(30 * time.Minute)
 
-	eventLink, err := c.createGoogleCalendarEventInternal(args.Title, tMin, tMax)
+	// Fetch campuslogin to get email for calendar invite
+	campusRecord, err := c.db.GetCampusloginByUserId(userId)
+	var customerEmail string
+	if err == nil && campusRecord != nil {
+		customerEmail = campusRecord.Email
+	}
+
+	eventLink, err := c.createGoogleCalendarEventInternal(args.Title, tMin, tMax, customerEmail)
 	if err != nil {
 		return "", fmt.Errorf("failed to create google calendar event: %w", err)
 	}
@@ -383,8 +390,8 @@ func (c *Client) handleGoogleCalendarCreateEvent(ctx context.Context, argsJSON, 
 	return fmt.Sprintf("Event and appointment created successfully! Link: %s", eventLink), nil
 }
 
-func (c *Client) createGoogleCalendarEventInternal(title string, start, end time.Time) (string, error) {
-	event, err := c.gc.CreateSimpleEvent(title, start, end)
+func (c *Client) createGoogleCalendarEventInternal(title string, start, end time.Time, customerEmail string) (string, error) {
+	event, err := c.gc.CreateSimpleEvent(title, start, end, customerEmail)
 	if err != nil {
 		return "", err
 	}

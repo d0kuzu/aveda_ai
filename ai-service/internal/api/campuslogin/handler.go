@@ -150,7 +150,7 @@ func (h *CampusLoginHandler) HandleTriggerTwilio(c *gin.Context) {
 	}
 
 	if contactIDInt > 0 {
-		err := h.db.UpsertCampuslogin(toPhone, contactIDInt, programIDInt, false, false, req.FirstName)
+		err := h.db.UpsertCampuslogin(toPhone, contactIDInt, programIDInt, false, false, req.FirstName, req.Email)
 		if err != nil {
 			log.Printf("[CampusLogin Trigger] Failed to upsert Campuslogin for %s: %v", toPhone, err)
 		}

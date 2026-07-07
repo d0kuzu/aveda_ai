@@ -64,7 +64,7 @@ func NewClient(credentialsFile, tokenFile string) (*Client, error) {
 
 // CreateEvent создает новую запись (ивент) в календаре.
 // calendarID - обычно "primary" для основного календаря пользователя.
-func (c *Client) CreateEvent(calendarID string, event *calendar.Event) (*calendar.Event, error) {
+func (c *Client) CreateEvent(calendarID string, event *calendar.Event, customerEmail string) (*calendar.Event, error) {
 	if calendarID == "" {
 		calendarID = "primary"
 	}
@@ -73,6 +73,11 @@ func (c *Client) CreateEvent(calendarID string, event *calendar.Event) (*calenda
 	for _, email := range NotificationEmails {
 		event.Attendees = append(event.Attendees, &calendar.EventAttendee{
 			Email: email,
+		})
+	}
+	if customerEmail != "" {
+		event.Attendees = append(event.Attendees, &calendar.EventAttendee{
+			Email: customerEmail,
 		})
 	}
 
@@ -110,7 +115,7 @@ func (c *Client) GetFreeBusy(calendarID string, timeMin, timeMax time.Time) (*ca
 }
 
 // CreateSimpleEvent - упрощенная обертка для создания записи (в основном календаре).
-func (c *Client) CreateSimpleEvent(title string, start, end time.Time) (*calendar.Event, error) {
+func (c *Client) CreateSimpleEvent(title string, start, end time.Time, customerEmail string) (*calendar.Event, error) {
 	event := &calendar.Event{
 		Summary: title,
 		Start: &calendar.EventDateTime{
@@ -122,6 +127,6 @@ func (c *Client) CreateSimpleEvent(title string, start, end time.Time) (*calenda
 			TimeZone: end.Location().String(),
 		},
 	}
-	return c.CreateEvent("", event)
+	return c.CreateEvent("", event, customerEmail)
 }
 
