@@ -75,11 +75,11 @@ func (c *Client) CreateEvent(calendarID string, event *calendar.Event, customerE
 			Email: email,
 		})
 	}
-	if customerEmail != "" {
-		event.Attendees = append(event.Attendees, &calendar.EventAttendee{
-			Email: customerEmail,
-		})
-	}
+	// if customerEmail != "" {
+	// 	event.Attendees = append(event.Attendees, &calendar.EventAttendee{
+	// 		Email: customerEmail,
+	// 	})
+	// }
 
 	// Выполняем запрос на добавление ивента с отправкой уведомлений участникам
 	createdEvent, err := c.srv.Events.Insert(calendarID, event).SendUpdates("all").Do()
@@ -129,4 +129,3 @@ func (c *Client) CreateSimpleEvent(title string, start, end time.Time, customerE
 	}
 	return c.CreateEvent("", event, customerEmail)
 }
-
