@@ -765,6 +765,7 @@ func (s *DatabaseServer) GetCampusloginByUserId(ctx context.Context, req *proto.
 		IsGrade11OrLower:       record.IsGrade11OrLower,
 		IsInternationalStudent: record.IsInternationalStudent,
 		FirstName:              record.FirstName,
+		Email:                  record.Email,
 	}, nil
 }
 
@@ -776,6 +777,7 @@ func (s *DatabaseServer) UpsertCampuslogin(ctx context.Context, req *proto.Upser
 		IsGrade11OrLower:       req.IsGrade11OrLower,
 		IsInternationalStudent: req.IsInternationalStudent,
 		FirstName:              req.FirstName,
+		Email:                  req.Email,
 	}
 
 	if err := s.campusloginRepo.Upsert(campuslogin); err != nil {

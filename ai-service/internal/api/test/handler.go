@@ -69,7 +69,7 @@ func (h *TestHandler) TestCreateEvent(c *gin.Context) {
 		req.End = req.Start.Add(1 * time.Hour)
 	}
 
-	event, err := h.gc.CreateSimpleEvent(req.Title, req.Start, req.End)
+	event, err := h.gc.CreateSimpleEvent(req.Title, req.Start, req.End, "")
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"status":  "error",

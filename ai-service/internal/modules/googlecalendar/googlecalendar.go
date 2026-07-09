@@ -13,6 +13,12 @@ import (
 	"google.golang.org/api/option"
 )
 
+// NotificationEmails — список email-адресов, которым отправляются уведомления при создании ивентов.
+var NotificationEmails = []string{
+	"cali@avedainstitutewinnipeg.ca",
+	"dkobdabaev@mail.ru",
+}
+
 type Client struct {
 	srv *calendar.Service
 }
@@ -58,13 +64,25 @@ func NewClient(credentialsFile, tokenFile string) (*Client, error) {
 
 // CreateEvent создает новую запись (ивент) в календаре.
 // calendarID - обычно "primary" для основного календаря пользователя.
-func (c *Client) CreateEvent(calendarID string, event *calendar.Event) (*calendar.Event, error) {
+func (c *Client) CreateEvent(calendarID string, event *calendar.Event, customerEmail string) (*calendar.Event, error) {
 	if calendarID == "" {
 		calendarID = "primary"
 	}
-	
-	// Выполняем запрос на добавление ивента
-	createdEvent, err := c.srv.Events.Insert(calendarID, event).Do()
+
+	// Добавляем attendees для рассылки уведомлений
+	for _, email := range NotificationEmails {
+		event.Attendees = append(event.Attendees, &calendar.EventAttendee{
+			Email: email,
+		})
+	}
+	// if customerEmail != "" {
+	// 	event.Attendees = append(event.Attendees, &calendar.EventAttendee{
+	// 		Email: customerEmail,
+	// 	})
+	// }
+
+	// Выполняем запрос на добавление ивента с отправкой уведомлений участникам
+	createdEvent, err := c.srv.Events.Insert(calendarID, event).SendUpdates("all").Do()
 	if err != nil {
 		return nil, fmt.Errorf("ошибка создания ивента: %w", err)
 	}
@@ -97,7 +115,7 @@ func (c *Client) GetFreeBusy(calendarID string, timeMin, timeMax time.Time) (*ca
 }
 
 // CreateSimpleEvent - упрощенная обертка для создания записи (в основном календаре).
-func (c *Client) CreateSimpleEvent(title string, start, end time.Time) (*calendar.Event, error) {
+func (c *Client) CreateSimpleEvent(title string, start, end time.Time, customerEmail string) (*calendar.Event, error) {
 	event := &calendar.Event{
 		Summary: title,
 		Start: &calendar.EventDateTime{
@@ -109,9 +127,8 @@ func (c *Client) CreateSimpleEvent(title string, start, end time.Time) (*calenda
 			TimeZone: end.Location().String(),
 		},
 	}
-	return c.CreateEvent("", event)
+	return c.CreateEvent("", event, customerEmail)
 }
-
 // ListEvents выполняет инкрементальную синхронизацию событий календаря.
 // Если syncToken пустой — выполняет полную синхронизацию (возвращает все события).
 // Возвращает список событий и новый syncToken для следующего вызова.

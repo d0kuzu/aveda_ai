@@ -384,6 +384,7 @@ message UpsertCampusloginRequest {
   bool is_grade11_or_lower = 4;
   bool is_international_student = 5;
   string first_name = 6;
+  string email = 7;
 }
 
 message CampusloginResponse {
@@ -393,6 +394,7 @@ message CampusloginResponse {
   bool is_grade11_or_lower = 4;
   bool is_international_student = 5;
   string first_name = 6;
+  string email = 7;
 }
 
 message SetCampusloginFlagsRequest {
