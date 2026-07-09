@@ -1,8 +1,10 @@
 package test
 
 import (
+	"diaxel/internal/modules/campuslogin"
 	"diaxel/internal/modules/googlecalendar"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -10,10 +12,11 @@ import (
 
 type TestHandler struct {
 	gc *googlecalendar.Client
+	cl *campuslogin.Client
 }
 
-func NewTestHandler(gc *googlecalendar.Client) *TestHandler {
-	return &TestHandler{gc: gc}
+func NewTestHandler(gc *googlecalendar.Client, cl *campuslogin.Client) *TestHandler {
+	return &TestHandler{gc: gc, cl: cl}
 }
 
 func (h *TestHandler) TestCalendar(c *gin.Context) {
@@ -83,5 +86,49 @@ func (h *TestHandler) TestCreateEvent(c *gin.Context) {
 		"status":  "success",
 		"message": "Event created successfully",
 		"event":   event,
+	})
+}
+
+func (h *TestHandler) TestSendAppointment(c *gin.Context) {
+	if h.cl == nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "CampusLogin client not initialized"})
+		return
+	}
+
+	startTime := c.Query("start_time")
+	endTime := c.Query("end_time")
+
+	if startTime == "" || endTime == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "start_time and end_time query parameters are required",
+			"example": "/test/campuslogin/appointment?start_time=2026-05-19T10:00:00&end_time=2026-05-19T11:00:00&contact_id=12345&program_id=1&description=Test",
+		})
+		return
+	}
+
+	contactID, _ := strconv.Atoi(c.DefaultQuery("contact_id", "0"))
+	programID, _ := strconv.Atoi(c.DefaultQuery("program_id", "0"))
+	description := c.DefaultQuery("description", "Test Appointment from AI Service")
+
+	err := h.cl.SendAppointment(c.Request.Context(), startTime, endTime, contactID, programID, description)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"status": "error",
+			"message": "Failed to send appointment",
+			"details": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status": "success",
+		"message": "Appointment sent successfully",
+		"request_data": gin.H{
+			"start_time": startTime,
+			"end_time": endTime,
+			"contact_id": contactID,
+			"program_id": programID,
+			"description": description,
+		},
 	})
 }

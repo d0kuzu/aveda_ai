@@ -2,18 +2,20 @@ package test
 
 import (
 	appModule "diaxel/internal/app"
+	"diaxel/internal/modules/campuslogin"
 	"log"
 
 	"github.com/gin-gonic/gin"
 )
 
 func TestRoutes(router *gin.Engine, app *appModule.App) {
-	h := NewTestHandler(app.GoogleCalendar)
+	h := NewTestHandler(app.GoogleCalendar, campuslogin.NewClient(app.Cfg.CampusLoginAPI))
 
 	group := router.Group("test")
 	{
 		group.GET("/calendar", h.TestCalendar)
 		group.POST("/calendar/event", h.TestCreateEvent)
+		group.Any("/campuslogin/appointment", h.TestSendAppointment)
 		
 		// Эндпоинт для вывода всех данных запроса
 		group.Any("/echo", func(c *gin.Context) {
