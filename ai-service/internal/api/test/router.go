@@ -2,6 +2,7 @@ package test
 
 import (
 	appModule "diaxel/internal/app"
+	"log"
 
 	"github.com/gin-gonic/gin"
 )
@@ -20,20 +21,22 @@ func TestRoutes(router *gin.Engine, app *appModule.App) {
 			_ = c.Request.ParseForm()
 			body, _ := c.GetRawData()
 
-			c.JSON(200, gin.H{
-				"method":         c.Request.Method,
-				"url":            c.Request.URL.String(),
-				"host":           c.Request.Host,
-				"remote_addr":    c.Request.RemoteAddr,
-				"headers":        c.Request.Header,
-				"query_params":   c.Request.URL.Query(),
-				"form":           c.Request.Form,
-				"post_form":      c.Request.PostForm,
-				"multipart_form": c.Request.MultipartForm,
-				"client_ip":      c.ClientIP(),
-				"content_length": c.Request.ContentLength,
-				"body_raw":       string(body),
-			})
+			log.Printf("====== ECHO REQUEST ======\n")
+			log.Printf("Method: %s\n", c.Request.Method)
+			log.Printf("URL: %s\n", c.Request.URL.String())
+			log.Printf("Host: %s\n", c.Request.Host)
+			log.Printf("RemoteAddr: %s\n", c.Request.RemoteAddr)
+			log.Printf("ClientIP: %s\n", c.ClientIP())
+			log.Printf("Headers: %+v\n", c.Request.Header)
+			log.Printf("Query Params: %+v\n", c.Request.URL.Query())
+			log.Printf("Form: %+v\n", c.Request.Form)
+			log.Printf("PostForm: %+v\n", c.Request.PostForm)
+			log.Printf("MultipartForm: %+v\n", c.Request.MultipartForm)
+			log.Printf("ContentLength: %d\n", c.Request.ContentLength)
+			log.Printf("Body: %s\n", string(body))
+			log.Printf("==========================\n")
+
+			c.Status(200)
 		})
 	}
 }
