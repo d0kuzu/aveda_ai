@@ -112,3 +112,44 @@ func (c *Client) CreateSimpleEvent(title string, start, end time.Time) (*calenda
 	return c.CreateEvent("", event)
 }
 
+// ListEvents выполняет инкрементальную синхронизацию событий календаря.
+// Если syncToken пустой — выполняет полную синхронизацию (возвращает все события).
+// Возвращает список событий и новый syncToken для следующего вызова.
+func (c *Client) ListEvents(calendarID, syncToken string) ([]*calendar.Event, string, error) {
+	if calendarID == "" {
+		calendarID = "primary"
+	}
+
+	call := c.srv.Events.List(calendarID).SingleEvents(true)
+
+	if syncToken != "" {
+		call = call.SyncToken(syncToken)
+	} else {
+		// При первой синхронизации получаем события начиная с текущего момента
+		call = call.TimeMin(time.Now().Format(time.RFC3339))
+	}
+
+	var allEvents []*calendar.Event
+	var nextSyncToken string
+
+	for {
+		events, err := call.Do()
+		if err != nil {
+			return nil, "", fmt.Errorf("ошибка получения списка событий: %w", err)
+		}
+
+		allEvents = append(allEvents, events.Items...)
+
+		if events.NextPageToken != "" {
+			call = c.srv.Events.List(calendarID).SingleEvents(true).PageToken(events.NextPageToken)
+			if syncToken != "" {
+				call = call.SyncToken(syncToken)
+			}
+		} else {
+			nextSyncToken = events.NextSyncToken
+			break
+		}
+	}
+
+	return allEvents, nextSyncToken, nil
+}

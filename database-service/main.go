@@ -63,10 +63,12 @@ func main() {
 	twilioRepo := repository.NewTwilioRepository(db)
 	campusloginRepo := repository.NewCampusloginRepository(db)
 	blockedCustomerRepo := repository.NewBlockedCustomerRepository(db)
+	googleSyncRepo := repository.NewGoogleSyncRepository(db)
+	appointmentRepo := repository.NewAppointmentRepository(db)
 
 	// Initialize gRPC server
 	grpcServer := grpc.NewServer()
-	databaseServer := server.NewDatabaseServer(userRepo, refreshTokenRepo, chatRepo, messageRepo, assistantRepo, twilioRepo, campusloginRepo, blockedCustomerRepo)
+	databaseServer := server.NewDatabaseServer(userRepo, refreshTokenRepo, chatRepo, messageRepo, assistantRepo, twilioRepo, campusloginRepo, blockedCustomerRepo, googleSyncRepo, appointmentRepo)
 
 	proto.RegisterDatabaseServiceServer(grpcServer, databaseServer)
 
@@ -157,6 +159,8 @@ func runMigrations(db *gorm.DB) error {
 		&models.TwilioConfig{},
 		&models.Campuslogin{},
 		&models.BlockedCustomer{},
+		&models.GoogleSync{},
+		&models.Appointment{},
 	)
 
 	if err != nil {

@@ -48,11 +48,16 @@ service DatabaseService {
   rpc DeleteAllChatsAndMessages(DeleteAllChatsAndMessagesRequest) returns (DeleteAllChatsAndMessagesResponse);
   rpc DeleteChatAndMessages(DeleteChatAndMessagesRequest) returns (DeleteChatAndMessagesResponse);
   rpc UpdateChatIsEnd(UpdateChatIsEndRequest) returns (ChatResponse);
+  rpc UpdateChatIsBooked(UpdateChatIsBookedRequest) returns (ChatResponse);
   rpc UpdateChatIsReviewed(UpdateChatIsReviewedRequest) returns (ChatResponse);
   rpc GetUnreviewedActiveChats(GetUnreviewedActiveChatsRequest) returns (ChatsResponse);
   rpc GetPeriodMetrics(GetPeriodMetricsRequest) returns (GetPeriodMetricsResponse);
   rpc GetWeeklyChatsStarted(GetWeeklyChatsStartedRequest) returns (GetWeeklyChatsStartedResponse);
   rpc IsCustomerBlocked(IsCustomerBlockedRequest) returns (IsCustomerBlockedResponse);
+  rpc UpsertGoogleSyncToken(UpsertGoogleSyncTokenRequest) returns (GoogleSyncTokenResponse);
+  rpc GetGoogleSyncToken(GetGoogleSyncTokenRequest) returns (GoogleSyncTokenResponse);
+  rpc CreateAppointment(CreateAppointmentRequest) returns (AppointmentResponse);
+  rpc GetAppointmentByGoogleEventID(GetAppointmentByGoogleEventIDRequest) returns (AppointmentResponse);
 }
 
 message DeleteAllChatsAndMessagesRequest {}
@@ -146,6 +151,7 @@ message ChatResponse {
   bool is_end = 10;
   int32 followup_stage = 11;
   bool is_reviewed = 12;
+  bool is_booked = 13;
 }
 
 message SaveMessageRequest {
@@ -377,6 +383,7 @@ message UpsertCampusloginRequest {
   int32 program_id = 3;
   bool is_grade11_or_lower = 4;
   bool is_international_student = 5;
+  string first_name = 6;
 }
 
 message CampusloginResponse {
@@ -385,6 +392,7 @@ message CampusloginResponse {
   int32 program_id = 3;
   bool is_grade11_or_lower = 4;
   bool is_international_student = 5;
+  string first_name = 6;
 }
 
 message SetCampusloginFlagsRequest {
@@ -419,6 +427,11 @@ message UpdateChatIsEndRequest {
   bool is_end = 2;
 }
 
+message UpdateChatIsBookedRequest {
+  string id = 1;
+  bool is_booked = 2;
+}
+
 message GetChatsForFollowupRequest {
   int64 inactive_duration_seconds = 1;
 }
@@ -439,6 +452,7 @@ message GetPeriodMetricsRequest {
 message GetPeriodMetricsResponse {
   int32 started_chats = 1;
   int32 completed_chats = 2;
+  int32 booked_chats = 3;
 }
 
 message DailyCount {
@@ -462,5 +476,52 @@ message IsCustomerBlockedRequest {
 
 message IsCustomerBlockedResponse {
   bool is_blocked = 1;
+}
+
+message UpsertGoogleSyncTokenRequest {
+  string calendar_id = 1;
+  string sync_token = 2;
+  string channel_id = 3;
+  string resource_id = 4;
+}
+
+message GetGoogleSyncTokenRequest {
+  string calendar_id = 1;
+}
+
+message GoogleSyncTokenResponse {
+  string calendar_id = 1;
+  string sync_token = 2;
+  string channel_id = 3;
+  string resource_id = 4;
+  string updated_at = 5;
+}
+
+message CreateAppointmentRequest {
+  string google_event_id = 1;
+  string title = 2;
+  string start_time = 3;
+  string end_time = 4;
+  string status = 5;
+  string description = 6;
+  string calendar_id = 7;
+  bool campus_login = 8;
+}
+
+message AppointmentResponse {
+  string id = 1;
+  string google_event_id = 2;
+  string title = 3;
+  string start_time = 4;
+  string end_time = 5;
+  string status = 6;
+  string description = 7;
+  string calendar_id = 8;
+  bool campus_login = 9;
+  string created_at = 10;
+}
+
+message GetAppointmentByGoogleEventIDRequest {
+  string google_event_id = 1;
 }
 

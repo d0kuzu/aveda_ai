@@ -17,26 +17,30 @@ import (
 
 type DatabaseServer struct {
 	proto.UnimplementedDatabaseServiceServer
-	userRepo         repository.UserRepository
-	refreshTokenRepo repository.RefreshTokenRepository
-	chatRepo         repository.ChatRepository
-	messageRepo      repository.MessageRepository
-	assistantRepo    repository.AssistantRepository
-	twilioRepo       repository.TwilioRepository
-	campusloginRepo  *repository.CampusloginRepository
+	userRepo            repository.UserRepository
+	refreshTokenRepo    repository.RefreshTokenRepository
+	chatRepo            repository.ChatRepository
+	messageRepo         repository.MessageRepository
+	assistantRepo       repository.AssistantRepository
+	twilioRepo          repository.TwilioRepository
+	campusloginRepo     *repository.CampusloginRepository
 	blockedCustomerRepo repository.BlockedCustomerRepository
+	googleSyncRepo      repository.GoogleSyncRepository
+	appointmentRepo     repository.AppointmentRepository
 }
 
-func NewDatabaseServer(userRepo repository.UserRepository, refreshTokenRepo repository.RefreshTokenRepository, chatRepo repository.ChatRepository, messageRepo repository.MessageRepository, assistantRepo repository.AssistantRepository, twilioRepo repository.TwilioRepository, campusloginRepo *repository.CampusloginRepository, blockedCustomerRepo repository.BlockedCustomerRepository) *DatabaseServer {
+func NewDatabaseServer(userRepo repository.UserRepository, refreshTokenRepo repository.RefreshTokenRepository, chatRepo repository.ChatRepository, messageRepo repository.MessageRepository, assistantRepo repository.AssistantRepository, twilioRepo repository.TwilioRepository, campusloginRepo *repository.CampusloginRepository, blockedCustomerRepo repository.BlockedCustomerRepository, googleSyncRepo repository.GoogleSyncRepository, appointmentRepo repository.AppointmentRepository) *DatabaseServer {
 	return &DatabaseServer{
-		userRepo:         userRepo,
-		refreshTokenRepo: refreshTokenRepo,
-		chatRepo:         chatRepo,
-		messageRepo:      messageRepo,
-		assistantRepo:    assistantRepo,
-		twilioRepo:       twilioRepo,
-		campusloginRepo:  campusloginRepo,
+		userRepo:            userRepo,
+		refreshTokenRepo:    refreshTokenRepo,
+		chatRepo:            chatRepo,
+		messageRepo:         messageRepo,
+		assistantRepo:       assistantRepo,
+		twilioRepo:          twilioRepo,
+		campusloginRepo:     campusloginRepo,
 		blockedCustomerRepo: blockedCustomerRepo,
+		googleSyncRepo:      googleSyncRepo,
+		appointmentRepo:     appointmentRepo,
 	}
 }
 
@@ -1022,5 +1026,101 @@ func (s *DatabaseServer) GetUnreviewedActiveChats(ctx context.Context, req *prot
 
 	return &proto.ChatsResponse{
 		Chats: protoChats,
+	}, nil
+}
+
+func (s *DatabaseServer) UpsertGoogleSyncToken(ctx context.Context, req *proto.UpsertGoogleSyncTokenRequest) (*proto.GoogleSyncTokenResponse, error) {
+	sync := &models.GoogleSync{
+		CalendarID: req.CalendarId,
+		SyncToken:  req.SyncToken,
+		ChannelID:  req.ChannelId,
+		ResourceID: req.ResourceId,
+	}
+
+	if err := s.googleSyncRepo.Upsert(sync); err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to upsert google sync token: %v", err)
+	}
+
+	return &proto.GoogleSyncTokenResponse{
+		CalendarId: sync.CalendarID,
+		SyncToken:  sync.SyncToken,
+		ChannelId:  sync.ChannelID,
+		ResourceId: sync.ResourceID,
+		UpdatedAt:  sync.UpdatedAt.Format(time.RFC3339),
+	}, nil
+}
+
+func (s *DatabaseServer) GetGoogleSyncToken(ctx context.Context, req *proto.GetGoogleSyncTokenRequest) (*proto.GoogleSyncTokenResponse, error) {
+	sync, err := s.googleSyncRepo.GetByCalendarID(req.CalendarId)
+	if err != nil {
+		return nil, status.Errorf(codes.NotFound, "google sync token not found: %v", err)
+	}
+
+	return &proto.GoogleSyncTokenResponse{
+		CalendarId: sync.CalendarID,
+		SyncToken:  sync.SyncToken,
+		ChannelId:  sync.ChannelID,
+		ResourceId: sync.ResourceID,
+		UpdatedAt:  sync.UpdatedAt.Format(time.RFC3339),
+	}, nil
+}
+
+func (s *DatabaseServer) CreateAppointment(ctx context.Context, req *proto.CreateAppointmentRequest) (*proto.AppointmentResponse, error) {
+	startTime, err := time.Parse(time.RFC3339, req.StartTime)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "invalid start_time format: %v", err)
+	}
+
+	endTime, err := time.Parse(time.RFC3339, req.EndTime)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "invalid end_time format: %v", err)
+	}
+
+	appointment := &models.Appointment{
+		GoogleEventID: req.GoogleEventId,
+		Title:         req.Title,
+		StartTime:     startTime,
+		EndTime:       endTime,
+		Status:        req.Status,
+		Description:   req.Description,
+		CalendarID:    req.CalendarId,
+		CampusLogin:   req.CampusLogin,
+	}
+
+	if err := s.appointmentRepo.Create(appointment); err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to create appointment: %v", err)
+	}
+
+	return &proto.AppointmentResponse{
+		Id:            appointment.ID,
+		GoogleEventId: appointment.GoogleEventID,
+		Title:         appointment.Title,
+		StartTime:     appointment.StartTime.Format(time.RFC3339),
+		EndTime:       appointment.EndTime.Format(time.RFC3339),
+		Status:        appointment.Status,
+		Description:   appointment.Description,
+		CalendarId:    appointment.CalendarID,
+		CampusLogin:   appointment.CampusLogin,
+		CreatedAt:     appointment.CreatedAt.Format(time.RFC3339),
+	}, nil
+}
+
+func (s *DatabaseServer) GetAppointmentByGoogleEventID(ctx context.Context, req *proto.GetAppointmentByGoogleEventIDRequest) (*proto.AppointmentResponse, error) {
+	appointment, err := s.appointmentRepo.GetByGoogleEventID(req.GoogleEventId)
+	if err != nil {
+		return nil, status.Errorf(codes.NotFound, "appointment not found: %v", err)
+	}
+
+	return &proto.AppointmentResponse{
+		Id:            appointment.ID,
+		GoogleEventId: appointment.GoogleEventID,
+		Title:         appointment.Title,
+		StartTime:     appointment.StartTime.Format(time.RFC3339),
+		EndTime:       appointment.EndTime.Format(time.RFC3339),
+		Status:        appointment.Status,
+		Description:   appointment.Description,
+		CalendarId:    appointment.CalendarID,
+		CampusLogin:   appointment.CampusLogin,
+		CreatedAt:     appointment.CreatedAt.Format(time.RFC3339),
 	}, nil
 }

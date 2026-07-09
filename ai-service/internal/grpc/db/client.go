@@ -531,3 +531,57 @@ func (c *Client) IsCustomerBlocked(userID string) (bool, error) {
 
 	return resp.IsBlocked, nil
 }
+
+func (c *Client) UpsertGoogleSyncToken(calendarID, syncToken, channelID, resourceID string) (*dbpb.GoogleSyncTokenResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	req := &dbpb.UpsertGoogleSyncTokenRequest{
+		CalendarId: calendarID,
+		SyncToken:  syncToken,
+		ChannelId:  channelID,
+		ResourceId: resourceID,
+	}
+
+	return c.DB.UpsertGoogleSyncToken(ctx, req)
+}
+
+func (c *Client) GetGoogleSyncToken(calendarID string) (*dbpb.GoogleSyncTokenResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	req := &dbpb.GetGoogleSyncTokenRequest{
+		CalendarId: calendarID,
+	}
+
+	return c.DB.GetGoogleSyncToken(ctx, req)
+}
+
+func (c *Client) CreateAppointment(googleEventID, title, startTime, endTime, status, description, calendarID string, campusLogin bool) (*dbpb.AppointmentResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	req := &dbpb.CreateAppointmentRequest{
+		GoogleEventId: googleEventID,
+		Title:         title,
+		StartTime:     startTime,
+		EndTime:       endTime,
+		Status:        status,
+		Description:   description,
+		CalendarId:    calendarID,
+		CampusLogin:   campusLogin,
+	}
+
+	return c.DB.CreateAppointment(ctx, req)
+}
+
+func (c *Client) GetAppointmentByGoogleEventID(googleEventID string) (*dbpb.AppointmentResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	req := &dbpb.GetAppointmentByGoogleEventIDRequest{
+		GoogleEventId: googleEventID,
+	}
+
+	return c.DB.GetAppointmentByGoogleEventID(ctx, req)
+}

@@ -4,6 +4,7 @@ import (
 	"diaxel/internal/api/assistant"
 	"diaxel/internal/api/chat"
 	"diaxel/internal/api/campuslogin"
+	"diaxel/internal/api/google"
 	"diaxel/internal/api/twilio"
 	"diaxel/internal/api/webhook"
 	"diaxel/internal/api/ws"
@@ -34,6 +35,7 @@ func RouterStart(app *appModule.App) {
 	campuslogin.CampusLoginRoutes(r, app)
 	analytics.AnalyticsRoutes(r, app)
 	test.TestRoutes(r, app)
+	google.GoogleRoutes(r, app)
 
 	err := r.Run(":" + app.Cfg.HTTPPort)
 	if err != nil {
