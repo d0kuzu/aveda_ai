@@ -155,11 +155,19 @@ func (h *TestHandler) TestListEvents(c *gin.Context) {
 		return
 	}
 
+	// Ограничиваем количество возвращаемых событий, чтобы избежать огромных JSON и broken pipe
+	var responseEvents []*calendar.Event
+	if len(events) > 5 {
+		responseEvents = events[:5]
+	} else {
+		responseEvents = events
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"status":          "success",
 		"message":         "Events listed successfully",
 		"events_count":    len(events),
 		"next_sync_token": nextSyncToken,
-		"events":          events,
+		"events_sample":   responseEvents,
 	})
 }
