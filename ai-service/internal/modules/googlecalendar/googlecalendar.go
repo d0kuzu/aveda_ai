@@ -158,10 +158,7 @@ func (c *Client) ListEvents(calendarID, syncToken string) ([]*calendar.Event, st
 		allEvents = append(allEvents, events.Items...)
 
 		if events.NextPageToken != "" {
-			call = c.srv.Events.List(calendarID).SingleEvents(true).PageToken(events.NextPageToken)
-			if syncToken != "" {
-				call = call.SyncToken(syncToken)
-			}
+			call = call.PageToken(events.NextPageToken)
 		} else {
 			nextSyncToken = events.NextSyncToken
 			break
