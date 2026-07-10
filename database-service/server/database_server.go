@@ -769,6 +769,23 @@ func (s *DatabaseServer) GetCampusloginByUserId(ctx context.Context, req *proto.
 	}, nil
 }
 
+func (s *DatabaseServer) GetCampusloginByPhone(ctx context.Context, req *proto.CampusloginPhoneRequest) (*proto.CampusloginResponse, error) {
+	record, err := s.campusloginRepo.GetByPhone(req.Phone)
+	if err != nil {
+		return nil, status.Errorf(codes.NotFound, "campuslogin not found by phone: %v", err)
+	}
+
+	return &proto.CampusloginResponse{
+		UserId:                 record.UserId,
+		ContactId:              int32(record.ContactID),
+		ProgramId:              int32(record.ProgramID),
+		IsGrade11OrLower:       record.IsGrade11OrLower,
+		IsInternationalStudent: record.IsInternationalStudent,
+		FirstName:              record.FirstName,
+		Email:                  record.Email,
+	}, nil
+}
+
 func (s *DatabaseServer) UpsertCampuslogin(ctx context.Context, req *proto.UpsertCampusloginRequest) (*proto.UpsertCampusloginResponse, error) {
 	campuslogin := &models.Campuslogin{
 		UserId:                 req.UserId,

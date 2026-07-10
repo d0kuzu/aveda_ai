@@ -129,6 +129,7 @@ func (c *Client) CreateSimpleEvent(title string, start, end time.Time, customerE
 	}
 	return c.CreateEvent("", event, customerEmail)
 }
+
 // ListEvents выполняет инкрементальную синхронизацию событий календаря.
 // Если syncToken пустой — выполняет полную синхронизацию (возвращает все события).
 // Возвращает список событий и новый syncToken для следующего вызова.

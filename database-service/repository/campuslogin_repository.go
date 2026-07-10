@@ -23,6 +23,15 @@ func (r *CampusloginRepository) GetByUserId(userId string) (*models.Campuslogin,
 	return &campuslogin, nil
 }
 
+func (r *CampusloginRepository) GetByPhone(phone string) (*models.Campuslogin, error) {
+	var campuslogin models.Campuslogin
+	err := r.db.Where("user_id LIKE ?", "%"+phone).First(&campuslogin).Error
+	if err != nil {
+		return nil, err
+	}
+	return &campuslogin, nil
+}
+
 func (r *CampusloginRepository) Upsert(campuslogin *models.Campuslogin) error {
 	return r.db.Clauses(clause.OnConflict{
 		Columns:   []clause.Column{{Name: "user_id"}},

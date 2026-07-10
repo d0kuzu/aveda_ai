@@ -43,6 +43,7 @@ service DatabaseService {
   rpc GetChatsForFollowup(GetChatsForFollowupRequest) returns (ChatsResponse);
   rpc UpdateChatFollowupStage(UpdateChatFollowupStageRequest) returns (ChatResponse);
   rpc GetCampusloginByUserId(CampusloginRequest) returns (CampusloginResponse);
+  rpc GetCampusloginByPhone(CampusloginPhoneRequest) returns (CampusloginResponse);
   rpc UpsertCampuslogin(UpsertCampusloginRequest) returns (UpsertCampusloginResponse);
   rpc SetCampusloginFlags(SetCampusloginFlagsRequest) returns (SetCampusloginFlagsResponse);
   rpc DeleteAllChatsAndMessages(DeleteAllChatsAndMessagesRequest) returns (DeleteAllChatsAndMessagesResponse);
@@ -54,6 +55,10 @@ service DatabaseService {
   rpc GetPeriodMetrics(GetPeriodMetricsRequest) returns (GetPeriodMetricsResponse);
   rpc GetWeeklyChatsStarted(GetWeeklyChatsStartedRequest) returns (GetWeeklyChatsStartedResponse);
   rpc IsCustomerBlocked(IsCustomerBlockedRequest) returns (IsCustomerBlockedResponse);
+  rpc UpsertGoogleSyncToken(UpsertGoogleSyncTokenRequest) returns (GoogleSyncTokenResponse);
+  rpc GetGoogleSyncToken(GetGoogleSyncTokenRequest) returns (GoogleSyncTokenResponse);
+  rpc CreateAppointment(CreateAppointmentRequest) returns (AppointmentResponse);
+  rpc GetAppointmentByGoogleEventID(GetAppointmentByGoogleEventIDRequest) returns (AppointmentResponse);
 }
 
 message DeleteAllChatsAndMessagesRequest {}
@@ -373,6 +378,10 @@ message CampusloginRequest {
   string user_id = 1;
 }
 
+message CampusloginPhoneRequest {
+  string phone = 1;
+}
+
 message UpsertCampusloginRequest {
   string user_id = 1;
   int32 contact_id = 2;
@@ -474,5 +483,52 @@ message IsCustomerBlockedRequest {
 
 message IsCustomerBlockedResponse {
   bool is_blocked = 1;
+}
+
+message UpsertGoogleSyncTokenRequest {
+  string calendar_id = 1;
+  string sync_token = 2;
+  string channel_id = 3;
+  string resource_id = 4;
+}
+
+message GetGoogleSyncTokenRequest {
+  string calendar_id = 1;
+}
+
+message GoogleSyncTokenResponse {
+  string calendar_id = 1;
+  string sync_token = 2;
+  string channel_id = 3;
+  string resource_id = 4;
+  string updated_at = 5;
+}
+
+message CreateAppointmentRequest {
+  string google_event_id = 1;
+  string title = 2;
+  string start_time = 3;
+  string end_time = 4;
+  string status = 5;
+  string description = 6;
+  string calendar_id = 7;
+  bool campus_login = 8;
+}
+
+message AppointmentResponse {
+  string id = 1;
+  string google_event_id = 2;
+  string title = 3;
+  string start_time = 4;
+  string end_time = 5;
+  string status = 6;
+  string description = 7;
+  string calendar_id = 8;
+  bool campus_login = 9;
+  string created_at = 10;
+}
+
+message GetAppointmentByGoogleEventIDRequest {
+  string google_event_id = 1;
 }
 

@@ -7,7 +7,7 @@ import (
 )
 
 func GoogleRoutes(router *gin.Engine, app *appModule.App) {
-	handler := NewGoogleHandler(app.GoogleCalendar, app.Db)
+	handler := NewGoogleHandler(app.GoogleCalendar, app.Db, app.CampusLogin)
 	googleGroup := router.Group("google")
 	{
 		googleGroup.POST("/webhook", handler.HandleWebhook)

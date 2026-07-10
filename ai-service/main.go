@@ -56,7 +56,7 @@ func main() {
 	abandonedSummarizer := summary.NewAbandonedSummarizer(grpcClient, campusloginClient, llmClient)
 	go abandonedSummarizer.Start(context.Background())
 
-	app := appModule.NewApp(llmClient, twilioClient, grpcClient, settings, tgOrchestrator, gcClient)
+	app := appModule.NewApp(llmClient, twilioClient, grpcClient, settings, tgOrchestrator, gcClient, campusloginClient)
 
 	api.RouterStart(app)
 }

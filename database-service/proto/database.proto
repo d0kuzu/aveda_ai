@@ -43,6 +43,7 @@ service DatabaseService {
   rpc GetChatsForFollowup(GetChatsForFollowupRequest) returns (ChatsResponse);
   rpc UpdateChatFollowupStage(UpdateChatFollowupStageRequest) returns (ChatResponse);
   rpc GetCampusloginByUserId(CampusloginRequest) returns (CampusloginResponse);
+  rpc GetCampusloginByPhone(CampusloginPhoneRequest) returns (CampusloginResponse);
   rpc UpsertCampuslogin(UpsertCampusloginRequest) returns (UpsertCampusloginResponse);
   rpc SetCampusloginFlags(SetCampusloginFlagsRequest) returns (SetCampusloginFlagsResponse);
   rpc DeleteAllChatsAndMessages(DeleteAllChatsAndMessagesRequest) returns (DeleteAllChatsAndMessagesResponse);
@@ -375,6 +376,10 @@ message DeleteTwilioConfigResponse {
 
 message CampusloginRequest {
   string user_id = 1;
+}
+
+message CampusloginPhoneRequest {
+  string phone = 1;
 }
 
 message UpsertCampusloginRequest {

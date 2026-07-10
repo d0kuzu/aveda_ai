@@ -3,6 +3,7 @@ package app
 import (
 	"diaxel/internal/config"
 	"diaxel/internal/grpc/db"
+	"diaxel/internal/modules/campuslogin"
 	"diaxel/internal/modules/googlecalendar"
 	"diaxel/internal/modules/llm"
 	"diaxel/internal/modules/telegram"
@@ -22,6 +23,7 @@ type App struct {
 	Cfg            *config.Settings
 	TgOrchestrator *telegram.Orchestrator
 	GoogleCalendar *googlecalendar.Client
+	CampusLogin    *campuslogin.Client
 }
 
 func NewApp(
@@ -31,6 +33,7 @@ func NewApp(
 	cfg *config.Settings,
 	tgOrch *telegram.Orchestrator,
 	gcClient *googlecalendar.Client,
+	campusLoginClient *campuslogin.Client,
 ) *App {
 	return &App{
 		LLM:            llmClient,
@@ -39,6 +42,7 @@ func NewApp(
 		Cfg:            cfg,
 		TgOrchestrator: tgOrch,
 		GoogleCalendar: gcClient,
+		CampusLogin:    campusLoginClient,
 	}
 }
 
