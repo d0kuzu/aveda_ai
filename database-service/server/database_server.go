@@ -890,9 +890,14 @@ func (s *DatabaseServer) GetPeriodMetrics(ctx context.Context, req *proto.GetPer
 		return nil, status.Errorf(codes.InvalidArgument, "invalid end_time: %v", err)
 	}
 
-	started, completed, booked, err := s.chatRepo.GetPeriodMetrics(ctx, req.AssistantId, startTime, endTime)
+	started, completed, _, err := s.chatRepo.GetPeriodMetrics(ctx, req.AssistantId, startTime, endTime)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to get period metrics: %v", err)
+	}
+
+	booked, err := s.appointmentRepo.CountByDateRange(ctx, startTime, endTime)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to get booked appointments count: %v", err)
 	}
 
 	return &proto.GetPeriodMetricsResponse{

@@ -412,13 +412,8 @@ func (r *chatRepository) GetPeriodMetrics(ctx context.Context, assistantID strin
 		return 0, 0, 0, fmt.Errorf("failed to get completed chats count: %w", err)
 	}
 
-	bookedQuery := r.db.WithContext(ctx).Model(&models.Chat{}).Where("started_at >= ? AND started_at < ?", startTime, endTime)
-	if assistantID != "" {
-		bookedQuery = bookedQuery.Where("assistant_id = ?", assistantID)
-	}
-	if err := bookedQuery.Where("is_booked = ?", true).Count(&bookedCount).Error; err != nil {
-		return 0, 0, 0, fmt.Errorf("failed to get booked chats count: %w", err)
-	}
+	// bookedQuery removed as bookings are now calculated from the appointments table
+	bookedCount = 0
 
 	return int32(startedCount), int32(completedCount), int32(bookedCount), nil
 }
