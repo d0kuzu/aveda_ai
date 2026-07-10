@@ -129,7 +129,7 @@ func (h *GoogleHandler) processEvents(channelID, resourceID string) {
 					log.Printf("[GoogleWebhook] Program ID: %d", programID)
 
 					// Отправляем Appointment
-					err = h.cl.SendAppointment(context.Background(), startTime, endTime, contactID, programID, " ")
+					err = h.cl.SendAppointment(context.Background(), "Campus Tour for "+campusRecord.FirstName, startTime, endTime, contactID, programID, event.Description)
 					if err == nil {
 						campusLoginSent = true
 						log.Printf("[GoogleWebhook] successfully sent appointment to CampusLogin for phone %s", phoneSuffix)

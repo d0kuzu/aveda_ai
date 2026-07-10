@@ -110,7 +110,7 @@ func (h *TestHandler) TestSendAppointment(c *gin.Context) {
 	programID, _ := strconv.Atoi(c.DefaultQuery("program_id", "0"))
 	description := c.DefaultQuery("description", "Test Appointment from AI Service")
 
-	err := h.cl.SendAppointment(c.Request.Context(), startTime, endTime, contactID, programID, description)
+	err := h.cl.SendAppointment(c.Request.Context(), "Testing", startTime, endTime, contactID, programID, description)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"status":  "error",

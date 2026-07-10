@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"diaxel/internal/constants"
+
 	"github.com/sashabaranov/go-openai"
 )
 
@@ -345,7 +346,7 @@ func (c *Client) handleGoogleCalendarCreateEvent(ctx context.Context, argsJSON, 
 	if err != nil {
 		return "Error: start must be in RFC3339 format", nil
 	}
-	
+
 	// Force Winnipeg timezone. Treat the provided clock time as local Winnipeg time.
 	tMin = time.Date(tMin.Year(), tMin.Month(), tMin.Day(), tMin.Hour(), tMin.Minute(), tMin.Second(), 0, winnipegLoc)
 	tMax := tMin.Add(30 * time.Minute)
@@ -411,7 +412,7 @@ func (c *Client) createCampusLoginAppointmentInternal(ctx context.Context, start
 		programID = int(campusRecord.ProgramId)
 	}
 
-	err = c.campuslogin.SendAppointment(ctx, startTime, endTime, contactID, programID, description)
+	err = c.campuslogin.SendAppointment(ctx, "Campus Tour for "+campusRecord.FirstName, startTime, endTime, contactID, programID, description)
 	if err != nil {
 		return err
 	}

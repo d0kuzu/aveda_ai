@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"time"
 )
 
 type AppointmentRequest struct {
@@ -46,7 +47,15 @@ type AppointmentRequest struct {
 	Automation           string `json:"Automation"`
 }
 
-func (c *Client) SendAppointment(ctx context.Context, startTime, endTime string, contactID int, programID int, description string) error {
+func (c *Client) SendAppointment(ctx context.Context, title, startTime, endTime string, contactID int, programID int, description string) error {
+	loc, err := time.LoadLocation("America/Winnipeg")
+	var currentTime string
+	if err != nil {
+		currentTime = time.Now().Format("2006-01-02T15:04:05")
+	} else {
+		currentTime = time.Now().In(loc).Format("2006-01-02T15:04:05")
+	}
+
 	reqBody := AppointmentRequest{
 		OrgId:                24900,
 		AppointmentID:        0,
@@ -56,13 +65,13 @@ func (c *Client) SendAppointment(ctx context.Context, startTime, endTime string,
 		ContactID:            contactID,
 		DateFrom:             startTime,
 		DateTo:               endTime,
-		Text:                 "Appointment",
+		Text:                 title,
 		Description:          description,
 		WebinarLink:          "",
 		StaffID:              6710,
 		EmployeeID:           1,
 		EmployeeIDs:          "",
-		CreateDate:           "2026-05-19T00:00:00",
+		CreateDate:           currentTime,
 		StageID:              2638,
 		SubStageID:           1,
 		ShowUp:               "0",
@@ -79,7 +88,7 @@ func (c *Client) SendAppointment(ctx context.Context, startTime, endTime string,
 		CampaignID:           1,
 		ContactType:          "",
 		TakenBy:              1,
-		TakenOn:              "2026-05-19T00:00:00",
+		TakenOn:              currentTime,
 		Office365GID:         "",
 		GoogleGID:            "",
 		Automation:           "",
