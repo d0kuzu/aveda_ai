@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"google.golang.org/api/calendar/v3"
 )
 
 type TestHandler struct {
