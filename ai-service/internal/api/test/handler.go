@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"google.golang.org/api/calendar/v3"
 )
 
 type TestHandler struct {
@@ -101,7 +100,7 @@ func (h *TestHandler) TestSendAppointment(c *gin.Context) {
 
 	if startTime == "" || endTime == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "start_time and end_time query parameters are required",
+			"error":   "start_time and end_time query parameters are required",
 			"example": "/test/campuslogin/appointment?start_time=2026-05-19T10:00:00&end_time=2026-05-19T11:00:00&contact_id=12345&program_id=1&description=Test",
 		})
 		return
@@ -114,7 +113,7 @@ func (h *TestHandler) TestSendAppointment(c *gin.Context) {
 	err := h.cl.SendAppointment(c.Request.Context(), startTime, endTime, contactID, programID, description)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"status": "error",
+			"status":  "error",
 			"message": "Failed to send appointment",
 			"details": err.Error(),
 		})
@@ -122,13 +121,13 @@ func (h *TestHandler) TestSendAppointment(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"status": "success",
+		"status":  "success",
 		"message": "Appointment sent successfully",
 		"request_data": gin.H{
-			"start_time": startTime,
-			"end_time": endTime,
-			"contact_id": contactID,
-			"program_id": programID,
+			"start_time":  startTime,
+			"end_time":    endTime,
+			"contact_id":  contactID,
+			"program_id":  programID,
 			"description": description,
 		},
 	})
