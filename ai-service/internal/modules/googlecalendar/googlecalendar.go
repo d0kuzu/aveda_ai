@@ -142,8 +142,10 @@ func (c *Client) ListEvents(calendarID, syncToken string) ([]*calendar.Event, st
 	if syncToken != "" {
 		call = call.SyncToken(syncToken)
 	} else {
-		// При первой синхронизации получаем события начиная с текущего момента
-		call = call.TimeMin(time.Now().Format(time.RFC3339))
+		// Получаем события только на 8 дней вперед, чтобы избежать огромных выгрузок
+		now := time.Now()
+		call = call.TimeMin(now.Format(time.RFC3339))
+		call = call.TimeMax(now.AddDate(0, 0, 8).Format(time.RFC3339))
 	}
 
 	var allEvents []*calendar.Event
