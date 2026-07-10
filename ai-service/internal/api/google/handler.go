@@ -108,24 +108,26 @@ func (h *GoogleHandler) processEvents(channelID, resourceID string) {
 
 		// Попытка отправить appointment в CampusLogin
 		campusLoginSent := false
-		
+
 		// Извлекаем номер телефона
 		eventText := event.Summary + " " + event.Description
 		phoneRegex := regexp.MustCompile(`\+?[1]?[-\s\.]?\(?\d{3}\)?[-\s\.]?\d{3}[-\s\.]?\d{4}`)
 		phoneStr := phoneRegex.FindString(eventText)
-		
+
 		if phoneStr != "" {
 			// Очищаем от нецифровых символов
 			digits := regexp.MustCompile(`\D`).ReplaceAllString(phoneStr, "")
 			if len(digits) >= 10 {
 				phoneSuffix := digits[len(digits)-10:]
-				
+
 				// Ищем пользователя в БД по суффиксу телефона
 				campusRecord, err := h.db.GetCampusloginByPhone(phoneSuffix)
 				if err == nil {
 					contactID := int(campusRecord.ContactId)
+					log.Printf("[GoogleWebhook] Contact ID: %d", contactID)
 					programID := int(campusRecord.ProgramId)
-					
+					log.Printf("[GoogleWebhook] Program ID: %d", programID)
+
 					// Отправляем Appointment
 					err = h.cl.SendAppointment(context.Background(), startTime, endTime, contactID, programID, " ")
 					if err == nil {
