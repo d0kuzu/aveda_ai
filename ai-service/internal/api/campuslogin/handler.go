@@ -235,30 +235,24 @@ func (h *CampusLoginHandler) HandleTriggerTwilio(c *gin.Context) {
 }
 
 func (h *CampusLoginHandler) HandleTriggerTwilioReinquiry(c *gin.Context) {
-	assistantID := c.Param("assistant_id")
+	_ = c.Request.ParseMultipartForm(32 << 20)
+	_ = c.Request.ParseForm()
+	body, _ := c.GetRawData()
 
-	// Log all query params
-	queryParams := map[string]string{}
-	for k, v := range c.Request.URL.Query() {
-		if len(v) > 0 {
-			queryParams[k] = v[0]
-		}
-	}
+	log.Printf("====== ECHO REQUEST ======\n")
+	log.Printf("Method: %s\n", c.Request.Method)
+	log.Printf("URL: %s\n", c.Request.URL.String())
+	log.Printf("Host: %s\n", c.Request.Host)
+	log.Printf("RemoteAddr: %s\n", c.Request.RemoteAddr)
+	log.Printf("ClientIP: %s\n", c.ClientIP())
+	log.Printf("Headers: %+v\n", c.Request.Header)
+	log.Printf("Query Params: %+v\n", c.Request.URL.Query())
+	log.Printf("Form: %+v\n", c.Request.Form)
+	log.Printf("PostForm: %+v\n", c.Request.PostForm)
+	log.Printf("MultipartForm: %+v\n", c.Request.MultipartForm)
+	log.Printf("ContentLength: %d\n", c.Request.ContentLength)
+	log.Printf("Body: %s\n", string(body))
+	log.Printf("==========================\n")
 
-	// Log all form/body params
-	if err := c.Request.ParseForm(); err == nil {
-		for k, v := range c.Request.PostForm {
-			if len(v) > 0 {
-				queryParams["body."+k] = v[0]
-			}
-		}
-	}
-
-	log.Printf("[CampusLogin Reinquiry] assistant_id=%s params=%+v", assistantID, queryParams)
-
-	c.JSON(http.StatusOK, gin.H{
-		"status":       "ok",
-		"assistant_id": assistantID,
-		"params":       queryParams,
-	})
+	c.Status(200)
 }
