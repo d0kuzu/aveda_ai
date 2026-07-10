@@ -15,6 +15,7 @@ func TestRoutes(router *gin.Engine, app *appModule.App) {
 	{
 		group.GET("/calendar", h.TestCalendar)
 		group.POST("/calendar/event", h.TestCreateEvent)
+		group.GET("/calendar/events", h.TestListEvents)
 		group.Any("/campuslogin/appointment", h.TestSendAppointment)
 		
 		// Эндпоинт для вывода всех данных запроса

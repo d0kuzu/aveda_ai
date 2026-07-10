@@ -132,3 +132,34 @@ func (h *TestHandler) TestSendAppointment(c *gin.Context) {
 		},
 	})
 }
+
+func (h *TestHandler) TestListEvents(c *gin.Context) {
+	if h.gc == nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"status":  "error",
+			"message": "Google Calendar client is not initialized",
+		})
+		return
+	}
+
+	calendarID := c.DefaultQuery("calendar_id", "primary")
+	syncToken := c.Query("sync_token")
+
+	events, nextSyncToken, err := h.gc.ListEvents(calendarID, syncToken)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"status":  "error",
+			"message": "Failed to list events",
+			"details": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":          "success",
+		"message":         "Events listed successfully",
+		"events_count":    len(events),
+		"next_sync_token": nextSyncToken,
+		"events":          events,
+	})
+}
