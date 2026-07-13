@@ -6,6 +6,7 @@ import (
 	"diaxel/internal/grpc/db"
 	"diaxel/internal/modules/llm"
 	twilio "diaxel/internal/modules/twilio"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -234,25 +235,174 @@ func (h *CampusLoginHandler) HandleTriggerTwilio(c *gin.Context) {
 	})
 }
 
+type ReinquiryWebhookRequest struct {
+	Payload string `form:"Payload" json:"Payload"`
+}
+
+type ReinquiryPayload struct {
+	ContactId          int `json:"ContactId"`
+	ContactPostedEvent struct {
+		CampusId  int    `json:"CampusId"`
+		ProgramId int    `json:"ProgramId"`
+		FirstName string `json:"FirstName"`
+		LastName  string `json:"LastName"`
+		Email     string `json:"Email"`
+		Data      []struct {
+			Name  string `json:"Name"`
+			Value string `json:"Value"`
+		} `json:"Data"`
+	} `json:"ContactPostedEvent"`
+}
+
 func (h *CampusLoginHandler) HandleTriggerTwilioReinquiry(c *gin.Context) {
-	_ = c.Request.ParseMultipartForm(32 << 20)
-	_ = c.Request.ParseForm()
-	body, _ := c.GetRawData()
+	assistantID := c.Param("assistant_id")
+	if assistantID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "assistant_id parameter is required"})
+		return
+	}
 
-	log.Printf("====== ECHO REQUEST ======\n")
-	log.Printf("Method: %s\n", c.Request.Method)
-	log.Printf("URL: %s\n", c.Request.URL.String())
-	log.Printf("Host: %s\n", c.Request.Host)
-	log.Printf("RemoteAddr: %s\n", c.Request.RemoteAddr)
-	log.Printf("ClientIP: %s\n", c.ClientIP())
-	log.Printf("Headers: %+v\n", c.Request.Header)
-	log.Printf("Query Params: %+v\n", c.Request.URL.Query())
-	log.Printf("Form: %+v\n", c.Request.Form)
-	log.Printf("PostForm: %+v\n", c.Request.PostForm)
-	log.Printf("MultipartForm: %+v\n", c.Request.MultipartForm)
-	log.Printf("ContentLength: %d\n", c.Request.ContentLength)
-	log.Printf("Body: %s\n", string(body))
-	log.Printf("==========================\n")
+	var rawReq ReinquiryWebhookRequest
+	if err := c.ShouldBind(&rawReq); err != nil {
+		log.Printf("[CampusLogin Reinquiry] Binding error: %v", err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request data: " + err.Error()})
+		return
+	}
 
-	c.Status(200)
+	var payload ReinquiryPayload
+	if rawReq.Payload != "" {
+		if err := json.Unmarshal([]byte(rawReq.Payload), &payload); err != nil {
+			log.Printf("[CampusLogin Reinquiry] Failed to unmarshal Payload string: %v", err)
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Payload format"})
+			return
+		}
+	} else {
+		if err := c.ShouldBind(&payload); err != nil {
+			log.Printf("[CampusLogin Reinquiry] Failed to bind payload directly: %v", err)
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Missing Payload"})
+			return
+		}
+	}
+
+	var toPhone string
+	var isInternational = "no"
+
+	for _, item := range payload.ContactPostedEvent.Data {
+		nameLower := strings.ToLower(item.Name)
+		if nameLower == "alternatephone" || nameLower == "telephone" {
+			if toPhone == "" && item.Value != "" {
+				toPhone = item.Value
+			}
+		}
+		if nameLower == "attributeid_2577" && item.Value != "" {
+			isInternational = "yes"
+		}
+	}
+
+	if toPhone == "" {
+		log.Printf("[CampusLogin Reinquiry] Phone number is missing in Data array")
+		c.JSON(http.StatusBadRequest, gin.H{"error": "phone number is required"})
+		return
+	}
+
+	contactIDInt := payload.ContactId
+	programIDInt := payload.ContactPostedEvent.ProgramId
+	firstName := payload.ContactPostedEvent.FirstName
+	email := payload.ContactPostedEvent.Email
+
+	var digitsOnly string
+	for _, r := range toPhone {
+		if r >= '0' && r <= '9' {
+			digitsOnly += string(r)
+		}
+	}
+
+	if len(digitsOnly) == 10 {
+		toPhone = "+1" + digitsOnly
+	} else if len(digitsOnly) == 11 && strings.HasPrefix(digitsOnly, "1") {
+		toPhone = "+" + digitsOnly
+	} else {
+		if !strings.HasPrefix(toPhone, "+") {
+			toPhone = "+" + toPhone
+		}
+	}
+
+	isBlocked, err := h.db.IsCustomerBlocked(toPhone)
+	if err == nil && isBlocked {
+		log.Printf("[CampusLogin Reinquiry] Ignoring trigger for blocked customer %s", toPhone)
+		c.JSON(http.StatusOK, gin.H{"status": "ignored", "message": "customer is blocked"})
+		return
+	}
+
+	if contactIDInt > 0 {
+		err := h.db.UpsertCampuslogin(toPhone, contactIDInt, programIDInt, false, false, firstName, email)
+		if err != nil {
+			log.Printf("[CampusLogin Reinquiry] Failed to upsert Campuslogin for %s: %v", toPhone, err)
+		}
+	}
+
+	existingChat, checkErr := h.db.GetLatestChatByCustomer(assistantID, toPhone)
+	if checkErr != nil {
+		log.Printf("[CampusLogin Reinquiry] Error checking existing chat for %s: %v", toPhone, checkErr)
+	} else if existingChat != nil && existingChat.Id != "" {
+		log.Printf("[CampusLogin Reinquiry] Existing chat found (ID: %s) for %s. Deleting chat and messages.", existingChat.Id, toPhone)
+		delErr := h.db.DeleteChatAndMessages(existingChat.Id)
+		if delErr != nil {
+			log.Printf("[CampusLogin Reinquiry] Failed to delete existing chat %s: %v", existingChat.Id, delErr)
+		}
+	}
+
+	_, err = h.db.GetAssistant(assistantID)
+	if err != nil {
+		log.Printf("Error getting assistant %s: %v", assistantID, err)
+		c.JSON(http.StatusNotFound, gin.H{"error": "assistant not found"})
+		return
+	}
+
+	twilioConfig, err := h.db.GetTwilioConfig(assistantID)
+	if err != nil {
+		log.Printf("Error getting twilio config for assistant %s: %v", assistantID, err)
+		c.JSON(http.StatusNotFound, gin.H{"error": "twilio configuration not found for this assistant"})
+		return
+	}
+
+	programNameStr := strconv.Itoa(programIDInt)
+	if name, ok := constants.ProgramIDToName[programNameStr]; ok {
+		programNameStr = name
+	}
+
+	systemPrompt := fmt.Sprintf(
+		"This is a new lead. Name: %s, program: %s, International: %s. Greet them by name and mention the program they chose.",
+		firstName,
+		programNameStr,
+		isInternational,
+	)
+
+	log.Printf("[CampusLogin Reinquiry] Generated System Prompt: %s", systemPrompt)
+
+	answer, err := h.LLM.Conversation(c, toPhone, assistantID, "", llm.WithSystemMessage(systemPrompt))
+	if err != nil {
+		log.Printf("LLM Conversation error for assistant %s: %v", assistantID, err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	err = h.twilio.SendMessage(c,
+		twilioConfig.AccountSid,
+		twilioConfig.AuthToken,
+		twilioConfig.TwilioNumber,
+		toPhone,
+		answer,
+	)
+	if err != nil {
+		log.Printf("Error sending Twilio message to %s: %v", toPhone, err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("failed to send message: %v", err)})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  "ok",
+		"message": "Reinquiry triggered successfully",
+		"to":      toPhone,
+		"answer":  answer,
+	})
 }
