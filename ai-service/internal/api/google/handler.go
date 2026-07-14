@@ -123,6 +123,8 @@ func (h *GoogleHandler) processEvents(channelID, resourceID string) {
 				// Ищем пользователя в БД по суффиксу телефона
 				campusRecord, err := h.db.GetCampusloginByPhone(phoneSuffix)
 				if err == nil {
+					log.Printf("[GoogleWebhook] start time: %d", startTime)
+					log.Printf("[GoogleWebhook] end time: %d", endTime)
 					contactID := int(campusRecord.ContactId)
 					log.Printf("[GoogleWebhook] Contact ID: %d", contactID)
 					programID := int(campusRecord.ProgramId)
