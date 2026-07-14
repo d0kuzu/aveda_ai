@@ -43,7 +43,12 @@ func (h *GoogleHandler) HandleWebhook(c *gin.Context) {
 }
 
 func (h *GoogleHandler) processEvents(channelID, resourceID string) {
+	log.Printf("[GoogleWebhook] processEvents: calendar processing started")
+	log.Printf("[GoogleWebhook] processEvents: channelID=%s", channelID)
+	log.Printf("[GoogleWebhook] processEvents: resourceID=%s", resourceID)
+
 	calendarID := defaultCalendarID
+	log.Printf("[GoogleWebhook] processEvents: calendarID=%s", calendarID)
 
 	// Получаем текущий sync_token из БД
 	var syncToken string
@@ -61,6 +66,8 @@ func (h *GoogleHandler) processEvents(channelID, resourceID string) {
 		return
 	}
 
+	log.Printf("[GoogleWebhook] processEvents: events=%v", events)
+
 	// Сохраняем новый sync_token
 	if nextSyncToken != "" {
 		_, err := h.db.UpsertGoogleSyncToken(calendarID, nextSyncToken, channelID, resourceID)
@@ -73,11 +80,13 @@ func (h *GoogleHandler) processEvents(channelID, resourceID string) {
 	for _, event := range events {
 		// Пропускаем если статус не "confirmed"
 		if event.Status != "confirmed" {
+			log.Printf("[GoogleWebhook] processEvents: event %s has status %s", event.Id, event.Status)
 			continue
 		}
 
 		// Пропускаем если название не начинается с "Campus Tour"
 		if !strings.HasPrefix(event.Summary, "Campus Tour") {
+			log.Printf("[GoogleWebhook] processEvents: event %s has summary %s", event.Id, event.Summary)
 			continue
 		}
 
