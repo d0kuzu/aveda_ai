@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"regexp"
 	"strings"
+	"time"
 
 	"diaxel/internal/grpc/db"
 	"diaxel/internal/modules/campuslogin"
@@ -100,19 +101,28 @@ func (h *GoogleHandler) processEvents(channelID, resourceID string) {
 		// Извлекаем время начала и окончания
 		startTime := ""
 		endTime := ""
-		if event.Start != nil {
-			if event.Start.DateTime != "" {
-				startTime = event.Start.DateTime
-			} else {
-				startTime = event.Start.Date
+		
+		loc, _ := time.LoadLocation("America/Winnipeg")
+
+		formatTime := func(timeStr, dateStr string) string {
+			if timeStr != "" {
+				t, err := time.Parse(time.RFC3339, timeStr)
+				if err == nil {
+					if loc != nil {
+						t = t.In(loc)
+					}
+					return t.Format("2006-01-02T15:04:05")
+				}
+				return timeStr
 			}
+			return dateStr
+		}
+
+		if event.Start != nil {
+			startTime = formatTime(event.Start.DateTime, event.Start.Date)
 		}
 		if event.End != nil {
-			if event.End.DateTime != "" {
-				endTime = event.End.DateTime
-			} else {
-				endTime = event.End.Date
-			}
+			endTime = formatTime(event.End.DateTime, event.End.Date)
 		}
 
 		// Попытка отправить appointment в CampusLogin
