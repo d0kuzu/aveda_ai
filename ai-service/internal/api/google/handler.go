@@ -84,8 +84,8 @@ func (h *GoogleHandler) processEvents(channelID, resourceID string) {
 			continue
 		}
 
-		// Пропускаем если название не начинается с "Campus Tour"
-		if !strings.HasPrefix(event.Summary, "Campus Tour") {
+		// Пропускаем если название не содержит "Campus Tour"
+		if !strings.Contains(event.Summary, "Campus Tour") {
 			log.Printf("[GoogleWebhook] processEvents: event %s has summary %s", event.Id, event.Summary)
 			continue
 		}
