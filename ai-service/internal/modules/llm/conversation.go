@@ -85,11 +85,13 @@ func (c *Client) Conversation(ctx context.Context, userId, assistantId, userMess
 			})
 		}
 
-		if !shouldCloseConversation {
-			response, err = c.GetAnswer(ctx, messages)
-			if err != nil {
-				return "", err
-			}
+		if shouldCloseConversation {
+			continue
+		}
+
+		response, err = c.GetAnswer(ctx, messages)
+		if err != nil {
+			return "", err
 		}
 	}
 
