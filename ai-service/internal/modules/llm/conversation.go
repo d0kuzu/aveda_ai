@@ -86,7 +86,7 @@ func (c *Client) Conversation(ctx context.Context, userId, assistantId, userMess
 		}
 
 		if shouldCloseConversation {
-			continue
+			break
 		}
 
 		response, err = c.GetAnswer(ctx, messages)
