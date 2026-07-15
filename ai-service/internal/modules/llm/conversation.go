@@ -60,9 +60,15 @@ func (c *Client) Conversation(ctx context.Context, userId, assistantId, userMess
 		}
 		messages = append(messages, assistantMsg)
 
+		shouldCloseConversation := false
+
 		for _, toolCall := range assistantMsg.ToolCalls {
 			log.Printf("Функция вызвана: %s", toolCall.Function.Name)
 			log.Printf("Аргументы: %s", toolCall.Function.Arguments)
+
+			if toolCall.Function.Name == "close_conversation" {
+				shouldCloseConversation = true
+			}
 
 			result, err := c.executeFunction(ctx, toolCall.Function.Name, toolCall.Function.Arguments, userId, assistantId)
 			if err != nil {
@@ -79,16 +85,19 @@ func (c *Client) Conversation(ctx context.Context, userId, assistantId, userMess
 			})
 		}
 
-		response, err = c.GetAnswer(ctx, messages)
-		if err != nil {
-			return "", err
+		if !shouldCloseConversation {
+			response, err = c.GetAnswer(ctx, messages)
+			if err != nil {
+				return "", err
+			}
 		}
 	}
 
 	assistantResponse := response.Choices[0].Message.Content
-	log.Printf("Ответ пользователю %s от ИИ: %s\n", userId, assistantResponse)
-
-	c.AddMessage(&messages, "assistant", assistantResponse)
+	if assistantResponse != "" {
+		log.Printf("Ответ пользователю %s от ИИ: %s\n", userId, assistantResponse)
+		c.AddMessage(&messages, "assistant", assistantResponse)
+	}
 
 	err = c.SaveMessages(assistantId, userId, messages)
 	if err != nil {
@@ -119,6 +128,8 @@ func (c *Client) executeFunction(ctx context.Context, functionName, argsJSON, us
 		return c.handleGoogleCalendarGetSlots(ctx, argsJSON)
 	case "google_calendar_create_event":
 		return c.handleGoogleCalendarCreateEvent(ctx, argsJSON, userId, assistantId)
+	case "close_conversation":
+		return c.handleCloseConversation(ctx, userId, assistantId)
 	default:
 		return "", fmt.Errorf("unknown function: %s", functionName)
 	}
@@ -224,6 +235,10 @@ func (c *Client) handleSendSummary(ctx context.Context, argsJSON, userId, assist
 		return "", fmt.Errorf("failed to add new note on CampusLogin: %w", err)
 	}
 
+	return "Summary successfully sent to CampusLogin.", nil
+}
+
+func (c *Client) handleCloseConversation(ctx context.Context, userId, assistantId string) (string, error) {
 	chat, err := c.db.GetLatestChatByCustomer(assistantId, userId)
 	if err == nil && chat != nil {
 		_, err = c.db.UpdateChatIsEnd(chat.Id, true)
@@ -234,7 +249,7 @@ func (c *Client) handleSendSummary(ctx context.Context, argsJSON, userId, assist
 		log.Printf("Failed to get latest chat for customer %s to set isEnd: %v", userId, err)
 	}
 
-	return "Summary successfully sent to CampusLogin.", nil
+	return "Conversation closed.", nil
 }
 
 func (c *Client) handleMarkGrade11OrLower(ctx context.Context, userId string) (string, error) {

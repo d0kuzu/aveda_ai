@@ -130,6 +130,17 @@ var Tools = []openai.Tool{
 			},
 		},
 	},
+	{
+		Type: openai.ToolTypeFunction,
+		Function: &openai.FunctionDefinition{
+			Name:        "close_conversation",
+			Description: "Call this function to end the conversation and stop responding to the user. Use this when the conversation is fully resolved or the user's intent requires no further action.",
+			Parameters: map[string]interface{}{
+				"type":       "object",
+				"properties": map[string]interface{}{},
+			},
+		},
+	},
 	// {
 	// 	Type: openai.ToolTypeFunction,
 	// 	Function: &openai.FunctionDefinition{
