@@ -57,6 +57,11 @@ func (h *GoogleHandler) processEvents(channelID, resourceID string) {
 	if err != nil {
 		log.Printf("[GoogleWebhook] sync token not found for calendar %s, performing full sync", calendarID)
 	} else {
+		// Игнорируем запросы от старых вебхуков, чтобы избежать дублирования
+		if syncData.ChannelId != "" && syncData.ChannelId != channelID {
+			log.Printf("[GoogleWebhook] Ignoring webhook from old channelID=%s (current channelID=%s)", channelID, syncData.ChannelId)
+			return
+		}
 		syncToken = syncData.SyncToken
 	}
 
