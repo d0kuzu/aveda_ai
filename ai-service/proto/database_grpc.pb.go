@@ -2,9 +2,9 @@
 // versions:
 // - protoc-gen-go-grpc v1.6.2
 // - protoc             v5.28.3
-// source: proto/db/database.proto
+// source: proto/database.proto
 
-package db
+package proto
 
 import (
 	context "context"
@@ -57,7 +57,6 @@ const (
 	DatabaseService_GetChatsForFollowup_FullMethodName           = "/database.DatabaseService/GetChatsForFollowup"
 	DatabaseService_UpdateChatFollowupStage_FullMethodName       = "/database.DatabaseService/UpdateChatFollowupStage"
 	DatabaseService_GetCampusloginByUserId_FullMethodName        = "/database.DatabaseService/GetCampusloginByUserId"
-	DatabaseService_GetCampusloginByPhone_FullMethodName         = "/database.DatabaseService/GetCampusloginByPhone"
 	DatabaseService_UpsertCampuslogin_FullMethodName             = "/database.DatabaseService/UpsertCampuslogin"
 	DatabaseService_SetCampusloginFlags_FullMethodName           = "/database.DatabaseService/SetCampusloginFlags"
 	DatabaseService_DeleteAllChatsAndMessages_FullMethodName     = "/database.DatabaseService/DeleteAllChatsAndMessages"
@@ -117,7 +116,6 @@ type DatabaseServiceClient interface {
 	GetChatsForFollowup(ctx context.Context, in *GetChatsForFollowupRequest, opts ...grpc.CallOption) (*ChatsResponse, error)
 	UpdateChatFollowupStage(ctx context.Context, in *UpdateChatFollowupStageRequest, opts ...grpc.CallOption) (*ChatResponse, error)
 	GetCampusloginByUserId(ctx context.Context, in *CampusloginRequest, opts ...grpc.CallOption) (*CampusloginResponse, error)
-	GetCampusloginByPhone(ctx context.Context, in *CampusloginPhoneRequest, opts ...grpc.CallOption) (*CampusloginResponse, error)
 	UpsertCampuslogin(ctx context.Context, in *UpsertCampusloginRequest, opts ...grpc.CallOption) (*UpsertCampusloginResponse, error)
 	SetCampusloginFlags(ctx context.Context, in *SetCampusloginFlagsRequest, opts ...grpc.CallOption) (*SetCampusloginFlagsResponse, error)
 	DeleteAllChatsAndMessages(ctx context.Context, in *DeleteAllChatsAndMessagesRequest, opts ...grpc.CallOption) (*DeleteAllChatsAndMessagesResponse, error)
@@ -523,16 +521,6 @@ func (c *databaseServiceClient) GetCampusloginByUserId(ctx context.Context, in *
 	return out, nil
 }
 
-func (c *databaseServiceClient) GetCampusloginByPhone(ctx context.Context, in *CampusloginPhoneRequest, opts ...grpc.CallOption) (*CampusloginResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(CampusloginResponse)
-	err := c.cc.Invoke(ctx, DatabaseService_GetCampusloginByPhone_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *databaseServiceClient) UpsertCampuslogin(ctx context.Context, in *UpsertCampusloginRequest, opts ...grpc.CallOption) (*UpsertCampusloginResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(UpsertCampusloginResponse)
@@ -725,7 +713,6 @@ type DatabaseServiceServer interface {
 	GetChatsForFollowup(context.Context, *GetChatsForFollowupRequest) (*ChatsResponse, error)
 	UpdateChatFollowupStage(context.Context, *UpdateChatFollowupStageRequest) (*ChatResponse, error)
 	GetCampusloginByUserId(context.Context, *CampusloginRequest) (*CampusloginResponse, error)
-	GetCampusloginByPhone(context.Context, *CampusloginPhoneRequest) (*CampusloginResponse, error)
 	UpsertCampuslogin(context.Context, *UpsertCampusloginRequest) (*UpsertCampusloginResponse, error)
 	SetCampusloginFlags(context.Context, *SetCampusloginFlagsRequest) (*SetCampusloginFlagsResponse, error)
 	DeleteAllChatsAndMessages(context.Context, *DeleteAllChatsAndMessagesRequest) (*DeleteAllChatsAndMessagesResponse, error)
@@ -864,9 +851,6 @@ func (UnimplementedDatabaseServiceServer) UpdateChatFollowupStage(context.Contex
 }
 func (UnimplementedDatabaseServiceServer) GetCampusloginByUserId(context.Context, *CampusloginRequest) (*CampusloginResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetCampusloginByUserId not implemented")
-}
-func (UnimplementedDatabaseServiceServer) GetCampusloginByPhone(context.Context, *CampusloginPhoneRequest) (*CampusloginResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method GetCampusloginByPhone not implemented")
 }
 func (UnimplementedDatabaseServiceServer) UpsertCampuslogin(context.Context, *UpsertCampusloginRequest) (*UpsertCampusloginResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpsertCampuslogin not implemented")
@@ -1618,24 +1602,6 @@ func _DatabaseService_GetCampusloginByUserId_Handler(srv interface{}, ctx contex
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DatabaseService_GetCampusloginByPhone_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CampusloginPhoneRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(DatabaseServiceServer).GetCampusloginByPhone(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: DatabaseService_GetCampusloginByPhone_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DatabaseServiceServer).GetCampusloginByPhone(ctx, req.(*CampusloginPhoneRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _DatabaseService_UpsertCampuslogin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpsertCampusloginRequest)
 	if err := dec(in); err != nil {
@@ -2066,10 +2032,6 @@ var DatabaseService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _DatabaseService_GetCampusloginByUserId_Handler,
 		},
 		{
-			MethodName: "GetCampusloginByPhone",
-			Handler:    _DatabaseService_GetCampusloginByPhone_Handler,
-		},
-		{
 			MethodName: "UpsertCampuslogin",
 			Handler:    _DatabaseService_UpsertCampuslogin_Handler,
 		},
@@ -2131,5 +2093,5 @@ var DatabaseService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "proto/db/database.proto",
+	Metadata: "proto/database.proto",
 }

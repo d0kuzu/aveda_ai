@@ -1060,9 +1060,19 @@ func (s *DatabaseServer) UpsertGoogleSyncToken(ctx context.Context, req *proto.U
 		ChannelID:  req.ChannelId,
 		ResourceID: req.ResourceId,
 	}
+	if req.ExpiresAt != "" {
+		if t, err := time.Parse(time.RFC3339, req.ExpiresAt); err == nil {
+			sync.ExpiresAt = t
+		}
+	}
 
 	if err := s.googleSyncRepo.Upsert(sync); err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to upsert google sync token: %v", err)
+	}
+
+	expiresAtStr := ""
+	if !sync.ExpiresAt.IsZero() {
+		expiresAtStr = sync.ExpiresAt.Format(time.RFC3339)
 	}
 
 	return &proto.GoogleSyncTokenResponse{
@@ -1071,6 +1081,7 @@ func (s *DatabaseServer) UpsertGoogleSyncToken(ctx context.Context, req *proto.U
 		ChannelId:  sync.ChannelID,
 		ResourceId: sync.ResourceID,
 		UpdatedAt:  sync.UpdatedAt.Format(time.RFC3339),
+		ExpiresAt:  expiresAtStr,
 	}, nil
 }
 
@@ -1080,12 +1091,18 @@ func (s *DatabaseServer) GetGoogleSyncToken(ctx context.Context, req *proto.GetG
 		return nil, status.Errorf(codes.NotFound, "google sync token not found: %v", err)
 	}
 
+	expiresAtStr := ""
+	if !sync.ExpiresAt.IsZero() {
+		expiresAtStr = sync.ExpiresAt.Format(time.RFC3339)
+	}
+
 	return &proto.GoogleSyncTokenResponse{
 		CalendarId: sync.CalendarID,
 		SyncToken:  sync.SyncToken,
 		ChannelId:  sync.ChannelID,
 		ResourceId: sync.ResourceID,
 		UpdatedAt:  sync.UpdatedAt.Format(time.RFC3339),
+		ExpiresAt:  expiresAtStr,
 	}, nil
 }
 

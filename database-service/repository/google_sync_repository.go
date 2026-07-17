@@ -22,7 +22,7 @@ func NewGoogleSyncRepository(db *gorm.DB) GoogleSyncRepository {
 func (r *googleSyncRepository) Upsert(sync *models.GoogleSync) error {
 	return r.db.Clauses(clause.OnConflict{
 		Columns:   []clause.Column{{Name: "calendar_id"}},
-		DoUpdates: clause.AssignmentColumns([]string{"sync_token", "channel_id", "resource_id", "updated_at"}),
+		DoUpdates: clause.AssignmentColumns([]string{"sync_token", "channel_id", "resource_id", "expires_at", "updated_at"}),
 	}).Create(sync).Error
 }
 

@@ -170,3 +170,35 @@ func (c *Client) ListEvents(calendarID, syncToken string) ([]*calendar.Event, st
 
 	return allEvents, nextSyncToken, nil
 }
+
+// WatchEvents создает webhook подписку на изменения календаря
+func (c *Client) WatchEvents(calendarID, channelID, address string, expiration time.Time) (*calendar.Channel, error) {
+	if calendarID == "" {
+		calendarID = "primary"
+	}
+
+	channel := &calendar.Channel{
+		Id:      channelID,
+		Type:    "web_hook",
+		Address: address,
+	}
+
+	if !expiration.IsZero() {
+		channel.Expiration = expiration.UnixMilli()
+	}
+
+	return c.srv.Events.Watch(calendarID, channel).Do()
+}
+
+// StopWatch останавливает существующую webhook подписку
+func (c *Client) StopWatch(channelID, resourceID string) error {
+	if channelID == "" || resourceID == "" {
+		return fmt.Errorf("channelID и resourceID обязательны")
+	}
+
+	channel := &calendar.Channel{
+		Id:         channelID,
+		ResourceId: resourceID,
+	}
+	return c.srv.Channels.Stop(channel).Do()
+}

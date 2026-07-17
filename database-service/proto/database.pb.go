@@ -4379,6 +4379,7 @@ type UpsertGoogleSyncTokenRequest struct {
 	SyncToken     string                 `protobuf:"bytes,2,opt,name=sync_token,json=syncToken,proto3" json:"sync_token,omitempty"`
 	ChannelId     string                 `protobuf:"bytes,3,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`
 	ResourceId    string                 `protobuf:"bytes,4,opt,name=resource_id,json=resourceId,proto3" json:"resource_id,omitempty"`
+	ExpiresAt     string                 `protobuf:"bytes,5,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -4441,6 +4442,13 @@ func (x *UpsertGoogleSyncTokenRequest) GetResourceId() string {
 	return ""
 }
 
+func (x *UpsertGoogleSyncTokenRequest) GetExpiresAt() string {
+	if x != nil {
+		return x.ExpiresAt
+	}
+	return ""
+}
+
 type GetGoogleSyncTokenRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	CalendarId    string                 `protobuf:"bytes,1,opt,name=calendar_id,json=calendarId,proto3" json:"calendar_id,omitempty"`
@@ -4492,6 +4500,7 @@ type GoogleSyncTokenResponse struct {
 	ChannelId     string                 `protobuf:"bytes,3,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`
 	ResourceId    string                 `protobuf:"bytes,4,opt,name=resource_id,json=resourceId,proto3" json:"resource_id,omitempty"`
 	UpdatedAt     string                 `protobuf:"bytes,5,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	ExpiresAt     string                 `protobuf:"bytes,6,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -4557,6 +4566,13 @@ func (x *GoogleSyncTokenResponse) GetResourceId() string {
 func (x *GoogleSyncTokenResponse) GetUpdatedAt() string {
 	if x != nil {
 		return x.UpdatedAt
+	}
+	return ""
+}
+
+func (x *GoogleSyncTokenResponse) GetExpiresAt() string {
+	if x != nil {
+		return x.ExpiresAt
 	}
 	return ""
 }
@@ -5139,7 +5155,7 @@ const file_proto_database_proto_rawDesc = "" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\":\n" +
 	"\x19IsCustomerBlockedResponse\x12\x1d\n" +
 	"\n" +
-	"is_blocked\x18\x01 \x01(\bR\tisBlocked\"\x9e\x01\n" +
+	"is_blocked\x18\x01 \x01(\bR\tisBlocked\"\xbd\x01\n" +
 	"\x1cUpsertGoogleSyncTokenRequest\x12\x1f\n" +
 	"\vcalendar_id\x18\x01 \x01(\tR\n" +
 	"calendarId\x12\x1d\n" +
@@ -5148,10 +5164,12 @@ const file_proto_database_proto_rawDesc = "" +
 	"\n" +
 	"channel_id\x18\x03 \x01(\tR\tchannelId\x12\x1f\n" +
 	"\vresource_id\x18\x04 \x01(\tR\n" +
-	"resourceId\"<\n" +
+	"resourceId\x12\x1d\n" +
+	"\n" +
+	"expires_at\x18\x05 \x01(\tR\texpiresAt\"<\n" +
 	"\x19GetGoogleSyncTokenRequest\x12\x1f\n" +
 	"\vcalendar_id\x18\x01 \x01(\tR\n" +
-	"calendarId\"\xb8\x01\n" +
+	"calendarId\"\xd7\x01\n" +
 	"\x17GoogleSyncTokenResponse\x12\x1f\n" +
 	"\vcalendar_id\x18\x01 \x01(\tR\n" +
 	"calendarId\x12\x1d\n" +
@@ -5162,7 +5180,9 @@ const file_proto_database_proto_rawDesc = "" +
 	"\vresource_id\x18\x04 \x01(\tR\n" +
 	"resourceId\x12\x1d\n" +
 	"\n" +
-	"updated_at\x18\x05 \x01(\tR\tupdatedAt\"\x90\x02\n" +
+	"updated_at\x18\x05 \x01(\tR\tupdatedAt\x12\x1d\n" +
+	"\n" +
+	"expires_at\x18\x06 \x01(\tR\texpiresAt\"\x90\x02\n" +
 	"\x18CreateAppointmentRequest\x12&\n" +
 	"\x0fgoogle_event_id\x18\x01 \x01(\tR\rgoogleEventId\x12\x14\n" +
 	"\x05title\x18\x02 \x01(\tR\x05title\x12\x1d\n" +

@@ -490,6 +490,7 @@ message UpsertGoogleSyncTokenRequest {
   string sync_token = 2;
   string channel_id = 3;
   string resource_id = 4;
+  string expires_at = 5;
 }
 
 message GetGoogleSyncTokenRequest {
@@ -502,6 +503,7 @@ message GoogleSyncTokenResponse {
   string channel_id = 3;
   string resource_id = 4;
   string updated_at = 5;
+  string expires_at = 6;
 }
 
 message CreateAppointmentRequest {

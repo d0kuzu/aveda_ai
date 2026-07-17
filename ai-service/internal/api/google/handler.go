@@ -71,7 +71,11 @@ func (h *GoogleHandler) processEvents(channelID, resourceID string) {
 
 	// Сохраняем новый sync_token
 	if nextSyncToken != "" {
-		_, err := h.db.UpsertGoogleSyncToken(calendarID, nextSyncToken, channelID, resourceID)
+		expiresAt := ""
+		if syncData != nil {
+			expiresAt = syncData.ExpiresAt
+		}
+		_, err := h.db.UpsertGoogleSyncToken(calendarID, nextSyncToken, channelID, resourceID, expiresAt)
 		if err != nil {
 			log.Printf("[GoogleWebhook] error saving sync token: %v", err)
 		}

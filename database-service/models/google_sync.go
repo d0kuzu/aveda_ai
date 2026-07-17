@@ -8,6 +8,7 @@ type GoogleSync struct {
 	SyncToken  string    `json:"sync_token" gorm:"type:text"`
 	ChannelID  string    `json:"channel_id" gorm:"type:varchar(255)"`
 	ResourceID string    `json:"resource_id" gorm:"type:varchar(255)"`
+	ExpiresAt  time.Time `json:"expires_at"`
 	UpdatedAt  time.Time `json:"updated_at"`
 }
 
