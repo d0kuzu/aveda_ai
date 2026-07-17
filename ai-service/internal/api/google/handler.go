@@ -172,12 +172,30 @@ func (h *GoogleHandler) processEvents(channelID, resourceID string) {
 			}
 		}
 
+		// Формируем время в RFC3339 для базы данных
+		startTimeDB := ""
+		endTimeDB := ""
+		if event.Start != nil {
+			if event.Start.DateTime != "" {
+				startTimeDB = event.Start.DateTime
+			} else if event.Start.Date != "" {
+				startTimeDB = event.Start.Date + "T00:00:00Z"
+			}
+		}
+		if event.End != nil {
+			if event.End.DateTime != "" {
+				endTimeDB = event.End.DateTime
+			} else if event.End.Date != "" {
+				endTimeDB = event.End.Date + "T00:00:00Z"
+			}
+		}
+
 		// Сохраняем новую запись в БД
 		_, err = h.db.CreateAppointment(
 			event.Id,
 			event.Summary,
-			startTime,
-			endTime,
+			startTimeDB,
+			endTimeDB,
 			event.Status,
 			event.Description,
 			calendarID,
