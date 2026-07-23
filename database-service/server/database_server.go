@@ -52,6 +52,22 @@ func (s *DatabaseServer) IsCustomerBlocked(ctx context.Context, req *proto.IsCus
 	return &proto.IsCustomerBlockedResponse{IsBlocked: isBlocked}, nil
 }
 
+func (s *DatabaseServer) BlockCustomer(ctx context.Context, req *proto.BlockCustomerRequest) (*proto.BlockCustomerResponse, error) {
+	err := s.blockedCustomerRepo.Block(ctx, req.UserId)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to block customer: %v", err)
+	}
+	return &proto.BlockCustomerResponse{Success: true}, nil
+}
+
+func (s *DatabaseServer) GetAllBlockedCustomers(ctx context.Context, req *proto.GetAllBlockedCustomersRequest) (*proto.GetAllBlockedCustomersResponse, error) {
+	userIDs, err := s.blockedCustomerRepo.GetAll(ctx)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to get all blocked customers: %v", err)
+	}
+	return &proto.GetAllBlockedCustomersResponse{UserIds: userIDs}, nil
+}
+
 func (s *DatabaseServer) CreateAssistant(ctx context.Context, req *proto.CreateAssistantRequest) (*proto.AssistantResponse, error) {
 	assistant, err := s.assistantRepo.CreateAssistant(ctx, req.Name, req.ApiToken, req.UserId, req.TelegramBotToken, req.Type)
 	if err != nil {

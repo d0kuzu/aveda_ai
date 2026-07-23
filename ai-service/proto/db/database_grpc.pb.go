@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.6.2
 // - protoc             v5.28.3
-// source: proto/db/database.proto
+// source: database.proto
 
 package db
 
@@ -73,6 +73,8 @@ const (
 	DatabaseService_GetGoogleSyncToken_FullMethodName            = "/database.DatabaseService/GetGoogleSyncToken"
 	DatabaseService_CreateAppointment_FullMethodName             = "/database.DatabaseService/CreateAppointment"
 	DatabaseService_GetAppointmentByGoogleEventID_FullMethodName = "/database.DatabaseService/GetAppointmentByGoogleEventID"
+	DatabaseService_BlockCustomer_FullMethodName                 = "/database.DatabaseService/BlockCustomer"
+	DatabaseService_GetAllBlockedCustomers_FullMethodName        = "/database.DatabaseService/GetAllBlockedCustomers"
 )
 
 // DatabaseServiceClient is the client API for DatabaseService service.
@@ -133,6 +135,8 @@ type DatabaseServiceClient interface {
 	GetGoogleSyncToken(ctx context.Context, in *GetGoogleSyncTokenRequest, opts ...grpc.CallOption) (*GoogleSyncTokenResponse, error)
 	CreateAppointment(ctx context.Context, in *CreateAppointmentRequest, opts ...grpc.CallOption) (*AppointmentResponse, error)
 	GetAppointmentByGoogleEventID(ctx context.Context, in *GetAppointmentByGoogleEventIDRequest, opts ...grpc.CallOption) (*AppointmentResponse, error)
+	BlockCustomer(ctx context.Context, in *BlockCustomerRequest, opts ...grpc.CallOption) (*BlockCustomerResponse, error)
+	GetAllBlockedCustomers(ctx context.Context, in *GetAllBlockedCustomersRequest, opts ...grpc.CallOption) (*GetAllBlockedCustomersResponse, error)
 }
 
 type databaseServiceClient struct {
@@ -683,6 +687,26 @@ func (c *databaseServiceClient) GetAppointmentByGoogleEventID(ctx context.Contex
 	return out, nil
 }
 
+func (c *databaseServiceClient) BlockCustomer(ctx context.Context, in *BlockCustomerRequest, opts ...grpc.CallOption) (*BlockCustomerResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(BlockCustomerResponse)
+	err := c.cc.Invoke(ctx, DatabaseService_BlockCustomer_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *databaseServiceClient) GetAllBlockedCustomers(ctx context.Context, in *GetAllBlockedCustomersRequest, opts ...grpc.CallOption) (*GetAllBlockedCustomersResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetAllBlockedCustomersResponse)
+	err := c.cc.Invoke(ctx, DatabaseService_GetAllBlockedCustomers_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // DatabaseServiceServer is the server API for DatabaseService service.
 // All implementations must embed UnimplementedDatabaseServiceServer
 // for forward compatibility.
@@ -741,6 +765,8 @@ type DatabaseServiceServer interface {
 	GetGoogleSyncToken(context.Context, *GetGoogleSyncTokenRequest) (*GoogleSyncTokenResponse, error)
 	CreateAppointment(context.Context, *CreateAppointmentRequest) (*AppointmentResponse, error)
 	GetAppointmentByGoogleEventID(context.Context, *GetAppointmentByGoogleEventIDRequest) (*AppointmentResponse, error)
+	BlockCustomer(context.Context, *BlockCustomerRequest) (*BlockCustomerResponse, error)
+	GetAllBlockedCustomers(context.Context, *GetAllBlockedCustomersRequest) (*GetAllBlockedCustomersResponse, error)
 	mustEmbedUnimplementedDatabaseServiceServer()
 }
 
@@ -912,6 +938,12 @@ func (UnimplementedDatabaseServiceServer) CreateAppointment(context.Context, *Cr
 }
 func (UnimplementedDatabaseServiceServer) GetAppointmentByGoogleEventID(context.Context, *GetAppointmentByGoogleEventIDRequest) (*AppointmentResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetAppointmentByGoogleEventID not implemented")
+}
+func (UnimplementedDatabaseServiceServer) BlockCustomer(context.Context, *BlockCustomerRequest) (*BlockCustomerResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method BlockCustomer not implemented")
+}
+func (UnimplementedDatabaseServiceServer) GetAllBlockedCustomers(context.Context, *GetAllBlockedCustomersRequest) (*GetAllBlockedCustomersResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetAllBlockedCustomers not implemented")
 }
 func (UnimplementedDatabaseServiceServer) mustEmbedUnimplementedDatabaseServiceServer() {}
 func (UnimplementedDatabaseServiceServer) testEmbeddedByValue()                         {}
@@ -1906,6 +1938,42 @@ func _DatabaseService_GetAppointmentByGoogleEventID_Handler(srv interface{}, ctx
 	return interceptor(ctx, in, info, handler)
 }
 
+func _DatabaseService_BlockCustomer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BlockCustomerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DatabaseServiceServer).BlockCustomer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DatabaseService_BlockCustomer_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DatabaseServiceServer).BlockCustomer(ctx, req.(*BlockCustomerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DatabaseService_GetAllBlockedCustomers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAllBlockedCustomersRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DatabaseServiceServer).GetAllBlockedCustomers(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DatabaseService_GetAllBlockedCustomers_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DatabaseServiceServer).GetAllBlockedCustomers(ctx, req.(*GetAllBlockedCustomersRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // DatabaseService_ServiceDesc is the grpc.ServiceDesc for DatabaseService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -2129,7 +2197,15 @@ var DatabaseService_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "GetAppointmentByGoogleEventID",
 			Handler:    _DatabaseService_GetAppointmentByGoogleEventID_Handler,
 		},
+		{
+			MethodName: "BlockCustomer",
+			Handler:    _DatabaseService_BlockCustomer_Handler,
+		},
+		{
+			MethodName: "GetAllBlockedCustomers",
+			Handler:    _DatabaseService_GetAllBlockedCustomers_Handler,
+		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "proto/db/database.proto",
+	Metadata: "database.proto",
 }

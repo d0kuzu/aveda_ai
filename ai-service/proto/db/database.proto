@@ -59,6 +59,8 @@ service DatabaseService {
   rpc GetGoogleSyncToken(GetGoogleSyncTokenRequest) returns (GoogleSyncTokenResponse);
   rpc CreateAppointment(CreateAppointmentRequest) returns (AppointmentResponse);
   rpc GetAppointmentByGoogleEventID(GetAppointmentByGoogleEventIDRequest) returns (AppointmentResponse);
+  rpc BlockCustomer(BlockCustomerRequest) returns (BlockCustomerResponse);
+  rpc GetAllBlockedCustomers(GetAllBlockedCustomersRequest) returns (GetAllBlockedCustomersResponse);
 }
 
 message DeleteAllChatsAndMessagesRequest {}
@@ -534,3 +536,16 @@ message GetAppointmentByGoogleEventIDRequest {
   string google_event_id = 1;
 }
 
+message BlockCustomerRequest {
+  string user_id = 1;
+}
+
+message BlockCustomerResponse {
+  bool success = 1;
+}
+
+message GetAllBlockedCustomersRequest {}
+
+message GetAllBlockedCustomersResponse {
+  repeated string user_ids = 1;
+}
