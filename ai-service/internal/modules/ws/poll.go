@@ -10,19 +10,17 @@ func (c *Client) PollLocalDB(chatID string) {
 	var lastMessageCount int
 
 	for {
-		messages, err := c.Db.GetAllChatMessages(chatID)
+		messages, err := c.Db.GetChatMessages(chatID, 50, int32(lastMessageCount))
 		if err != nil {
 			log.Println("DB fetch error:", err)
 			time.Sleep(5 * time.Second)
 			continue
 		}
 
-		currentMessageCount := len(messages)
+		newCount := len(messages)
 
-		if currentMessageCount > lastMessageCount {
-			for i := lastMessageCount; i < currentMessageCount; i++ {
-				msg := messages[i]
-
+		if newCount > 0 {
+			for _, msg := range messages {
 				var author string
 				switch msg.Role {
 				case "user":
@@ -46,7 +44,7 @@ func (c *Client) PollLocalDB(chatID string) {
 
 				c.Broadcast(chatID, data)
 			}
-			lastMessageCount = currentMessageCount
+			lastMessageCount += newCount
 		}
 
 		time.Sleep(500 * time.Millisecond)

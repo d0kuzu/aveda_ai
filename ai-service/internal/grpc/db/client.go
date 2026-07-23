@@ -188,6 +188,7 @@ func (c *Client) GetAllChatMessages(chatID string) ([]*dbpb.MessageResponse, err
 	return resp.Messages, nil
 }
 
+
 func (c *Client) GetLatestChatByCustomer(assistantID, customerID string) (*dbpb.ChatResponse, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
