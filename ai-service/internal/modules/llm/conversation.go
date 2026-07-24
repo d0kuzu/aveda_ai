@@ -53,8 +53,19 @@ func (c *Client) Conversation(ctx context.Context, userId, assistantId, userMess
 		return "", err
 	}
 
+	var fullResponseBuilder strings.Builder
+	brokeEarly := false
+
 	for len(response.Choices) > 0 && len(response.Choices[0].Message.ToolCalls) > 0 {
 		assistantMsg := response.Choices[0].Message
+		
+		if strings.TrimSpace(assistantMsg.Content) != "" {
+			if fullResponseBuilder.Len() > 0 {
+				fullResponseBuilder.WriteString("\n\n")
+			}
+			fullResponseBuilder.WriteString(strings.TrimSpace(assistantMsg.Content))
+		}
+
 		if assistantMsg.Content == "" && len(assistantMsg.ToolCalls) > 0 {
 			assistantMsg.Content = " "
 		}
@@ -86,6 +97,7 @@ func (c *Client) Conversation(ctx context.Context, userId, assistantId, userMess
 		}
 
 		if shouldCloseConversation {
+			brokeEarly = true
 			break
 		}
 
@@ -95,11 +107,22 @@ func (c *Client) Conversation(ctx context.Context, userId, assistantId, userMess
 		}
 	}
 
-	assistantResponse := response.Choices[0].Message.Content
-	if assistantResponse != "" {
-		log.Printf("Ответ пользователю %s от ИИ: %s\n", userId, assistantResponse)
-		c.AddMessage(&messages, "assistant", assistantResponse)
+	if !brokeEarly {
+		assistantResponse := response.Choices[0].Message.Content
+		if assistantResponse != "" {
+			log.Printf("Ответ пользователю %s от ИИ: %s\n", userId, assistantResponse)
+			c.AddMessage(&messages, "assistant", assistantResponse)
+			
+			if strings.TrimSpace(assistantResponse) != "" {
+				if fullResponseBuilder.Len() > 0 {
+					fullResponseBuilder.WriteString("\n\n")
+				}
+				fullResponseBuilder.WriteString(strings.TrimSpace(assistantResponse))
+			}
+		}
 	}
+
+	finalResponseText := fullResponseBuilder.String()
 
 	err = c.SaveMessages(assistantId, userId, messages)
 	if err != nil {
@@ -107,7 +130,7 @@ func (c *Client) Conversation(ctx context.Context, userId, assistantId, userMess
 	}
 
 	log.Println("Конец запроса")
-	return assistantResponse, nil
+	return finalResponseText, nil
 }
 
 func (c *Client) executeFunction(ctx context.Context, functionName, argsJSON, userId, assistantId string) (string, error) {
