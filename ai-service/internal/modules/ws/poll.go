@@ -3,6 +3,7 @@ package ws
 import (
 	"encoding/json"
 	"log"
+	"strings"
 	"time"
 )
 
@@ -31,9 +32,26 @@ func (c *Client) PollLocalDB(chatID string) {
 					continue
 				}
 
+				body := msg.Content
+
+				// Если это JSON ответа с вызовом функции (assistant с tool_calls)
+				if author == "bot" && strings.HasPrefix(body, "{") && strings.Contains(body, "\"tool_calls\"") {
+					var extMsg struct {
+						Content string `json:"content"`
+					}
+					if err := json.Unmarshal([]byte(body), &extMsg); err == nil {
+						body = extMsg.Content
+					}
+				}
+
+				body = strings.TrimSpace(body)
+				if body == "" {
+					continue
+				}
+
 				wsMsg := Message{
 					Author: author,
-					Body:   msg.Content,
+					Body:   body,
 				}
 
 				data, err := json.Marshal(wsMsg)
