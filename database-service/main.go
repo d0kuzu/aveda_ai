@@ -114,7 +114,25 @@ func runMigrations(db *gorm.DB) error {
 		return fmt.Errorf("failed to create schema_migrations table: %w", err)
 	}
 
-	// 2. Read and run SQL migrations
+	// 2. Run GORM AutoMigrate for model creation/synchronization
+	err = db.AutoMigrate(
+		&models.User{},
+		&models.RefreshToken{},
+		&models.Analytics{},
+		&models.Assistant{},
+		&models.Chat{},
+		&models.Message{},
+		&models.TwilioConfig{},
+		&models.Campuslogin{},
+		&models.BlockedCustomer{},
+		&models.GoogleSync{},
+		&models.Appointment{},
+	)
+	if err != nil {
+		return fmt.Errorf("failed to run AutoMigrate: %w", err)
+	}
+
+	// 3. Read and run SQL migrations
 	migrationFiles, err := os.ReadDir("./migrations")
 	if err != nil {
 		// Log error but continue (might be missing in development)
@@ -145,26 +163,6 @@ func runMigrations(db *gorm.DB) error {
 				}
 			}
 		}
-	}
-
-	// 3. Run GORM AutoMigrate for model synchronization
-	// Note: AutoMigrate will not drop columns!
-	err = db.AutoMigrate(
-		&models.User{},
-		&models.RefreshToken{},
-		&models.Analytics{},
-		&models.Assistant{},
-		&models.Chat{},
-		&models.Message{},
-		&models.TwilioConfig{},
-		&models.Campuslogin{},
-		&models.BlockedCustomer{},
-		&models.GoogleSync{},
-		&models.Appointment{},
-	)
-
-	if err != nil {
-		return fmt.Errorf("failed to run AutoMigrate: %w", err)
 	}
 
 	log.Println("Database migrations completed successfully")
