@@ -11,7 +11,6 @@ import (
 	"diaxel/internal/cleanup"
 	"diaxel/internal/config"
 	"diaxel/internal/grpc/db"
-	"diaxel/internal/modules/calcom"
 	"diaxel/internal/modules/campuslogin"
 	"diaxel/internal/modules/followup"
 	"diaxel/internal/modules/googlecalendar"
@@ -32,7 +31,6 @@ func main() {
 		return
 	}
 
-	calcomClient := calcom.New(settings.CalApiKey, settings.CalEventTypeID)
 	campusloginClient := campuslogin.NewClient(settings.CampusLoginAPI)
 
 	gcClient, err := googlecalendar.NewClient("credentials.json", "token.json")
@@ -40,7 +38,7 @@ func main() {
 		log.Fatalf("Failed to initialize Google Calendar client: %v", err)
 	}
 
-	llmClient := llm.InitClient(settings.OpenaiApiKey, grpcClient, calcomClient, campusloginClient, gcClient)
+	llmClient := llm.InitClient(settings.OpenaiApiKey, grpcClient, campusloginClient, gcClient)
 
 	twilioClient := twilio.InitClient()
 

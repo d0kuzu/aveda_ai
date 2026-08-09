@@ -14,10 +14,7 @@ type Config struct {
 	AuthServiceURL string
 	AIServiceURL   string
 
-	TelegramWebhook string
-
-	AccessSecret          string
-	TelegramServiceSecret string
+	AccessSecret string
 }
 
 func LoadConfig() (*Config, error) {
@@ -36,9 +33,6 @@ func LoadConfig() (*Config, error) {
 		AuthServiceURL: os.Getenv("AUTH_SERVICE_URL"),
 		AIServiceURL:   os.Getenv("AI_SERVICE_URL"),
 
-		TelegramWebhook: os.Getenv("TELEGRAM_WEBHOOK"),
-
-		AccessSecret:          os.Getenv("ACCESS_SECRET"),
-		TelegramServiceSecret: os.Getenv("TELEGRAM_SERVICE_SECRET"),
+		AccessSecret: os.Getenv("ACCESS_SECRET"),
 	}, nil
 }

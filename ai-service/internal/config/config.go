@@ -11,13 +11,6 @@ type Settings struct {
 	HTTPPort    string
 	GRPCAddress string
 
-	DbHost     string
-	DbUser     string
-	DbPassword string
-	DbName     string
-	DbPort     string
-	Ssl        string
-
 	OpenaiApiKey string
 
 	TwilioAccountSID string
@@ -29,9 +22,6 @@ type Settings struct {
 
 	TokenPrefix string
 	TokenLength int
-
-	CalApiKey      string
-	CalEventTypeID int
 
 	CampusLoginAPI string
 }
@@ -53,13 +43,6 @@ func LoadConfig() (*Settings, error) {
 		HTTPPort:    httpPort,
 		GRPCAddress: grpcAddress,
 
-		DbHost:     os.Getenv("DB_HOST"),
-		DbUser:     os.Getenv("DB_USER"),
-		DbPassword: os.Getenv("DB_PASSWORD"),
-		DbName:     os.Getenv("DB_NAME"),
-		DbPort:     os.Getenv("DB_PORT"),
-		Ssl:        os.Getenv("DB_SSL"),
-
 		OpenaiApiKey: os.Getenv("OPENAI_API_KEY"),
 
 		TwilioAccountSID: os.Getenv("TWILIO_ACCOUNT_SID"),
@@ -71,9 +54,6 @@ func LoadConfig() (*Settings, error) {
 
 		TokenPrefix: os.Getenv("TOKEN_PREFIX"),
 		TokenLength: getEnvAsInt("TOKEN_LENGTH", 32),
-
-		CalApiKey:      os.Getenv("CAL_API_KEY"),
-		CalEventTypeID: getEnvAsInt("CAL_EVENT_TYPE_ID", 0),
 
 		CampusLoginAPI: os.Getenv("CAMPUSLOGIN_API"),
 	}, nil
