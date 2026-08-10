@@ -14,7 +14,7 @@ import (
 )
 
 type ChatRepository interface {
-	CreateChat(ctx context.Context, assistantID, customerID, platform string) (*models.Chat, error)
+	CreateChat(ctx context.Context, assistantID, customerID, platform string, startedAt string) (*models.Chat, error)
 	GetChatByID(ctx context.Context, id string) (*models.Chat, error)
 	GetChatsByCustomerID(ctx context.Context, customerID string) ([]*models.Chat, error)
 	GetChatsByUserID(ctx context.Context, assistantIDs []string, limit, offset int32) ([]*models.Chat, error)
@@ -46,12 +46,23 @@ func NewChatRepository(db *gorm.DB) ChatRepository {
 	return &chatRepository{db: db}
 }
 
-func (r *chatRepository) CreateChat(ctx context.Context, assistantID, customerID, platform string) (*models.Chat, error) {
+func (r *chatRepository) CreateChat(ctx context.Context, assistantID, customerID, platform string, startedAt string) (*models.Chat, error) {
+	parsedTime := time.Now()
+	if startedAt != "" {
+		if t, err := time.Parse(time.RFC3339, startedAt); err == nil {
+			parsedTime = t
+		} else {
+			log.Printf("Failed to parse started_at '%s', falling back to time.Now(): %v", startedAt, err)
+		}
+	}
+
 	chat := models.Chat{
 		ID:          uuid.New().String(),
 		AssistantID: assistantID,
 		CustomerID:  &customerID,
-		StartedAt:   time.Now(),
+		StartedAt:   parsedTime,
+		CreatedAt:   parsedTime,
+		UpdatedAt:   parsedTime,
 	}
 
 	if err := r.db.WithContext(ctx).Create(&chat).Error; err != nil {

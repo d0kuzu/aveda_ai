@@ -271,7 +271,7 @@ func (s *DatabaseServer) CreateChat(ctx context.Context, req *proto.CreateChatRe
 		return nil, status.Errorf(codes.NotFound, "assistant not found: %v", err)
 	}
 
-	chat, err := s.chatRepo.CreateChat(ctx, req.AssistantId, req.CustomerId, req.Platform)
+	chat, err := s.chatRepo.CreateChat(ctx, req.AssistantId, req.CustomerId, req.Platform, req.StartedAt)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to create chat: %v", err)
 	}
@@ -378,7 +378,7 @@ func (s *DatabaseServer) DeleteChat(ctx context.Context, req *proto.DeleteChatRe
 }
 
 func (s *DatabaseServer) SaveMessage(ctx context.Context, req *proto.SaveMessageRequest) (*proto.MessageResponse, error) {
-	message, err := s.messageRepo.SaveMessage(ctx, req.GetChatId(), req.GetRole(), req.GetContent(), req.GetPlatform())
+	message, err := s.messageRepo.SaveMessage(ctx, req.GetChatId(), req.GetRole(), req.GetContent(), req.GetPlatform(), req.GetTime())
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to save message: %v", err)
 	}

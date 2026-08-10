@@ -133,6 +133,63 @@ func (c *Client) Conversation(ctx context.Context, userId, assistantId, userMess
 	return finalResponseText, nil
 }
 
+// AnalyzeTranscript sends a transcript to the LLM purely to trigger tool calls
+// (mark_grade_11_or_lower, mark_international_student, close_conversation, send_summary).
+// It does NOT load or save messages from/to the DB — it is a standalone, fire-and-forget call.
+func (c *Client) AnalyzeTranscript(ctx context.Context, userId, assistantId, transcript string) error {
+	systemPrompt := `You are an analysis bot. You will receive a chat transcript between the AI assistant "Ally from Aveda" and a user.
+Your ONLY job is to call the appropriate tools based on what happened in the conversation:
+- If the user mentioned they are in Grade 11 or lower, call mark_grade_11_or_lower.
+- If the user confirmed they are an international student or on a visa, call mark_international_student.
+- If the conversation was concluded or ended naturally, call close_conversation.
+Do NOT output any text messages. ONLY call tools if needed.
+If none of the tools apply, do nothing.`
+
+	messages := []openai.ChatCompletionMessage{
+		{Role: openai.ChatMessageRoleSystem, Content: systemPrompt},
+		{Role: openai.ChatMessageRoleUser, Content: transcript},
+	}
+
+	response, err := c.GetAnswer(ctx, messages)
+	if err != nil {
+		return fmt.Errorf("LLM analyze error: %w", err)
+	}
+
+	// Process tool calls in a loop
+	for len(response.Choices) > 0 && len(response.Choices[0].Message.ToolCalls) > 0 {
+		assistantMsg := response.Choices[0].Message
+		if assistantMsg.Content == "" && len(assistantMsg.ToolCalls) > 0 {
+			assistantMsg.Content = " "
+		}
+		messages = append(messages, assistantMsg)
+
+		for _, toolCall := range assistantMsg.ToolCalls {
+			log.Printf("[AnalyzeTranscript] Tool called: %s, args: %s", toolCall.Function.Name, toolCall.Function.Arguments)
+
+			result, execErr := c.executeFunction(ctx, toolCall.Function.Name, toolCall.Function.Arguments, userId, assistantId)
+			if execErr != nil {
+				log.Printf("[AnalyzeTranscript] Tool exec error for %s: %v", toolCall.Function.Name, execErr)
+				result = fmt.Sprintf("Error: %s", execErr.Error())
+			} else {
+				log.Printf("[AnalyzeTranscript] Tool result for %s: %s", toolCall.Function.Name, result)
+			}
+
+			messages = append(messages, openai.ChatCompletionMessage{
+				Role:       openai.ChatMessageRoleTool,
+				Content:    result,
+				ToolCallID: toolCall.ID,
+			})
+		}
+
+		response, err = c.GetAnswer(ctx, messages)
+		if err != nil {
+			return fmt.Errorf("LLM analyze follow-up error: %w", err)
+		}
+	}
+
+	return nil
+}
+
 func (c *Client) executeFunction(ctx context.Context, functionName, argsJSON, userId, assistantId string) (string, error) {
 	switch functionName {
 	case "get_available_slots":

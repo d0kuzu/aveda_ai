@@ -10,5 +10,6 @@ func TwilioWebhookRoutes(router *gin.Engine, app *appModule.App) {
 	productGroup := router.Group("twilio")
 	{
 		productGroup.POST("/webhook/:assistant_id", twilioWebhookHandler.HandleWebhook)
+		productGroup.POST("/recover/:assistant_id", twilioWebhookHandler.HandleRecovery)
 	}
 }

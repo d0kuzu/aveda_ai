@@ -11,7 +11,7 @@ import (
 )
 
 type MessageRepository interface {
-	SaveMessage(ctx context.Context, chatID, role, content, platform string) (*models.Message, error)
+	SaveMessage(ctx context.Context, chatID, role, content, platform string, msgTime string) (*models.Message, error)
 	GetMessageByID(ctx context.Context, id uint) (*models.Message, error)
 	GetMessagesByChatID(ctx context.Context, chatID string, limit, offset int32) ([]*models.Message, error)
 	GetMessagePagesCount(ctx context.Context, chatID string, messagesPerPage int32) (int32, error)
@@ -30,12 +30,23 @@ func NewMessageRepository(db *gorm.DB) MessageRepository {
 	return &messageRepository{db: db}
 }
 
-func (r *messageRepository) SaveMessage(ctx context.Context, chatID, role, content, platform string) (*models.Message, error) {
+func (r *messageRepository) SaveMessage(ctx context.Context, chatID, role, content, platform string, msgTime string) (*models.Message, error) {
+	parsedTime := time.Now().UTC()
+	if msgTime != "" {
+		if t, err := time.Parse(time.RFC3339, msgTime); err == nil {
+			parsedTime = t
+		} else {
+			// For debug, but no need to log every fail
+		}
+	}
+
 	message := models.Message{
-		ChatID:  chatID,
-		Role:    role,
-		Content: content,
-		Time:    time.Now().UTC(),
+		ChatID:    chatID,
+		Role:      role,
+		Content:   content,
+		Time:      parsedTime,
+		CreatedAt: parsedTime,
+		UpdatedAt: parsedTime,
 	}
 
 	if err := r.db.WithContext(ctx).Create(&message).Error; err != nil {

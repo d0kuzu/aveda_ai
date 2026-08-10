@@ -141,6 +141,7 @@ message CreateChatRequest {
   string assistant_id = 1;
   string customer_id = 2;
   string platform = 3;
+  string started_at = 4;
 }
 
 message ChatResponse {
@@ -162,6 +163,7 @@ message SaveMessageRequest {
   string role = 2;
   string content = 3;
   string platform = 4;
+  string time = 5;
 }
 
 message MessageResponse {

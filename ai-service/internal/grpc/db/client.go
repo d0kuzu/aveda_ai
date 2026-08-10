@@ -143,6 +143,20 @@ func (c *Client) CreateChat(assistantID, customerID, platform string) (*dbpb.Cha
 	return c.DB.CreateChat(ctx, req)
 }
 
+func (c *Client) CreateChatWithTime(assistantID, customerID, platform string, startedAt string) (*dbpb.ChatResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	req := &dbpb.CreateChatRequest{
+		AssistantId: assistantID,
+		CustomerId:  customerID,
+		Platform:    platform,
+		StartedAt:   startedAt,
+	}
+
+	return c.DB.CreateChat(ctx, req)
+}
+
 func (c *Client) GetChat(chatID string) (*dbpb.ChatResponse, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -163,6 +177,21 @@ func (c *Client) SaveMessage(chatID, role, content, platform string) (*dbpb.Mess
 		Role:     role,
 		Content:  content,
 		Platform: platform,
+	}
+
+	return c.DB.SaveMessage(ctx, req)
+}
+
+func (c *Client) SaveMessageWithTime(chatID, role, content, platform, msgTime string) (*dbpb.MessageResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	req := &dbpb.SaveMessageRequest{
+		ChatId:   chatID,
+		Role:     role,
+		Content:  content,
+		Platform: platform,
+		Time:     msgTime,
 	}
 
 	return c.DB.SaveMessage(ctx, req)
