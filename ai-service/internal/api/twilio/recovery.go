@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	dbpb "diaxel/proto/db"
 	"github.com/gin-gonic/gin"
 	openapi "github.com/twilio/twilio-go/rest/api/v2010"
 )
@@ -219,4 +220,207 @@ func (h *TwilioWebhookHandler) runRecoveryJob(assistantID, accountSID, authToken
 	log.Printf("[Recovery Job] Skipped (not AI chat): %d", skippedNotAI)
 	log.Printf("[Recovery Job] Failed: %d", failedCount)
 	log.Printf("[Recovery Job] ========================================")
+}
+
+func (h *TwilioWebhookHandler) HandleRecoveryPhase2(c *gin.Context) {
+	assistantID := c.Param("assistant_id")
+	if assistantID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "assistant_id is required"})
+		return
+	}
+
+	go h.runRecoveryPhase2Job(assistantID)
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  "recovery_phase2_started",
+		"message": "Phase 2 background job started. Check logs for progress.",
+	})
+}
+
+func (h *TwilioWebhookHandler) runRecoveryPhase2Job(assistantID string) {
+	log.Printf("[Recovery Phase 2] Starting Phase 2 for assistant: %s", assistantID)
+
+	pagesCount, err := h.db.GetChatPagesCount(assistantID, 50)
+	if err != nil {
+		log.Printf("[Recovery Phase 2] ERROR getting chat pages count: %v", err)
+		return
+	}
+
+	var totalChats int
+	var updatedUsers int
+	var createdAppointments int
+
+	for page := int32(1); page <= pagesCount; page++ {
+		chats, err := h.db.GetChatPage(assistantID, page, 50)
+		if err != nil {
+			log.Printf("[Recovery Phase 2] ERROR getting chat page %d: %v", page, err)
+			continue
+		}
+
+		for _, chat := range chats {
+			totalChats++
+			customerPhone := chat.CustomerId
+
+			if customerPhone == "" {
+				continue
+			}
+
+			// Get all messages for the chat
+			messages, err := h.db.GetAllChatMessages(chat.Id)
+			if err != nil {
+				log.Printf("[Recovery Phase 2] WARN: Failed to get messages for chat %s: %v", chat.Id, err)
+				continue
+			}
+
+			if len(messages) == 0 {
+				continue
+			}
+
+			// Find first message from assistant to extract FirstName and ProgramID
+			var firstAssistantMsg *dbpb.MessageResponse // nolint
+			for _, m := range messages {
+				if m.Role == "assistant" {
+					firstAssistantMsg = m
+					break
+				}
+			}
+
+			if firstAssistantMsg != nil {
+				// Parse FirstName and ProgramID
+				var firstName string
+				var programID int
+
+				body := firstAssistantMsg.Content
+				if strings.HasPrefix(body, "Hey ") {
+					parts := strings.SplitN(body[4:], ",", 2)
+					if len(parts) >= 1 {
+						firstName = strings.TrimSpace(parts[0])
+					}
+				}
+
+				lowerBody := strings.ToLower(body)
+				if strings.Contains(lowerBody, "hairstyling") {
+					if strings.Contains(lowerBody, "evening") {
+						programID = 41664
+					} else {
+						programID = 41346
+					}
+				} else if strings.Contains(lowerBody, "makeup") {
+					programID = 42013
+				}
+
+				// Get Campuslogin. If FirstName is empty or ProgramID is 0, we can update it
+				campusResp, err := h.db.GetCampusloginByPhone(customerPhone)
+				needsUpdate := false
+				if err != nil {
+					// Doesn't exist
+					needsUpdate = true
+				} else {
+					if campusResp.FirstName == "" && firstName != "" {
+						needsUpdate = true
+					}
+					if campusResp.ProgramId == 0 && programID != 0 {
+						needsUpdate = true
+					}
+				}
+
+				if needsUpdate {
+					log.Printf("[Recovery Phase 2] Updating CampusLogin for %s: First=%s, Prog=%d", customerPhone, firstName, programID)
+
+					if campusResp != nil {
+						// Record exists — preserve existing flags, only fill in missing data
+						existingFirstName := campusResp.FirstName
+						if existingFirstName == "" && firstName != "" {
+							existingFirstName = firstName
+						}
+						existingProgramID := int(campusResp.ProgramId)
+						if existingProgramID == 0 && programID != 0 {
+							existingProgramID = programID
+						}
+						err = h.db.UpsertCampuslogin(
+							customerPhone,
+							int(campusResp.ContactId),
+							existingProgramID,
+							campusResp.IsGrade11OrLower,
+							campusResp.IsInternationalStudent,
+							existingFirstName,
+							campusResp.Email,
+						)
+					} else {
+						// Record doesn't exist — create new
+						err = h.db.UpsertCampuslogin(customerPhone, 0, programID, false, false, firstName, "")
+					}
+
+					if err != nil {
+						log.Printf("[Recovery Phase 2] WARN: Failed to upsert campuslogin for %s: %v", customerPhone, err)
+					} else {
+						updatedUsers++
+					}
+				}
+			}
+
+			// Search for appointments
+			// Requirements:
+			// 1. Must occur AFTER the assistant has sent the Google Calendar link ("https://calendar.app.google").
+			// 2. Can be triggered by multiple variations of the booking confirmation.
+			calendarLinkSent := false
+			for _, m := range messages {
+				if m.Role == "assistant" {
+					lowerContent := strings.ToLower(m.Content)
+					
+					// Check if this message contains the calendar link
+					if strings.Contains(lowerContent, "https://calendar.app.google") {
+						calendarLinkSent = true
+						continue // We want it to be a subsequent message
+					}
+
+					// If the link was already sent in a previous message, check for booking phrases
+					if calendarLinkSent {
+						isBooked := strings.Contains(lowerContent, "booked for") ||
+							strings.Contains(lowerContent, "is booked for") ||
+							strings.Contains(lowerContent, "emailed you details about what to bring") ||
+							strings.Contains(lowerContent, "tour at aveda is booked") ||
+							strings.Contains(lowerContent, "your tour at aveda")
+
+						if isBooked {
+							msgTime, err := time.Parse(time.RFC3339, m.CreatedAt)
+							if err != nil {
+								msgTime = time.Now()
+							}
+
+							googleEventID := "recovered-" + m.Id
+							startTimeStr := msgTime.Format(time.RFC3339)
+							endTimeStr := msgTime.Add(1 * time.Hour).Format(time.RFC3339)
+
+							_, err = h.db.CreateAppointment(
+								googleEventID,
+								"Recovered Appointment",
+								startTimeStr,
+								endTimeStr,
+								"confirmed",
+								"Recovered from chat history",
+								"primary",
+								false,
+								m.CreatedAt,
+							)
+							if err == nil {
+								log.Printf("[Recovery Phase 2] Created recovered appointment for %s (msg time: %s)", customerPhone, m.CreatedAt)
+								createdAppointments++
+							} else {
+								// Ignore if already exists
+								if !strings.Contains(err.Error(), "duplicate") {
+									log.Printf("[Recovery Phase 2] WARN: Failed to create appointment for %s: %v", customerPhone, err)
+								}
+							}
+							
+							// Break out of the loop after finding the appointment message to avoid creating multiple
+							break
+						}
+					}
+				}
+			}
+		}
+	}
+
+	log.Printf("[Recovery Phase 2] FINISHED. Total Chats: %d, Users Updated: %d, Appointments Created: %d", totalChats, updatedUsers, createdAppointments)
 }

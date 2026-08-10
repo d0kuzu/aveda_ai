@@ -1133,6 +1133,15 @@ func (s *DatabaseServer) CreateAppointment(ctx context.Context, req *proto.Creat
 		return nil, status.Errorf(codes.InvalidArgument, "invalid end_time format: %v", err)
 	}
 
+	createdAt := time.Now()
+	if req.CreatedAt != "" {
+		if t, err := time.Parse(time.RFC3339, req.CreatedAt); err == nil {
+			createdAt = t
+		} else {
+			log.Printf("Failed to parse created_at '%s', falling back to time.Now(): %v", req.CreatedAt, err)
+		}
+	}
+
 	appointment := &models.Appointment{
 		GoogleEventID: req.GoogleEventId,
 		Title:         req.Title,
@@ -1142,6 +1151,7 @@ func (s *DatabaseServer) CreateAppointment(ctx context.Context, req *proto.Creat
 		Description:   req.Description,
 		CalendarID:    req.CalendarId,
 		CampusLogin:   req.CampusLogin,
+		CreatedAt:     createdAt,
 	}
 
 	if err := s.appointmentRepo.Create(appointment); err != nil {

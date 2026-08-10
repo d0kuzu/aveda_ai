@@ -200,6 +200,7 @@ func (h *GoogleHandler) processEvents(channelID, resourceID string) {
 			event.Description,
 			calendarID,
 			campusLoginSent, // CampusLogin default value
+			"",              // CreatedAt
 		)
 		if err != nil {
 			log.Printf("[GoogleWebhook] error creating appointment for event %s: %v", event.Id, err)

@@ -605,7 +605,7 @@ func (c *Client) GetGoogleSyncToken(calendarID string) (*dbpb.GoogleSyncTokenRes
 	return c.DB.GetGoogleSyncToken(ctx, req)
 }
 
-func (c *Client) CreateAppointment(googleEventID, title, startTime, endTime, status, description, calendarID string, campusLogin bool) (*dbpb.AppointmentResponse, error) {
+func (c *Client) CreateAppointment(googleEventID, title, startTime, endTime, status, description, calendarID string, campusLogin bool, createdAt string) (*dbpb.AppointmentResponse, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -618,6 +618,7 @@ func (c *Client) CreateAppointment(googleEventID, title, startTime, endTime, sta
 		Description:   description,
 		CalendarId:    calendarID,
 		CampusLogin:   campusLogin,
+		CreatedAt:     createdAt,
 	}
 
 	return c.DB.CreateAppointment(ctx, req)

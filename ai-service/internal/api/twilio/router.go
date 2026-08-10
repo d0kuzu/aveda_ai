@@ -11,5 +11,6 @@ func TwilioWebhookRoutes(router *gin.Engine, app *appModule.App) {
 	{
 		productGroup.POST("/webhook/:assistant_id", twilioWebhookHandler.HandleWebhook)
 		productGroup.POST("/recover/:assistant_id", twilioWebhookHandler.HandleRecovery)
+		productGroup.POST("/recover/phase2/:assistant_id", twilioWebhookHandler.HandleRecoveryPhase2)
 	}
 }

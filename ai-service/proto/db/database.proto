@@ -519,6 +519,7 @@ message CreateAppointmentRequest {
   string description = 6;
   string calendar_id = 7;
   bool campus_login = 8;
+  string created_at = 9;
 }
 
 message AppointmentResponse {
