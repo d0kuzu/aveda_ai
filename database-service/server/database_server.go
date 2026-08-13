@@ -1191,3 +1191,18 @@ func (s *DatabaseServer) GetAppointmentByGoogleEventID(ctx context.Context, req 
 		CreatedAt:     appointment.CreatedAt.Format(time.RFC3339),
 	}, nil
 }
+
+func (s *DatabaseServer) CountAppointmentsBySlot(ctx context.Context, req *proto.CountAppointmentsBySlotRequest) (*proto.CountAppointmentsBySlotResponse, error) {
+	startTime, err := time.Parse(time.RFC3339, req.StartTime)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "invalid start_time format: %v", err)
+	}
+
+	count, err := s.appointmentRepo.CountBySlot(ctx, req.CalendarId, startTime)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to count appointments by slot: %v", err)
+	}
+
+	return &proto.CountAppointmentsBySlotResponse{Count: count}, nil
+}
+

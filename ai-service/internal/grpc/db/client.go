@@ -659,3 +659,21 @@ func (c *Client) GetAllBlockedCustomers() ([]string, error) {
 	}
 	return resp.UserIds, nil
 }
+
+func (c *Client) CountAppointmentsBySlot(calendarID, startTime string) (int32, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	req := &dbpb.CountAppointmentsBySlotRequest{
+		CalendarId: calendarID,
+		StartTime:  startTime,
+	}
+
+	resp, err := c.DB.CountAppointmentsBySlot(ctx, req)
+	if err != nil {
+		return 0, err
+	}
+
+	return resp.Count, nil
+}
+

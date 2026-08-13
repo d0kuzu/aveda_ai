@@ -202,3 +202,34 @@ func (c *Client) StopWatch(channelID, resourceID string) error {
 	}
 	return c.srv.Channels.Stop(channel).Do()
 }
+
+// CreateEventWithTransparency создает ивент с заданным transparency ("transparent" или "opaque").
+// "transparent" — ивент не блокирует слот во FreeBusy, "opaque" — блокирует.
+func (c *Client) CreateEventWithTransparency(calendarID string, event *calendar.Event, transparency string, customerEmail string) (*calendar.Event, error) {
+	if calendarID == "" {
+		calendarID = "primary"
+	}
+
+	event.Transparency = transparency
+
+	// Добавляем attendees для рассылки уведомлений
+	for _, email := range NotificationEmails {
+		event.Attendees = append(event.Attendees, &calendar.EventAttendee{
+			Email: email,
+		})
+	}
+
+	if customerEmail != "" {
+		event.Attendees = append(event.Attendees, &calendar.EventAttendee{
+			Email: customerEmail,
+		})
+	}
+
+	createdEvent, err := c.srv.Events.Insert(calendarID, event).SendUpdates("all").Do()
+	if err != nil {
+		return nil, fmt.Errorf("ошибка создания ивента: %w", err)
+	}
+
+	return createdEvent, nil
+}
+

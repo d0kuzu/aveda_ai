@@ -24,6 +24,11 @@ type Settings struct {
 	TokenLength int
 
 	CampusLoginAPI string
+
+	MaxSlotCapacity      int
+	SlotDurationMinutes  int
+	WorkSchedule         string
+	AvedaCalendarSecret  string
 }
 
 func LoadConfig() (*Settings, error) {
@@ -37,6 +42,11 @@ func LoadConfig() (*Settings, error) {
 	grpcAddress := os.Getenv("GRPC_ADDRESS")
 	if grpcAddress == "" {
 		grpcAddress = "localhost:50051"
+	}
+
+	workSchedule := os.Getenv("WORK_SCHEDULE")
+	if workSchedule == "" {
+		workSchedule = "Tue=09:00-17:00,Wed=11:00-19:00,Thu=11:00-19:00,Fri=09:00-17:00,Sat=09:00-17:00"
 	}
 
 	return &Settings{
@@ -56,6 +66,11 @@ func LoadConfig() (*Settings, error) {
 		TokenLength: getEnvAsInt("TOKEN_LENGTH", 32),
 
 		CampusLoginAPI: os.Getenv("CAMPUSLOGIN_API"),
+
+		MaxSlotCapacity:     getEnvAsInt("MAX_SLOT_CAPACITY", 10),
+		SlotDurationMinutes: getEnvAsInt("SLOT_DURATION_MINUTES", 60),
+		WorkSchedule:        workSchedule,
+		AvedaCalendarSecret: os.Getenv("AVEDA_CALENDAR_SECRET"),
 	}, nil
 }
 
@@ -72,3 +87,4 @@ func getEnvAsInt(name string, defaultVal int) int {
 
 	return value
 }
+

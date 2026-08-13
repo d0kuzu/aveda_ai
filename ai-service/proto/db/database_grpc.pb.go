@@ -2,9 +2,9 @@
 // versions:
 // - protoc-gen-go-grpc v1.6.2
 // - protoc             v4.25.2
-// source: database.proto
+// source: proto/database.proto
 
-package db
+package proto
 
 import (
 	context "context"
@@ -73,6 +73,7 @@ const (
 	DatabaseService_GetGoogleSyncToken_FullMethodName            = "/database.DatabaseService/GetGoogleSyncToken"
 	DatabaseService_CreateAppointment_FullMethodName             = "/database.DatabaseService/CreateAppointment"
 	DatabaseService_GetAppointmentByGoogleEventID_FullMethodName = "/database.DatabaseService/GetAppointmentByGoogleEventID"
+	DatabaseService_CountAppointmentsBySlot_FullMethodName       = "/database.DatabaseService/CountAppointmentsBySlot"
 	DatabaseService_BlockCustomer_FullMethodName                 = "/database.DatabaseService/BlockCustomer"
 	DatabaseService_GetAllBlockedCustomers_FullMethodName        = "/database.DatabaseService/GetAllBlockedCustomers"
 )
@@ -135,6 +136,7 @@ type DatabaseServiceClient interface {
 	GetGoogleSyncToken(ctx context.Context, in *GetGoogleSyncTokenRequest, opts ...grpc.CallOption) (*GoogleSyncTokenResponse, error)
 	CreateAppointment(ctx context.Context, in *CreateAppointmentRequest, opts ...grpc.CallOption) (*AppointmentResponse, error)
 	GetAppointmentByGoogleEventID(ctx context.Context, in *GetAppointmentByGoogleEventIDRequest, opts ...grpc.CallOption) (*AppointmentResponse, error)
+	CountAppointmentsBySlot(ctx context.Context, in *CountAppointmentsBySlotRequest, opts ...grpc.CallOption) (*CountAppointmentsBySlotResponse, error)
 	BlockCustomer(ctx context.Context, in *BlockCustomerRequest, opts ...grpc.CallOption) (*BlockCustomerResponse, error)
 	GetAllBlockedCustomers(ctx context.Context, in *GetAllBlockedCustomersRequest, opts ...grpc.CallOption) (*GetAllBlockedCustomersResponse, error)
 }
@@ -687,6 +689,16 @@ func (c *databaseServiceClient) GetAppointmentByGoogleEventID(ctx context.Contex
 	return out, nil
 }
 
+func (c *databaseServiceClient) CountAppointmentsBySlot(ctx context.Context, in *CountAppointmentsBySlotRequest, opts ...grpc.CallOption) (*CountAppointmentsBySlotResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CountAppointmentsBySlotResponse)
+	err := c.cc.Invoke(ctx, DatabaseService_CountAppointmentsBySlot_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *databaseServiceClient) BlockCustomer(ctx context.Context, in *BlockCustomerRequest, opts ...grpc.CallOption) (*BlockCustomerResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(BlockCustomerResponse)
@@ -765,6 +777,7 @@ type DatabaseServiceServer interface {
 	GetGoogleSyncToken(context.Context, *GetGoogleSyncTokenRequest) (*GoogleSyncTokenResponse, error)
 	CreateAppointment(context.Context, *CreateAppointmentRequest) (*AppointmentResponse, error)
 	GetAppointmentByGoogleEventID(context.Context, *GetAppointmentByGoogleEventIDRequest) (*AppointmentResponse, error)
+	CountAppointmentsBySlot(context.Context, *CountAppointmentsBySlotRequest) (*CountAppointmentsBySlotResponse, error)
 	BlockCustomer(context.Context, *BlockCustomerRequest) (*BlockCustomerResponse, error)
 	GetAllBlockedCustomers(context.Context, *GetAllBlockedCustomersRequest) (*GetAllBlockedCustomersResponse, error)
 	mustEmbedUnimplementedDatabaseServiceServer()
@@ -938,6 +951,9 @@ func (UnimplementedDatabaseServiceServer) CreateAppointment(context.Context, *Cr
 }
 func (UnimplementedDatabaseServiceServer) GetAppointmentByGoogleEventID(context.Context, *GetAppointmentByGoogleEventIDRequest) (*AppointmentResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetAppointmentByGoogleEventID not implemented")
+}
+func (UnimplementedDatabaseServiceServer) CountAppointmentsBySlot(context.Context, *CountAppointmentsBySlotRequest) (*CountAppointmentsBySlotResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CountAppointmentsBySlot not implemented")
 }
 func (UnimplementedDatabaseServiceServer) BlockCustomer(context.Context, *BlockCustomerRequest) (*BlockCustomerResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method BlockCustomer not implemented")
@@ -1938,6 +1954,24 @@ func _DatabaseService_GetAppointmentByGoogleEventID_Handler(srv interface{}, ctx
 	return interceptor(ctx, in, info, handler)
 }
 
+func _DatabaseService_CountAppointmentsBySlot_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CountAppointmentsBySlotRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DatabaseServiceServer).CountAppointmentsBySlot(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DatabaseService_CountAppointmentsBySlot_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DatabaseServiceServer).CountAppointmentsBySlot(ctx, req.(*CountAppointmentsBySlotRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _DatabaseService_BlockCustomer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(BlockCustomerRequest)
 	if err := dec(in); err != nil {
@@ -2198,6 +2232,10 @@ var DatabaseService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _DatabaseService_GetAppointmentByGoogleEventID_Handler,
 		},
 		{
+			MethodName: "CountAppointmentsBySlot",
+			Handler:    _DatabaseService_CountAppointmentsBySlot_Handler,
+		},
+		{
 			MethodName: "BlockCustomer",
 			Handler:    _DatabaseService_BlockCustomer_Handler,
 		},
@@ -2207,5 +2245,5 @@ var DatabaseService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "database.proto",
+	Metadata: "proto/database.proto",
 }
