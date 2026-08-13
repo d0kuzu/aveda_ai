@@ -16,7 +16,6 @@ import (
 // NotificationEmails — список email-адресов, которым отправляются уведомления при создании ивентов.
 var NotificationEmails = []string{
 	"cali@avedainstitutewinnipeg.ca",
-	"dkobdabaev@mail.ru",
 }
 
 type Client struct {
@@ -232,4 +231,3 @@ func (c *Client) CreateEventWithTransparency(calendarID string, event *calendar.
 
 	return createdEvent, nil
 }
-
