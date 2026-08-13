@@ -43,7 +43,7 @@ func main() {
 	twilioClient := twilio.InitClient()
 
 	tgOrchestrator := telegram.NewOrchestrator(llmClient, grpcClient, 5, 1000)
-	go tgOrchestrator.Start(context.Background())
+	// go tgOrchestrator.Start(context.Background())
 
 	cm := &cleanup.CleanupManager{}
 	go cm.Start()
