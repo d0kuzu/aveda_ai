@@ -36,8 +36,8 @@ func (h *GoogleHandler) HandleWebhook(c *gin.Context) {
 
 	log.Printf("[GoogleWebhook] received notification: channelID=%s, resourceID=%s", channelID, resourceID)
 
-	// Сразу отвечаем 200 OK — Google требует быстрый ответ
-	c.Status(http.StatusOK)
+	// Отвечаем 410 Gone — это сигнал для Google, что вебхук больше не активен и его нужно удалить
+	c.Status(http.StatusGone)
 
 	// go h.processEvents(channelID, resourceID)
 }
