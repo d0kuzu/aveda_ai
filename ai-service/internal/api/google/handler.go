@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"regexp"
 	"strings"
 	"time"
 
@@ -14,6 +13,7 @@ import (
 	"diaxel/internal/modules/googlecalendar"
 
 	"github.com/gin-gonic/gin"
+	"google.golang.org/api/calendar/v3"
 )
 
 const defaultCalendarID = "primary"
@@ -107,70 +107,29 @@ func (h *GoogleHandler) processEvents(channelID, resourceID string) {
 			continue
 		}
 
-		// Извлекаем время начала и окончания
-		startTime := ""
-		endTime := ""
-		
-		loc, _ := time.LoadLocation("America/Winnipeg")
-
-		formatTime := func(timeStr, dateStr string) string {
-			if timeStr != "" {
-				t, err := time.Parse(time.RFC3339, timeStr)
-				if err == nil {
-					if loc != nil {
-						t = t.In(loc)
-					}
-					return t.Format("2006-01-02T15:04:05")
-				}
-				return timeStr
+		parseTime := func(eDateTime *calendar.EventDateTime) time.Time {
+			if eDateTime == nil {
+				return time.Time{}
 			}
-			return dateStr
+			if eDateTime.DateTime != "" {
+				if t, err := time.Parse(time.RFC3339, eDateTime.DateTime); err == nil {
+					return t
+				}
+			}
+			if eDateTime.Date != "" {
+				if t, err := time.Parse("2006-01-02", eDateTime.Date); err == nil {
+					return t
+				}
+			}
+			return time.Time{}
 		}
 
-		if event.Start != nil {
-			startTime = formatTime(event.Start.DateTime, event.Start.Date)
-		}
-		if event.End != nil {
-			endTime = formatTime(event.End.DateTime, event.End.Date)
-		}
+		startT := parseTime(event.Start)
+		endT := parseTime(event.End)
 
-		// Попытка отправить appointment в CampusLogin
-		campusLoginSent := false
-
-		// Извлекаем номер телефона
 		eventText := event.Summary + " " + event.Description
-		phoneRegex := regexp.MustCompile(`\+?[1]?[-\s\.]?\(?\d{3}\)?[-\s\.]?\d{3}[-\s\.]?\d{4}`)
-		phoneStr := phoneRegex.FindString(eventText)
+		campusLoginSent := trySendCampusLogin(context.Background(), h.db, h.cl, eventText, startT, endT, event.Description)
 
-		if phoneStr != "" {
-			// Очищаем от нецифровых символов
-			digits := regexp.MustCompile(`\D`).ReplaceAllString(phoneStr, "")
-			if len(digits) >= 10 {
-				phoneSuffix := digits[len(digits)-10:]
-
-				// Ищем пользователя в БД по суффиксу телефона
-				campusRecord, err := h.db.GetCampusloginByPhone(phoneSuffix)
-				if err == nil {
-					log.Printf("[GoogleWebhook] start time: %d", startTime)
-					log.Printf("[GoogleWebhook] end time: %d", endTime)
-					contactID := int(campusRecord.ContactId)
-					log.Printf("[GoogleWebhook] Contact ID: %d", contactID)
-					programID := int(campusRecord.ProgramId)
-					log.Printf("[GoogleWebhook] Program ID: %d", programID)
-
-					// Отправляем Appointment
-					err = h.cl.SendAppointment(context.Background(), "Campus Tour for "+campusRecord.FirstName, startTime, endTime, contactID, programID, event.Description)
-					if err == nil {
-						campusLoginSent = true
-						log.Printf("[GoogleWebhook] successfully sent appointment to CampusLogin for phone %s", phoneSuffix)
-					} else {
-						log.Printf("[GoogleWebhook] failed to send appointment to CampusLogin for phone %s: %v", phoneSuffix, err)
-					}
-				} else {
-					log.Printf("[GoogleWebhook] user not found in CampusLogin by phone %s: %v", phoneSuffix, err)
-				}
-			}
-		}
 
 		// Формируем время в RFC3339 для базы данных
 		startTimeDB := ""

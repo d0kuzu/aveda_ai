@@ -22,7 +22,8 @@ func CalendarAuthMiddleware(secret string) gin.HandlerFunc {
 
 func GoogleRoutes(router *gin.Engine, app *appModule.App) {
 	handler := NewGoogleHandler(app.GoogleCalendar, app.Db, app.CampusLogin)
-	calendarHandler := NewCalendarHandler(app.GoogleCalendar, app.Db, app.Cfg)
+	calendarHandler := NewCalendarHandler(app.GoogleCalendar, app.Db, app.CampusLogin, app.Cfg)
+
 
 	googleGroup := router.Group("google")
 	{

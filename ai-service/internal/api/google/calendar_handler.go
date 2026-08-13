@@ -9,6 +9,7 @@ import (
 
 	"diaxel/internal/config"
 	"diaxel/internal/grpc/db"
+	"diaxel/internal/modules/campuslogin"
 	"diaxel/internal/modules/googlecalendar"
 
 	"github.com/gin-gonic/gin"
@@ -46,6 +47,7 @@ type bookRequest struct {
 type CalendarHandler struct {
 	gc  *googlecalendar.Client
 	db  *db.Client
+	cl  *campuslogin.Client
 	cfg *config.Settings
 
 	// Парсированное расписание: day of week -> workWindow
@@ -53,12 +55,14 @@ type CalendarHandler struct {
 	loc      *time.Location
 }
 
-func NewCalendarHandler(gc *googlecalendar.Client, db *db.Client, cfg *config.Settings) *CalendarHandler {
+func NewCalendarHandler(gc *googlecalendar.Client, db *db.Client, cl *campuslogin.Client, cfg *config.Settings) *CalendarHandler {
 	h := &CalendarHandler{
 		gc:  gc,
 		db:  db,
+		cl:  cl,
 		cfg: cfg,
 	}
+
 
 	loc, err := time.LoadLocation("America/Winnipeg")
 	if err != nil {
@@ -309,6 +313,10 @@ func (h *CalendarHandler) BookSlot(c *gin.Context) {
 		return
 	}
 
+	// Попытка отправить запись в CampusLogin если есть телефон
+	eventText := title + " " + req.GuestName + " " + req.Description
+	campusLoginSent := trySendCampusLogin(c.Request.Context(), h.db, h.cl, eventText, startTime, endTime, req.Description)
+
 	// Сохраняем запись в БД
 	_, err = h.db.CreateAppointment(
 		createdEvent.Id,
@@ -318,9 +326,10 @@ func (h *CalendarHandler) BookSlot(c *gin.Context) {
 		"confirmed",
 		req.Description,
 		calendarID,
-		false, // campusLogin
-		"",    // createdAt — будет time.Now() в сервере
+		campusLoginSent,
+		"", // createdAt — будет time.Now() в сервере
 	)
+
 	if err != nil {
 		log.Printf("[CalendarHandler] CreateAppointment error: %v", err)
 		// Ивент уже создан в Calendar, но запись в БД не сохранена
