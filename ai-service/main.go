@@ -54,9 +54,9 @@ func main() {
 	abandonedSummarizer := summary.NewAbandonedSummarizer(grpcClient, campusloginClient, llmClient)
 	go abandonedSummarizer.Start(context.Background())
 
-	webhookURL := settings.WebhookBaseURL + "/google/webhook"
-	webhookWorker := googlecalendar.NewWebhookWorker(gcClient, grpcClient, "primary", webhookURL)
-	go webhookWorker.Start(context.Background())
+	// webhookURL := settings.WebhookBaseURL + "/google/webhook"
+	// webhookWorker := googlecalendar.NewWebhookWorker(gcClient, grpcClient, "primary", webhookURL)
+	// go webhookWorker.Start(context.Background())
 
 	app := appModule.NewApp(llmClient, twilioClient, grpcClient, settings, tgOrchestrator, gcClient, campusloginClient)
 

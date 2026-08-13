@@ -34,6 +34,7 @@ func GoogleRoutes(router *gin.Engine, app *appModule.App) {
 		{
 			calendarGroup.GET("/slots", calendarHandler.GetSlots)
 			calendarGroup.POST("/book", calendarHandler.BookSlot)
+			calendarGroup.POST("/webhook/stop", handler.StopWebhook)
 		}
 	}
 }

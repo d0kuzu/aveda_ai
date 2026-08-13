@@ -39,8 +39,7 @@ func (h *GoogleHandler) HandleWebhook(c *gin.Context) {
 	// Сразу отвечаем 200 OK — Google требует быстрый ответ
 	c.Status(http.StatusOK)
 
-	// Асинхронно обрабатываем события
-	go h.processEvents(channelID, resourceID)
+	// go h.processEvents(channelID, resourceID)
 }
 
 func (h *GoogleHandler) processEvents(channelID, resourceID string) {
@@ -130,7 +129,6 @@ func (h *GoogleHandler) processEvents(channelID, resourceID string) {
 		eventText := event.Summary + " " + event.Description
 		campusLoginSent := trySendCampusLogin(context.Background(), h.db, h.cl, eventText, startT, endT, event.Description)
 
-
 		// Формируем время в RFC3339 для базы данных
 		startTimeDB := ""
 		endTimeDB := ""
@@ -170,4 +168,28 @@ func (h *GoogleHandler) processEvents(channelID, resourceID string) {
 	}
 
 	log.Printf("[GoogleWebhook] processed %d events, sync complete", len(events))
+}
+
+// StopWebhook отключает активный вебхук для текущего календаря
+func (h *GoogleHandler) StopWebhook(c *gin.Context) {
+	calendarID := defaultCalendarID
+
+	syncData, err := h.db.GetGoogleSyncToken(calendarID)
+	if err != nil || syncData == nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "no active webhook found in DB"})
+		return
+	}
+
+	if syncData.ChannelId == "" || syncData.ResourceId == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "webhook channel or resource ID is empty"})
+		return
+	}
+
+	err = h.gc.StopWatch(syncData.ChannelId, syncData.ResourceId)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("failed to stop webhook: %v", err)})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "webhook stopped successfully", "channel_id": syncData.ChannelId})
 }
