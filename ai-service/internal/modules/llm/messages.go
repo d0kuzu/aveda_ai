@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"net/url"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -50,7 +52,7 @@ func (c *Client) GetMessages(assistantId, customerId string) ([]openai.ChatCompl
 	}
 
 	// Append system prompt at the end
-	startMessages, err := c.StartMessages(assistantId)
+	startMessages, err := c.StartMessages(assistantId, customerId)
 	if err != nil {
 		return nil, err
 	}
@@ -59,7 +61,7 @@ func (c *Client) GetMessages(assistantId, customerId string) ([]openai.ChatCompl
 	return messages, nil
 }
 
-func (c *Client) StartMessages(assistantId string) ([]openai.ChatCompletionMessage, error) {
+func (c *Client) StartMessages(assistantId, customerId string) ([]openai.ChatCompletionMessage, error) {
 	log.Printf("Getting system prompt")
 
 	systemPrompt := "You are a helpful assistant."
@@ -73,6 +75,12 @@ func (c *Client) StartMessages(assistantId string) ([]openai.ChatCompletionMessa
 	if assistant.Configuration != "" {
 		systemPrompt = assistant.Configuration
 	}
+
+	if customerId != "" && strings.Contains(systemPrompt, "https://api.zerde.co/aveda-calendar/") {
+		escapedClient := url.QueryEscape(customerId)
+		systemPrompt = strings.ReplaceAll(systemPrompt, "https://api.zerde.co/aveda-calendar/", "https://api.zerde.co/aveda-calendar/?client="+escapedClient)
+	}
+	log.Printf("System prompt for customer %s: %s", customerId, systemPrompt)
 
 	// Inject current date/time so the model can resolve relative dates ("this Monday", "next Friday", etc.)
 	loc, err := time.LoadLocation("America/Winnipeg")
@@ -119,9 +127,9 @@ func (c *Client) SaveMessages(assistantId, customerId string, messages []openai.
 	// Определяем, сколько сообщений уже было (системные + те, что в базе)
 	// Нам нужно знать, сколько системных сообщений добавляет StartMessages.
 	// Обычно это 1 сообщение.
-	systemMessages, _ := c.StartMessages(assistantId)
+	systemMessages, _ := c.StartMessages(assistantId, "")
 	systemCount := len(systemMessages)
-	
+
 	totalExistingCount := systemCount + int(messageCount)
 
 	// Если новых сообщений в принципе нет, выходим
@@ -131,7 +139,7 @@ func (c *Client) SaveMessages(assistantId, customerId string, messages []openai.
 
 	// Берем только те, которые реально новые
 	newCandidateMessages := messages[totalExistingCount:]
-	
+
 	for _, msg := range newCandidateMessages {
 		// Фильтруем системные сообщения
 		if msg.Role == openai.ChatMessageRoleSystem {
@@ -146,9 +154,9 @@ func (c *Client) SaveMessages(assistantId, customerId string, messages []openai.
 		// Если это вызов функции или ответ функции, сохраняем расширенные данные в JSON
 		if msg.Role == openai.ChatMessageRoleTool || (msg.Role == openai.ChatMessageRoleAssistant && len(msg.ToolCalls) > 0) {
 			type extendedMsg struct {
-				Content    string             `json:"content"`
-				ToolCallID string             `json:"tool_call_id,omitempty"`
-				ToolCalls  []openai.ToolCall  `json:"tool_calls,omitempty"`
+				Content    string            `json:"content"`
+				ToolCallID string            `json:"tool_call_id,omitempty"`
+				ToolCalls  []openai.ToolCall `json:"tool_calls,omitempty"`
 			}
 			b, err := json.Marshal(extendedMsg{
 				Content:    msg.Content,
@@ -198,9 +206,9 @@ func (c *Client) ConvertToOpenaiMessage(arrayMessages []Message) ([]openai.ChatC
 		// Декодируем ToolCallID и ToolCalls, если это tool/assistant сообщение
 		if message.Role == openai.ChatMessageRoleTool || message.Role == openai.ChatMessageRoleAssistant {
 			type extendedMsg struct {
-				Content    string             `json:"content"`
-				ToolCallID string             `json:"tool_call_id,omitempty"`
-				ToolCalls  []openai.ToolCall  `json:"tool_calls,omitempty"`
+				Content    string            `json:"content"`
+				ToolCallID string            `json:"tool_call_id,omitempty"`
+				ToolCalls  []openai.ToolCall `json:"tool_calls,omitempty"`
 			}
 			var em extendedMsg
 			if err := json.Unmarshal([]byte(content), &em); err == nil {
