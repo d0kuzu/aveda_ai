@@ -63,7 +63,6 @@ func NewCalendarHandler(gc *googlecalendar.Client, db *db.Client, cl *campuslogi
 		cfg: cfg,
 	}
 
-
 	loc, err := time.LoadLocation("America/Winnipeg")
 	if err != nil {
 		log.Printf("[CalendarHandler] failed to load timezone America/Winnipeg, using UTC: %v", err)
@@ -250,6 +249,7 @@ func (h *CalendarHandler) BookSlot(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("invalid request: %v", err)})
 		return
 	}
+	log.Printf("[CalendarHandler] BookSlot request: %v", req)
 
 	startTime, err := time.Parse(time.RFC3339, req.StartTime)
 	if err != nil {
@@ -334,7 +334,7 @@ func (h *CalendarHandler) BookSlot(c *gin.Context) {
 		log.Printf("[CalendarHandler] CreateAppointment error: %v", err)
 		// Ивент уже создан в Calendar, но запись в БД не сохранена
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"error":          "event created in calendar but failed to save to database",
+			"error":           "event created in calendar but failed to save to database",
 			"google_event_id": createdEvent.Id,
 		})
 		return
