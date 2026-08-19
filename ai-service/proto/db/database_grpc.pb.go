@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.6.2
 // - protoc             v4.25.2
-// source: proto/database.proto
+// source: proto/db/database.proto
 
 package proto
 
@@ -19,63 +19,65 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	DatabaseService_GetAnalytics_FullMethodName                  = "/database.DatabaseService/GetAnalytics"
-	DatabaseService_GetAnalyticsByAssistant_FullMethodName       = "/database.DatabaseService/GetAnalyticsByAssistant"
-	DatabaseService_CreateUser_FullMethodName                    = "/database.DatabaseService/CreateUser"
-	DatabaseService_GetUser_FullMethodName                       = "/database.DatabaseService/GetUser"
-	DatabaseService_GetUserByEmail_FullMethodName                = "/database.DatabaseService/GetUserByEmail"
-	DatabaseService_UpdateUser_FullMethodName                    = "/database.DatabaseService/UpdateUser"
-	DatabaseService_DeleteUser_FullMethodName                    = "/database.DatabaseService/DeleteUser"
-	DatabaseService_SaveRefreshToken_FullMethodName              = "/database.DatabaseService/SaveRefreshToken"
-	DatabaseService_GetRefreshToken_FullMethodName               = "/database.DatabaseService/GetRefreshToken"
-	DatabaseService_DeleteRefreshToken_FullMethodName            = "/database.DatabaseService/DeleteRefreshToken"
-	DatabaseService_CreateAssistant_FullMethodName               = "/database.DatabaseService/CreateAssistant"
-	DatabaseService_GetAssistant_FullMethodName                  = "/database.DatabaseService/GetAssistant"
-	DatabaseService_GetAssistantByAPIToken_FullMethodName        = "/database.DatabaseService/GetAssistantByAPIToken"
-	DatabaseService_UpdateAssistant_FullMethodName               = "/database.DatabaseService/UpdateAssistant"
-	DatabaseService_DeleteAssistant_FullMethodName               = "/database.DatabaseService/DeleteAssistant"
-	DatabaseService_GetAssistantsByUserID_FullMethodName         = "/database.DatabaseService/GetAssistantsByUserID"
-	DatabaseService_CreateChat_FullMethodName                    = "/database.DatabaseService/CreateChat"
-	DatabaseService_GetChat_FullMethodName                       = "/database.DatabaseService/GetChat"
-	DatabaseService_GetChatsByUser_FullMethodName                = "/database.DatabaseService/GetChatsByUser"
-	DatabaseService_UpdateChat_FullMethodName                    = "/database.DatabaseService/UpdateChat"
-	DatabaseService_DeleteChat_FullMethodName                    = "/database.DatabaseService/DeleteChat"
-	DatabaseService_SaveMessage_FullMethodName                   = "/database.DatabaseService/SaveMessage"
-	DatabaseService_GetChatMessages_FullMethodName               = "/database.DatabaseService/GetChatMessages"
-	DatabaseService_GetAllChatMessages_FullMethodName            = "/database.DatabaseService/GetAllChatMessages"
-	DatabaseService_UpdateMessage_FullMethodName                 = "/database.DatabaseService/UpdateMessage"
-	DatabaseService_DeleteMessage_FullMethodName                 = "/database.DatabaseService/DeleteMessage"
-	DatabaseService_GetChatPagesCount_FullMethodName             = "/database.DatabaseService/GetChatPagesCount"
-	DatabaseService_GetChatPage_FullMethodName                   = "/database.DatabaseService/GetChatPage"
-	DatabaseService_GetChatPagesCountByUserID_FullMethodName     = "/database.DatabaseService/GetChatPagesCountByUserID"
-	DatabaseService_GetChatPageByUserID_FullMethodName           = "/database.DatabaseService/GetChatPageByUserID"
-	DatabaseService_SearchChatsByCustomer_FullMethodName         = "/database.DatabaseService/SearchChatsByCustomer"
-	DatabaseService_GetLatestChatByCustomer_FullMethodName       = "/database.DatabaseService/GetLatestChatByCustomer"
-	DatabaseService_SaveTwilioConfig_FullMethodName              = "/database.DatabaseService/SaveTwilioConfig"
-	DatabaseService_GetTwilioConfig_FullMethodName               = "/database.DatabaseService/GetTwilioConfig"
-	DatabaseService_DeleteTwilioConfig_FullMethodName            = "/database.DatabaseService/DeleteTwilioConfig"
-	DatabaseService_GetChatsForFollowup_FullMethodName           = "/database.DatabaseService/GetChatsForFollowup"
-	DatabaseService_UpdateChatFollowupStage_FullMethodName       = "/database.DatabaseService/UpdateChatFollowupStage"
-	DatabaseService_GetCampusloginByUserId_FullMethodName        = "/database.DatabaseService/GetCampusloginByUserId"
-	DatabaseService_GetCampusloginByPhone_FullMethodName         = "/database.DatabaseService/GetCampusloginByPhone"
-	DatabaseService_UpsertCampuslogin_FullMethodName             = "/database.DatabaseService/UpsertCampuslogin"
-	DatabaseService_SetCampusloginFlags_FullMethodName           = "/database.DatabaseService/SetCampusloginFlags"
-	DatabaseService_DeleteAllChatsAndMessages_FullMethodName     = "/database.DatabaseService/DeleteAllChatsAndMessages"
-	DatabaseService_DeleteChatAndMessages_FullMethodName         = "/database.DatabaseService/DeleteChatAndMessages"
-	DatabaseService_UpdateChatIsEnd_FullMethodName               = "/database.DatabaseService/UpdateChatIsEnd"
-	DatabaseService_UpdateChatIsBooked_FullMethodName            = "/database.DatabaseService/UpdateChatIsBooked"
-	DatabaseService_UpdateChatIsReviewed_FullMethodName          = "/database.DatabaseService/UpdateChatIsReviewed"
-	DatabaseService_GetUnreviewedActiveChats_FullMethodName      = "/database.DatabaseService/GetUnreviewedActiveChats"
-	DatabaseService_GetPeriodMetrics_FullMethodName              = "/database.DatabaseService/GetPeriodMetrics"
-	DatabaseService_GetWeeklyChatsStarted_FullMethodName         = "/database.DatabaseService/GetWeeklyChatsStarted"
-	DatabaseService_IsCustomerBlocked_FullMethodName             = "/database.DatabaseService/IsCustomerBlocked"
-	DatabaseService_UpsertGoogleSyncToken_FullMethodName         = "/database.DatabaseService/UpsertGoogleSyncToken"
-	DatabaseService_GetGoogleSyncToken_FullMethodName            = "/database.DatabaseService/GetGoogleSyncToken"
-	DatabaseService_CreateAppointment_FullMethodName             = "/database.DatabaseService/CreateAppointment"
-	DatabaseService_GetAppointmentByGoogleEventID_FullMethodName = "/database.DatabaseService/GetAppointmentByGoogleEventID"
-	DatabaseService_CountAppointmentsBySlot_FullMethodName       = "/database.DatabaseService/CountAppointmentsBySlot"
-	DatabaseService_BlockCustomer_FullMethodName                 = "/database.DatabaseService/BlockCustomer"
-	DatabaseService_GetAllBlockedCustomers_FullMethodName        = "/database.DatabaseService/GetAllBlockedCustomers"
+	DatabaseService_GetAnalytics_FullMethodName                       = "/database.DatabaseService/GetAnalytics"
+	DatabaseService_GetAnalyticsByAssistant_FullMethodName            = "/database.DatabaseService/GetAnalyticsByAssistant"
+	DatabaseService_CreateUser_FullMethodName                         = "/database.DatabaseService/CreateUser"
+	DatabaseService_GetUser_FullMethodName                            = "/database.DatabaseService/GetUser"
+	DatabaseService_GetUserByEmail_FullMethodName                     = "/database.DatabaseService/GetUserByEmail"
+	DatabaseService_UpdateUser_FullMethodName                         = "/database.DatabaseService/UpdateUser"
+	DatabaseService_DeleteUser_FullMethodName                         = "/database.DatabaseService/DeleteUser"
+	DatabaseService_SaveRefreshToken_FullMethodName                   = "/database.DatabaseService/SaveRefreshToken"
+	DatabaseService_GetRefreshToken_FullMethodName                    = "/database.DatabaseService/GetRefreshToken"
+	DatabaseService_DeleteRefreshToken_FullMethodName                 = "/database.DatabaseService/DeleteRefreshToken"
+	DatabaseService_CreateAssistant_FullMethodName                    = "/database.DatabaseService/CreateAssistant"
+	DatabaseService_GetAssistant_FullMethodName                       = "/database.DatabaseService/GetAssistant"
+	DatabaseService_GetAssistantByAPIToken_FullMethodName             = "/database.DatabaseService/GetAssistantByAPIToken"
+	DatabaseService_UpdateAssistant_FullMethodName                    = "/database.DatabaseService/UpdateAssistant"
+	DatabaseService_DeleteAssistant_FullMethodName                    = "/database.DatabaseService/DeleteAssistant"
+	DatabaseService_GetAssistantsByUserID_FullMethodName              = "/database.DatabaseService/GetAssistantsByUserID"
+	DatabaseService_CreateChat_FullMethodName                         = "/database.DatabaseService/CreateChat"
+	DatabaseService_GetChat_FullMethodName                            = "/database.DatabaseService/GetChat"
+	DatabaseService_GetChatsByUser_FullMethodName                     = "/database.DatabaseService/GetChatsByUser"
+	DatabaseService_UpdateChat_FullMethodName                         = "/database.DatabaseService/UpdateChat"
+	DatabaseService_DeleteChat_FullMethodName                         = "/database.DatabaseService/DeleteChat"
+	DatabaseService_SaveMessage_FullMethodName                        = "/database.DatabaseService/SaveMessage"
+	DatabaseService_GetChatMessages_FullMethodName                    = "/database.DatabaseService/GetChatMessages"
+	DatabaseService_GetAllChatMessages_FullMethodName                 = "/database.DatabaseService/GetAllChatMessages"
+	DatabaseService_UpdateMessage_FullMethodName                      = "/database.DatabaseService/UpdateMessage"
+	DatabaseService_DeleteMessage_FullMethodName                      = "/database.DatabaseService/DeleteMessage"
+	DatabaseService_GetChatPagesCount_FullMethodName                  = "/database.DatabaseService/GetChatPagesCount"
+	DatabaseService_GetChatPage_FullMethodName                        = "/database.DatabaseService/GetChatPage"
+	DatabaseService_GetChatPagesCountByUserID_FullMethodName          = "/database.DatabaseService/GetChatPagesCountByUserID"
+	DatabaseService_GetChatPageByUserID_FullMethodName                = "/database.DatabaseService/GetChatPageByUserID"
+	DatabaseService_SearchChatsByCustomer_FullMethodName              = "/database.DatabaseService/SearchChatsByCustomer"
+	DatabaseService_GetLatestChatByCustomer_FullMethodName            = "/database.DatabaseService/GetLatestChatByCustomer"
+	DatabaseService_SaveTwilioConfig_FullMethodName                   = "/database.DatabaseService/SaveTwilioConfig"
+	DatabaseService_GetTwilioConfig_FullMethodName                    = "/database.DatabaseService/GetTwilioConfig"
+	DatabaseService_DeleteTwilioConfig_FullMethodName                 = "/database.DatabaseService/DeleteTwilioConfig"
+	DatabaseService_GetChatsForFollowup_FullMethodName                = "/database.DatabaseService/GetChatsForFollowup"
+	DatabaseService_UpdateChatFollowupStage_FullMethodName            = "/database.DatabaseService/UpdateChatFollowupStage"
+	DatabaseService_GetCampusloginByUserId_FullMethodName             = "/database.DatabaseService/GetCampusloginByUserId"
+	DatabaseService_GetCampusloginByPhone_FullMethodName              = "/database.DatabaseService/GetCampusloginByPhone"
+	DatabaseService_UpsertCampuslogin_FullMethodName                  = "/database.DatabaseService/UpsertCampuslogin"
+	DatabaseService_SetCampusloginFlags_FullMethodName                = "/database.DatabaseService/SetCampusloginFlags"
+	DatabaseService_DeleteAllChatsAndMessages_FullMethodName          = "/database.DatabaseService/DeleteAllChatsAndMessages"
+	DatabaseService_DeleteChatAndMessages_FullMethodName              = "/database.DatabaseService/DeleteChatAndMessages"
+	DatabaseService_UpdateChatIsEnd_FullMethodName                    = "/database.DatabaseService/UpdateChatIsEnd"
+	DatabaseService_UpdateChatIsBooked_FullMethodName                 = "/database.DatabaseService/UpdateChatIsBooked"
+	DatabaseService_UpdateChatIsReviewed_FullMethodName               = "/database.DatabaseService/UpdateChatIsReviewed"
+	DatabaseService_GetUnreviewedActiveChats_FullMethodName           = "/database.DatabaseService/GetUnreviewedActiveChats"
+	DatabaseService_GetPeriodMetrics_FullMethodName                   = "/database.DatabaseService/GetPeriodMetrics"
+	DatabaseService_GetWeeklyChatsStarted_FullMethodName              = "/database.DatabaseService/GetWeeklyChatsStarted"
+	DatabaseService_IsCustomerBlocked_FullMethodName                  = "/database.DatabaseService/IsCustomerBlocked"
+	DatabaseService_UpsertGoogleSyncToken_FullMethodName              = "/database.DatabaseService/UpsertGoogleSyncToken"
+	DatabaseService_GetGoogleSyncToken_FullMethodName                 = "/database.DatabaseService/GetGoogleSyncToken"
+	DatabaseService_CreateAppointment_FullMethodName                  = "/database.DatabaseService/CreateAppointment"
+	DatabaseService_GetAppointmentByGoogleEventID_FullMethodName      = "/database.DatabaseService/GetAppointmentByGoogleEventID"
+	DatabaseService_CountAppointmentsBySlot_FullMethodName            = "/database.DatabaseService/CountAppointmentsBySlot"
+	DatabaseService_BlockCustomer_FullMethodName                      = "/database.DatabaseService/BlockCustomer"
+	DatabaseService_GetAllBlockedCustomers_FullMethodName             = "/database.DatabaseService/GetAllBlockedCustomers"
+	DatabaseService_GetUnsyncedCampusloginAppointments_FullMethodName = "/database.DatabaseService/GetUnsyncedCampusloginAppointments"
+	DatabaseService_UpdateAppointmentCampusloginStatus_FullMethodName = "/database.DatabaseService/UpdateAppointmentCampusloginStatus"
 )
 
 // DatabaseServiceClient is the client API for DatabaseService service.
@@ -139,6 +141,8 @@ type DatabaseServiceClient interface {
 	CountAppointmentsBySlot(ctx context.Context, in *CountAppointmentsBySlotRequest, opts ...grpc.CallOption) (*CountAppointmentsBySlotResponse, error)
 	BlockCustomer(ctx context.Context, in *BlockCustomerRequest, opts ...grpc.CallOption) (*BlockCustomerResponse, error)
 	GetAllBlockedCustomers(ctx context.Context, in *GetAllBlockedCustomersRequest, opts ...grpc.CallOption) (*GetAllBlockedCustomersResponse, error)
+	GetUnsyncedCampusloginAppointments(ctx context.Context, in *GetUnsyncedCampusloginAppointmentsRequest, opts ...grpc.CallOption) (*AppointmentsResponse, error)
+	UpdateAppointmentCampusloginStatus(ctx context.Context, in *UpdateAppointmentCampusloginStatusRequest, opts ...grpc.CallOption) (*AppointmentResponse, error)
 }
 
 type databaseServiceClient struct {
@@ -719,6 +723,26 @@ func (c *databaseServiceClient) GetAllBlockedCustomers(ctx context.Context, in *
 	return out, nil
 }
 
+func (c *databaseServiceClient) GetUnsyncedCampusloginAppointments(ctx context.Context, in *GetUnsyncedCampusloginAppointmentsRequest, opts ...grpc.CallOption) (*AppointmentsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AppointmentsResponse)
+	err := c.cc.Invoke(ctx, DatabaseService_GetUnsyncedCampusloginAppointments_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *databaseServiceClient) UpdateAppointmentCampusloginStatus(ctx context.Context, in *UpdateAppointmentCampusloginStatusRequest, opts ...grpc.CallOption) (*AppointmentResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AppointmentResponse)
+	err := c.cc.Invoke(ctx, DatabaseService_UpdateAppointmentCampusloginStatus_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // DatabaseServiceServer is the server API for DatabaseService service.
 // All implementations must embed UnimplementedDatabaseServiceServer
 // for forward compatibility.
@@ -780,6 +804,8 @@ type DatabaseServiceServer interface {
 	CountAppointmentsBySlot(context.Context, *CountAppointmentsBySlotRequest) (*CountAppointmentsBySlotResponse, error)
 	BlockCustomer(context.Context, *BlockCustomerRequest) (*BlockCustomerResponse, error)
 	GetAllBlockedCustomers(context.Context, *GetAllBlockedCustomersRequest) (*GetAllBlockedCustomersResponse, error)
+	GetUnsyncedCampusloginAppointments(context.Context, *GetUnsyncedCampusloginAppointmentsRequest) (*AppointmentsResponse, error)
+	UpdateAppointmentCampusloginStatus(context.Context, *UpdateAppointmentCampusloginStatusRequest) (*AppointmentResponse, error)
 	mustEmbedUnimplementedDatabaseServiceServer()
 }
 
@@ -960,6 +986,12 @@ func (UnimplementedDatabaseServiceServer) BlockCustomer(context.Context, *BlockC
 }
 func (UnimplementedDatabaseServiceServer) GetAllBlockedCustomers(context.Context, *GetAllBlockedCustomersRequest) (*GetAllBlockedCustomersResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetAllBlockedCustomers not implemented")
+}
+func (UnimplementedDatabaseServiceServer) GetUnsyncedCampusloginAppointments(context.Context, *GetUnsyncedCampusloginAppointmentsRequest) (*AppointmentsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetUnsyncedCampusloginAppointments not implemented")
+}
+func (UnimplementedDatabaseServiceServer) UpdateAppointmentCampusloginStatus(context.Context, *UpdateAppointmentCampusloginStatusRequest) (*AppointmentResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateAppointmentCampusloginStatus not implemented")
 }
 func (UnimplementedDatabaseServiceServer) mustEmbedUnimplementedDatabaseServiceServer() {}
 func (UnimplementedDatabaseServiceServer) testEmbeddedByValue()                         {}
@@ -2008,6 +2040,42 @@ func _DatabaseService_GetAllBlockedCustomers_Handler(srv interface{}, ctx contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _DatabaseService_GetUnsyncedCampusloginAppointments_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUnsyncedCampusloginAppointmentsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DatabaseServiceServer).GetUnsyncedCampusloginAppointments(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DatabaseService_GetUnsyncedCampusloginAppointments_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DatabaseServiceServer).GetUnsyncedCampusloginAppointments(ctx, req.(*GetUnsyncedCampusloginAppointmentsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DatabaseService_UpdateAppointmentCampusloginStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateAppointmentCampusloginStatusRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DatabaseServiceServer).UpdateAppointmentCampusloginStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DatabaseService_UpdateAppointmentCampusloginStatus_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DatabaseServiceServer).UpdateAppointmentCampusloginStatus(ctx, req.(*UpdateAppointmentCampusloginStatusRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // DatabaseService_ServiceDesc is the grpc.ServiceDesc for DatabaseService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -2243,7 +2311,15 @@ var DatabaseService_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "GetAllBlockedCustomers",
 			Handler:    _DatabaseService_GetAllBlockedCustomers_Handler,
 		},
+		{
+			MethodName: "GetUnsyncedCampusloginAppointments",
+			Handler:    _DatabaseService_GetUnsyncedCampusloginAppointments_Handler,
+		},
+		{
+			MethodName: "UpdateAppointmentCampusloginStatus",
+			Handler:    _DatabaseService_UpdateAppointmentCampusloginStatus_Handler,
+		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "proto/database.proto",
+	Metadata: "proto/db/database.proto",
 }

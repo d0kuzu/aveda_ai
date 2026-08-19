@@ -406,3 +406,44 @@ func (h *CampusLoginHandler) HandleTriggerTwilioReinquiry(c *gin.Context) {
 		"answer":  answer,
 	})
 }
+
+func (h *CampusLoginHandler) GetPendingAppointments(c *gin.Context) {
+	resp, err := h.db.GetUnsyncedCampusloginAppointments()
+	if err != nil {
+		log.Printf("[CampusLogin API] Failed to get pending appointments: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch pending appointments"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"appointments": resp.Appointments,
+	})
+}
+
+func (h *CampusLoginHandler) UpdateAppointmentSyncStatus(c *gin.Context) {
+	id := c.Param("id")
+	if id == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "appointment id is required"})
+		return
+	}
+
+	var req struct {
+		CampusLogin bool `json:"campus_login"`
+	}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		// If binding fails, default to true for the sake of simple API or allow only explicit boolean
+		req.CampusLogin = true 
+	}
+
+	resp, err := h.db.UpdateAppointmentCampusloginStatus(id, req.CampusLogin)
+	if err != nil {
+		log.Printf("[CampusLogin API] Failed to update appointment status: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update appointment"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Appointment updated successfully",
+		"appointment": resp,
+	})
+}

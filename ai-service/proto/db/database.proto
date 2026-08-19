@@ -62,6 +62,8 @@ service DatabaseService {
   rpc CountAppointmentsBySlot(CountAppointmentsBySlotRequest) returns (CountAppointmentsBySlotResponse);
   rpc BlockCustomer(BlockCustomerRequest) returns (BlockCustomerResponse);
   rpc GetAllBlockedCustomers(GetAllBlockedCustomersRequest) returns (GetAllBlockedCustomersResponse);
+  rpc GetUnsyncedCampusloginAppointments(GetUnsyncedCampusloginAppointmentsRequest) returns (AppointmentsResponse);
+  rpc UpdateAppointmentCampusloginStatus(UpdateAppointmentCampusloginStatusRequest) returns (AppointmentResponse);
 }
 
 message DeleteAllChatsAndMessagesRequest {}
@@ -561,4 +563,15 @@ message CountAppointmentsBySlotRequest {
 
 message CountAppointmentsBySlotResponse {
   int32 count = 1;
+}
+
+message GetUnsyncedCampusloginAppointmentsRequest {}
+
+message AppointmentsResponse {
+  repeated AppointmentResponse appointments = 1;
+}
+
+message UpdateAppointmentCampusloginStatusRequest {
+  string id = 1;
+  bool campus_login = 2;
 }

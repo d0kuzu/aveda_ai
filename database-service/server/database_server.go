@@ -1206,3 +1206,48 @@ func (s *DatabaseServer) CountAppointmentsBySlot(ctx context.Context, req *proto
 	return &proto.CountAppointmentsBySlotResponse{Count: count}, nil
 }
 
+
+func (s *DatabaseServer) GetUnsyncedCampusloginAppointments(ctx context.Context, req *proto.GetUnsyncedCampusloginAppointmentsRequest) (*proto.AppointmentsResponse, error) {
+	appointments, err := s.appointmentRepo.GetUnsyncedCampusloginAppointments(ctx)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to get unsynced appointments: %v", err)
+	}
+
+	var pbAppointments []*proto.AppointmentResponse
+	for _, app := range appointments {
+		pbAppointments = append(pbAppointments, &proto.AppointmentResponse{
+			Id:            app.ID,
+			GoogleEventId: app.GoogleEventID,
+			Title:         app.Title,
+			StartTime:     app.StartTime.Format(time.RFC3339),
+			EndTime:       app.EndTime.Format(time.RFC3339),
+			Status:        app.Status,
+			Description:   app.Description,
+			CalendarId:    app.CalendarID,
+			CampusLogin:   app.CampusLogin,
+			CreatedAt:     app.CreatedAt.Format(time.RFC3339),
+		})
+	}
+
+	return &proto.AppointmentsResponse{Appointments: pbAppointments}, nil
+}
+
+func (s *DatabaseServer) UpdateAppointmentCampusloginStatus(ctx context.Context, req *proto.UpdateAppointmentCampusloginStatusRequest) (*proto.AppointmentResponse, error) {
+	app, err := s.appointmentRepo.UpdateAppointmentCampusloginStatus(ctx, req.Id, req.CampusLogin)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to update appointment campus login status: %v", err)
+	}
+
+	return &proto.AppointmentResponse{
+		Id:            app.ID,
+		GoogleEventId: app.GoogleEventID,
+		Title:         app.Title,
+		StartTime:     app.StartTime.Format(time.RFC3339),
+		EndTime:       app.EndTime.Format(time.RFC3339),
+		Status:        app.Status,
+		Description:   app.Description,
+		CalendarId:    app.CalendarID,
+		CampusLogin:   app.CampusLogin,
+		CreatedAt:     app.CreatedAt.Format(time.RFC3339),
+	}, nil
+}

@@ -677,3 +677,21 @@ func (c *Client) CountAppointmentsBySlot(calendarID, startTime string) (int32, e
 	return resp.Count, nil
 }
 
+func (c *Client) GetUnsyncedCampusloginAppointments() (*dbpb.AppointmentsResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	req := &dbpb.GetUnsyncedCampusloginAppointmentsRequest{}
+	return c.DB.GetUnsyncedCampusloginAppointments(ctx, req)
+}
+
+func (c *Client) UpdateAppointmentCampusloginStatus(id string, campusLogin bool) (*dbpb.AppointmentResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	req := &dbpb.UpdateAppointmentCampusloginStatusRequest{
+		Id:          id,
+		CampusLogin: campusLogin,
+	}
+	return c.DB.UpdateAppointmentCampusloginStatus(ctx, req)
+}
