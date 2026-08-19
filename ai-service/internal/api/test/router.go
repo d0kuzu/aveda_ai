@@ -17,8 +17,8 @@ func TestRoutes(router *gin.Engine, app *appModule.App) {
 		group.POST("/calendar/event", h.TestCreateEvent)
 		group.GET("/calendar/events", h.TestListEvents)
 		group.Any("/campuslogin/appointment", h.TestSendAppointment)
-		group.POST("/appointments/:id/retry", h.RetryAppointment)
-		
+		//group.POST("/appointments/:id/retry", h.RetryAppointment)
+
 		// Эндпоинт для вывода всех данных запроса
 		group.Any("/echo", func(c *gin.Context) {
 			_ = c.Request.ParseMultipartForm(32 << 20)
