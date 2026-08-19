@@ -3,5 +3,4 @@
 .env
 *.md
 docker-compose*.yml
-main
 *.exe
