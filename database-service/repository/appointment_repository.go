@@ -60,9 +60,14 @@ func (r *appointmentRepository) CountBySlot(ctx context.Context, calendarID stri
 }
 
 func (r *appointmentRepository) GetUnsyncedCampusloginAppointments(ctx context.Context) ([]*models.Appointment, error) {
-	var appointments []*models.Appointment
-	err := r.db.WithContext(ctx).Where("campus_login = ?", false).Find(&appointments).Error
+	loc, err := time.LoadLocation("America/Winnipeg")
 	if err != nil {
+		loc = time.UTC
+	}
+	now := time.Now().In(loc)
+
+	var appointments []*models.Appointment
+	if err := r.db.WithContext(ctx).Where("campus_login = ?", false).Where("end_time >= ?", now).Find(&appointments).Error; err != nil {
 		return nil, err
 	}
 	return appointments, nil
