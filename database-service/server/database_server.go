@@ -1251,3 +1251,24 @@ func (s *DatabaseServer) UpdateAppointmentCampusloginStatus(ctx context.Context,
 		CreatedAt:     app.CreatedAt.Format(time.RFC3339),
 	}, nil
 }
+
+func (s *DatabaseServer) GetAppointmentByID(ctx context.Context, req *proto.GetAppointmentByIDRequest) (*proto.AppointmentResponse, error) {
+	appointment, err := s.appointmentRepo.GetByID(req.Id)
+	if err != nil {
+		return nil, status.Errorf(codes.NotFound, "appointment not found: %v", err)
+	}
+
+	return &proto.AppointmentResponse{
+		Id:            appointment.ID,
+		GoogleEventId: appointment.GoogleEventID,
+		Title:         appointment.Title,
+		StartTime:     appointment.StartTime.Format(time.RFC3339),
+		EndTime:       appointment.EndTime.Format(time.RFC3339),
+		Status:        appointment.Status,
+		Description:   appointment.Description,
+		CalendarId:    appointment.CalendarID,
+		CampusLogin:   appointment.CampusLogin,
+		CreatedAt:     appointment.CreatedAt.Format(time.RFC3339),
+	}, nil
+}
+

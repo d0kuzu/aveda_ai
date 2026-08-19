@@ -15,6 +15,7 @@ type AppointmentRepository interface {
 	CountBySlot(ctx context.Context, calendarID string, startTime time.Time) (int32, error)
 	GetUnsyncedCampusloginAppointments(ctx context.Context) ([]*models.Appointment, error)
 	UpdateAppointmentCampusloginStatus(ctx context.Context, id string, status bool) (*models.Appointment, error)
+	GetByID(id string) (*models.Appointment, error)
 }
 
 type appointmentRepository struct {
@@ -86,5 +87,13 @@ func (r *appointmentRepository) UpdateAppointmentCampusloginStatus(ctx context.C
 		return nil, err
 	}
 
+	return &appointment, nil
+}
+
+func (r *appointmentRepository) GetByID(id string) (*models.Appointment, error) {
+	var appointment models.Appointment
+	if err := r.db.Where("id = ?", id).First(&appointment).Error; err != nil {
+		return nil, err
+	}
 	return &appointment, nil
 }

@@ -78,6 +78,7 @@ const (
 	DatabaseService_GetAllBlockedCustomers_FullMethodName             = "/database.DatabaseService/GetAllBlockedCustomers"
 	DatabaseService_GetUnsyncedCampusloginAppointments_FullMethodName = "/database.DatabaseService/GetUnsyncedCampusloginAppointments"
 	DatabaseService_UpdateAppointmentCampusloginStatus_FullMethodName = "/database.DatabaseService/UpdateAppointmentCampusloginStatus"
+	DatabaseService_GetAppointmentByID_FullMethodName                 = "/database.DatabaseService/GetAppointmentByID"
 )
 
 // DatabaseServiceClient is the client API for DatabaseService service.
@@ -143,6 +144,7 @@ type DatabaseServiceClient interface {
 	GetAllBlockedCustomers(ctx context.Context, in *GetAllBlockedCustomersRequest, opts ...grpc.CallOption) (*GetAllBlockedCustomersResponse, error)
 	GetUnsyncedCampusloginAppointments(ctx context.Context, in *GetUnsyncedCampusloginAppointmentsRequest, opts ...grpc.CallOption) (*AppointmentsResponse, error)
 	UpdateAppointmentCampusloginStatus(ctx context.Context, in *UpdateAppointmentCampusloginStatusRequest, opts ...grpc.CallOption) (*AppointmentResponse, error)
+	GetAppointmentByID(ctx context.Context, in *GetAppointmentByIDRequest, opts ...grpc.CallOption) (*AppointmentResponse, error)
 }
 
 type databaseServiceClient struct {
@@ -743,6 +745,16 @@ func (c *databaseServiceClient) UpdateAppointmentCampusloginStatus(ctx context.C
 	return out, nil
 }
 
+func (c *databaseServiceClient) GetAppointmentByID(ctx context.Context, in *GetAppointmentByIDRequest, opts ...grpc.CallOption) (*AppointmentResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AppointmentResponse)
+	err := c.cc.Invoke(ctx, DatabaseService_GetAppointmentByID_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // DatabaseServiceServer is the server API for DatabaseService service.
 // All implementations must embed UnimplementedDatabaseServiceServer
 // for forward compatibility.
@@ -806,6 +818,7 @@ type DatabaseServiceServer interface {
 	GetAllBlockedCustomers(context.Context, *GetAllBlockedCustomersRequest) (*GetAllBlockedCustomersResponse, error)
 	GetUnsyncedCampusloginAppointments(context.Context, *GetUnsyncedCampusloginAppointmentsRequest) (*AppointmentsResponse, error)
 	UpdateAppointmentCampusloginStatus(context.Context, *UpdateAppointmentCampusloginStatusRequest) (*AppointmentResponse, error)
+	GetAppointmentByID(context.Context, *GetAppointmentByIDRequest) (*AppointmentResponse, error)
 	mustEmbedUnimplementedDatabaseServiceServer()
 }
 
@@ -992,6 +1005,9 @@ func (UnimplementedDatabaseServiceServer) GetUnsyncedCampusloginAppointments(con
 }
 func (UnimplementedDatabaseServiceServer) UpdateAppointmentCampusloginStatus(context.Context, *UpdateAppointmentCampusloginStatusRequest) (*AppointmentResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateAppointmentCampusloginStatus not implemented")
+}
+func (UnimplementedDatabaseServiceServer) GetAppointmentByID(context.Context, *GetAppointmentByIDRequest) (*AppointmentResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetAppointmentByID not implemented")
 }
 func (UnimplementedDatabaseServiceServer) mustEmbedUnimplementedDatabaseServiceServer() {}
 func (UnimplementedDatabaseServiceServer) testEmbeddedByValue()                         {}
@@ -2076,6 +2092,24 @@ func _DatabaseService_UpdateAppointmentCampusloginStatus_Handler(srv interface{}
 	return interceptor(ctx, in, info, handler)
 }
 
+func _DatabaseService_GetAppointmentByID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAppointmentByIDRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DatabaseServiceServer).GetAppointmentByID(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DatabaseService_GetAppointmentByID_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DatabaseServiceServer).GetAppointmentByID(ctx, req.(*GetAppointmentByIDRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // DatabaseService_ServiceDesc is the grpc.ServiceDesc for DatabaseService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -2318,6 +2352,10 @@ var DatabaseService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateAppointmentCampusloginStatus",
 			Handler:    _DatabaseService_UpdateAppointmentCampusloginStatus_Handler,
+		},
+		{
+			MethodName: "GetAppointmentByID",
+			Handler:    _DatabaseService_GetAppointmentByID_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -127,7 +127,7 @@ func (h *GoogleHandler) processEvents(channelID, resourceID string) {
 		endT := parseTime(event.End)
 
 		eventText := event.Summary + " " + event.Description
-		campusLoginSent := trySendCampusLogin(context.Background(), h.db, h.cl, eventText, startT, endT, event.Description)
+		campusLoginSent := TrySendCampusLogin(context.Background(), h.db, h.cl, eventText, startT, endT, event.Description)
 
 		// Формируем время в RFC3339 для базы данных
 		startTimeDB := ""

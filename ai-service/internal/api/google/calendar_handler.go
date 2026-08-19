@@ -314,8 +314,7 @@ func (h *CalendarHandler) BookSlot(c *gin.Context) {
 	}
 
 	// Попытка отправить запись в CampusLogin если есть телефон
-	eventText := title + " " + req.GuestName + " " + req.Description
-	campusLoginSent := trySendCampusLogin(c.Request.Context(), h.db, h.cl, eventText, startTime, endTime, req.Description)
+	success := TrySendCampusLogin(c.Request.Context(), h.db, h.cl, event.Description+" "+event.Summary, startTime, endTime, event.Description)
 
 	// Сохраняем запись в БД
 	_, err = h.db.CreateAppointment(
@@ -326,7 +325,7 @@ func (h *CalendarHandler) BookSlot(c *gin.Context) {
 		"confirmed",
 		req.Description,
 		calendarID,
-		campusLoginSent,
+		success,
 		"", // createdAt — будет time.Now() в сервере
 	)
 

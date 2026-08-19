@@ -3,9 +3,11 @@ package test
 import (
 	"diaxel/internal/modules/campuslogin"
 	"diaxel/internal/modules/googlecalendar"
+	"diaxel/internal/grpc/db"
 	"net/http"
 	"strconv"
 	"time"
+	"regexp"
 
 	"github.com/gin-gonic/gin"
 )
@@ -13,10 +15,11 @@ import (
 type TestHandler struct {
 	gc *googlecalendar.Client
 	cl *campuslogin.Client
+	db *db.Client
 }
 
-func NewTestHandler(gc *googlecalendar.Client, cl *campuslogin.Client) *TestHandler {
-	return &TestHandler{gc: gc, cl: cl}
+func NewTestHandler(gc *googlecalendar.Client, cl *campuslogin.Client, dbClient *db.Client) *TestHandler {
+	return &TestHandler{gc: gc, cl: cl, db: dbClient}
 }
 
 func (h *TestHandler) TestCalendar(c *gin.Context) {
@@ -163,3 +166,67 @@ func (h *TestHandler) TestListEvents(c *gin.Context) {
 		"events":          events,
 	})
 }
+
+func (h *TestHandler) RetryAppointment(c *gin.Context) {
+	id := c.Param("id")
+	if id == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "appointment id is required"})
+		return
+	}
+
+	app, err := h.db.GetAppointmentByID(id)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "appointment not found"})
+		return
+	}
+
+	startTime, _ := time.Parse(time.RFC3339, app.StartTime)
+	endTime, _ := time.Parse(time.RFC3339, app.EndTime)
+
+	// We extract phone from description + title just like TrySendCampusLogin
+	text := app.Description + " " + app.Title
+	
+	importRegexp := regexp.MustCompile(`\+?[1]?[-\s\.]?\(?\d{3}\)?[-\s\.]?\d{3}[-\s\.]?\d{4}`)
+	nonDigit := regexp.MustCompile(`\D`)
+	
+	phoneStr := importRegexp.FindString(text)
+	if phoneStr == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "phone not found in appointment text", "text": text})
+		return
+	}
+	
+	digits := nonDigit.ReplaceAllString(phoneStr, "")
+	if len(digits) < 10 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid phone length extracted", "digits": digits})
+		return
+	}
+	phoneSuffix := digits[len(digits)-10:]
+	
+	campusRecord, err := h.db.GetCampusloginByPhone(phoneSuffix)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "user not found in CampusLogin by phone", "phoneSuffix": phoneSuffix})
+		return
+	}
+	
+	loc, err := time.LoadLocation("America/Winnipeg")
+	if err != nil {
+		loc = time.UTC
+	}
+	
+	startTimeFormatted := startTime.In(loc).Format("2006-01-02T15:04:05")
+	endTimeFormatted := endTime.In(loc).Format("2006-01-02T15:04:05")
+	
+	err = h.cl.SendAppointment(c.Request.Context(), "Campus Tour for "+campusRecord.FirstName, startTimeFormatted, endTimeFormatted, int(campusRecord.ContactId), int(campusRecord.ProgramId), app.Description)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to send appointment to CampusLogin API", "details": err.Error(), "campusRecord": campusRecord})
+		return
+	}
+	
+	// If successful, update DB
+	h.db.UpdateAppointmentCampusloginStatus(id, true)
+	
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Appointment sent to CampusLogin successfully",
+	})
+}
+

@@ -695,3 +695,13 @@ func (c *Client) UpdateAppointmentCampusloginStatus(id string, campusLogin bool)
 	}
 	return c.DB.UpdateAppointmentCampusloginStatus(ctx, req)
 }
+
+func (c *Client) GetAppointmentByID(id string) (*dbpb.AppointmentResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	req := &dbpb.GetAppointmentByIDRequest{
+		Id: id,
+	}
+	return c.DB.GetAppointmentByID(ctx, req)
+}

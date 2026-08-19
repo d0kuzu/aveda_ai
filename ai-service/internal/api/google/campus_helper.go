@@ -13,8 +13,8 @@ import (
 var phoneRegex = regexp.MustCompile(`\+?[1]?[-\s\.]?\(?\d{3}\)?[-\s\.]?\d{3}[-\s\.]?\d{4}`)
 var nonDigitRegex = regexp.MustCompile(`\D`)
 
-// trySendCampusLogin извлекает телефон из текста, ищет запись в БД и отправляет назначение в CampusLogin.
-func trySendCampusLogin(ctx context.Context, dbClient *db.Client, cl *campuslogin.Client, text string, start, end time.Time, description string) bool {
+// TrySendCampusLogin извлекает телефон из текста, ищет запись в БД и отправляет назначение в CampusLogin.
+func TrySendCampusLogin(ctx context.Context, dbClient *db.Client, cl *campuslogin.Client, text string, start, end time.Time, description string) bool {
 	if cl == nil || dbClient == nil {
 		return false
 	}
