@@ -68,7 +68,7 @@ func (c *Client) SendAppointment(ctx context.Context, title, startTime, endTime 
 		Text:                 title,
 		Description:          description,
 		WebinarLink:          "",
-		StaffID:              6710,
+		StaffID:              7547, //6710 - cali,  7547 - jenna
 		EmployeeID:           1,
 		EmployeeIDs:          "",
 		CreateDate:           currentTime,
