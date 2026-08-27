@@ -196,10 +196,18 @@ func (h *CalendarHandler) GetSlots(c *gin.Context) {
 		}
 	}
 
+	// Текущее время в часовом поясе Winnipeg для фильтрации прошедших слотов
+	now := time.Now().In(h.loc)
+
 	// Генерируем слоты и проверяем доступность
 	var slots []slotInfo
 	for slotStart := dayStart; slotStart.Add(slotDuration).Before(dayEnd) || slotStart.Add(slotDuration).Equal(dayEnd); slotStart = slotStart.Add(slotDuration) {
 		slotEnd := slotStart.Add(slotDuration)
+
+		// Пропускаем слоты, которые уже начались или прошли
+		if !slotStart.After(now) {
+			continue
+		}
 
 		// Проверяем пересечение с busy-периодами (opaque ивенты)
 		isBusy := false
