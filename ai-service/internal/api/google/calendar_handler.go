@@ -271,6 +271,12 @@ func (h *CalendarHandler) BookSlot(c *gin.Context) {
 		return
 	}
 
+	// Проверяем что слот ещё не прошёл
+	if !startTime.After(time.Now().In(h.loc)) {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "cannot book a slot that has already passed"})
+		return
+	}
+
 	// Проверяем количество записей на слоте
 	booked, err := h.db.CountAppointmentsBySlot(calendarID, startTime.Format(time.RFC3339))
 	if err != nil {
