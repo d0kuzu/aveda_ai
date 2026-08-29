@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"net/url"
 	"strings"
 	"time"
 
@@ -208,6 +209,8 @@ func (c *Client) executeFunction(ctx context.Context, functionName, argsJSON, us
 		return c.handleGoogleCalendarCreateEvent(ctx, argsJSON, userId, assistantId)
 	case "close_conversation":
 		return c.handleCloseConversation(ctx, userId, assistantId)
+	case "bookcampussansfrancisco", "bookcampussansjose":
+		return c.handleBookCampusSinta(ctx, functionName, userId, assistantId)
 	default:
 		return "", fmt.Errorf("unknown function: %s", functionName)
 	}
@@ -510,4 +513,15 @@ func (c *Client) createCampusLoginAppointmentInternal(ctx context.Context, start
 		return err
 	}
 	return nil
+}
+
+func (c *Client) handleBookCampusSinta(ctx context.Context, functionName, userId, assistantId string) (string, error) {
+	escapedPhone := url.QueryEscape(userId)
+
+	_, err := c.handleCloseConversation(ctx, userId, assistantId)
+	if err != nil {
+		log.Printf("Failed to close conversation: %v", err)
+	}
+
+	return "Appointment link create, please return that link to the customer to let him book his appointment: : Here is the link to schedule your campus visit in San Francisco:https://cal.com/cinta-aveda/san-francisco-campus-tour?phone=" + escapedPhone, nil
 }

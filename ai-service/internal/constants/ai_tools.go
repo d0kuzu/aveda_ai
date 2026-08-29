@@ -189,25 +189,19 @@ var AvedaSintaTools = []openai.Tool{
 	{
 		Type: openai.ToolTypeFunction,
 		Function: &openai.FunctionDefinition{
-			Name:        "send_summary",
-			Description: "Send a summary of the conversation (important information about the user, what they were interested in, etc.). Call this function when you give the user a link to a tour.",
+			Name:        "bookcampussansfrancisco",
+			Description: "Use this function only once and only after the customer has explicitly confirmed their interest in booking a campus tour in San Francisco. Once the confirmation is received, trigger the function to return the appointment booking link provided by the webhook.",
 			Parameters: map[string]interface{}{
-				"type": "object",
-				"properties": map[string]interface{}{
-					"summary": map[string]interface{}{
-						"type":        "string",
-						"description": "Important information about the user, their interests, and context of the conversation.",
-					},
-				},
-				"required": []string{"summary"},
+				"type":       "object",
+				"properties": map[string]interface{}{},
 			},
 		},
 	},
 	{
 		Type: openai.ToolTypeFunction,
 		Function: &openai.FunctionDefinition{
-			Name:        "close_conversation",
-			Description: "Call this function to end the conversation and stop responding to the user. Use this when the conversation is fully resolved or the user's intent requires no further action.",
+			Name:        "bookcampussansjose",
+			Description: "Use this function only once and only after the customer has explicitly confirmed their interest in booking a campus tour in San Jose. Once the confirmation is received, trigger the function to return the appointment booking link provided by the webhook.",
 			Parameters: map[string]interface{}{
 				"type":       "object",
 				"properties": map[string]interface{}{},
