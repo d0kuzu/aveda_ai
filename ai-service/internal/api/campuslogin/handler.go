@@ -198,12 +198,20 @@ func (h *CampusLoginHandler) HandleTriggerTwilio(c *gin.Context) {
 		isInternational = "yes"
 	}
 
-	systemPrompt := fmt.Sprintf(
-		"This is a new lead. Name: %s, program: %s, International: %s. Greet them by name and mention the program they chose.",
-		req.FirstName,
-		programName,
-		isInternational,
-	)
+	var systemPrompt string
+	if assistantID == constants.AvedaSintaAssistantID {
+		systemPrompt = fmt.Sprintf(
+			"This is a new lead. Name: %s. Greet them by name.",
+			req.FirstName,
+		)
+	} else {
+		systemPrompt = fmt.Sprintf(
+			"This is a new lead. Name: %s, program: %s, International: %s. Greet them by name and mention the program they chose.",
+			req.FirstName,
+			programName,
+			isInternational,
+		)
+	}
 
 	log.Printf("[CampusLogin Trigger] Generated System Prompt: %s", systemPrompt)
 
@@ -440,7 +448,7 @@ func (h *CampusLoginHandler) UpdateAppointmentSyncStatus(c *gin.Context) {
 	}
 	if err := c.ShouldBindJSON(&req); err != nil {
 		// If binding fails, default to true for the sake of simple API or allow only explicit boolean
-		req.CampusLogin = true 
+		req.CampusLogin = true
 	}
 
 	resp, err := h.db.UpdateAppointmentCampusloginStatus(id, req.CampusLogin)
@@ -451,7 +459,7 @@ func (h *CampusLoginHandler) UpdateAppointmentSyncStatus(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"message": "Appointment updated successfully",
+		"message":     "Appointment updated successfully",
 		"appointment": resp,
 	})
 }
