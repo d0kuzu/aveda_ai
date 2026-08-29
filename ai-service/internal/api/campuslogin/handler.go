@@ -370,12 +370,20 @@ func (h *CampusLoginHandler) HandleTriggerTwilioReinquiry(c *gin.Context) {
 		programNameStr = name
 	}
 
-	systemPrompt := fmt.Sprintf(
-		"This is a new lead. Name: %s, program: %s, International: %s. Greet them by name and mention the program they chose.",
-		firstName,
-		programNameStr,
-		isInternational,
-	)
+	var systemPrompt string
+	if assistantID == constants.AvedaSintaAssistantID {
+		systemPrompt = fmt.Sprintf(
+			"This is a new lead. Name: %s. Greet them by name.",
+			firstName,
+		)
+	} else {
+		systemPrompt = fmt.Sprintf(
+			"This is a new lead. Name: %s, program: %s, International: %s. Greet them by name and mention the program they chose.",
+			firstName,
+			programNameStr,
+			isInternational,
+		)
+	}
 
 	log.Printf("[CampusLogin Reinquiry] Generated System Prompt: %s", systemPrompt)
 
