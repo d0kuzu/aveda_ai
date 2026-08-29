@@ -190,7 +190,7 @@ var AvedaSintaTools = []openai.Tool{
 		Type: openai.ToolTypeFunction,
 		Function: &openai.FunctionDefinition{
 			Name:        "bookcampussansfrancisco",
-			Description: "Use this function only once and only after the customer has explicitly confirmed their interest in booking a campus tour in San Francisco. Once the confirmation is received, trigger the function to return the appointment booking link provided by the webhook.",
+			Description: "Trigger this function in Step 2 (upon the lead's first reply) to obtain the San Francisco campus tour booking link provided by the webhook. This function can only be called once per conversation.",
 			Parameters: map[string]interface{}{
 				"type":       "object",
 				"properties": map[string]interface{}{},
@@ -202,6 +202,17 @@ var AvedaSintaTools = []openai.Tool{
 		Function: &openai.FunctionDefinition{
 			Name:        "bookcampussansjose",
 			Description: "Use this function only once and only after the customer has explicitly confirmed their interest in booking a campus tour in San Jose. Once the confirmation is received, trigger the function to return the appointment booking link provided by the webhook.",
+			Parameters: map[string]interface{}{
+				"type":       "object",
+				"properties": map[string]interface{}{},
+			},
+		},
+	},
+	{
+		Type: openai.ToolTypeFunction,
+		Function: &openai.FunctionDefinition{
+			Name:        "close_conversation",
+			Description: "Call this function to close the conversation and stop responding to the customer. Trigger this when an exit condition is reached (salon/spa inquiry, already contacted advisor, out-of-state lead, customer declines/not interested), or when the customer sends closing acknowledgments (e.g. 'thanks', 'got it', 'okay', emoji).",
 			Parameters: map[string]interface{}{
 				"type":       "object",
 				"properties": map[string]interface{}{},
