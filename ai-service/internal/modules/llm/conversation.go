@@ -48,7 +48,7 @@ func (c *Client) Conversation(ctx context.Context, userId, assistantId, userMess
 		c.AddMessage(&messages, openai.ChatMessageRoleUser, userMessage)
 	}
 
-	response, err := c.GetAnswer(ctx, messages)
+	response, err := c.GetAnswer(ctx, assistantId, messages)
 	if err != nil {
 		return "", err
 	}
@@ -101,7 +101,7 @@ func (c *Client) Conversation(ctx context.Context, userId, assistantId, userMess
 			break
 		}
 
-		response, err = c.GetAnswer(ctx, messages)
+		response, err = c.GetAnswer(ctx, assistantId, messages)
 		if err != nil {
 			return "", err
 		}
@@ -150,7 +150,7 @@ If none of the tools apply, do nothing.`
 		{Role: openai.ChatMessageRoleUser, Content: transcript},
 	}
 
-	response, err := c.GetAnswer(ctx, messages)
+	response, err := c.GetAnswer(ctx, assistantId, messages)
 	if err != nil {
 		return fmt.Errorf("LLM analyze error: %w", err)
 	}
@@ -181,7 +181,7 @@ If none of the tools apply, do nothing.`
 			})
 		}
 
-		response, err = c.GetAnswer(ctx, messages)
+		response, err = c.GetAnswer(ctx, assistantId, messages)
 		if err != nil {
 			return fmt.Errorf("LLM analyze follow-up error: %w", err)
 		}

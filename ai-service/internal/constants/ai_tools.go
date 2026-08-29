@@ -2,7 +2,7 @@ package constants
 
 import "github.com/sashabaranov/go-openai"
 
-var Tools = []openai.Tool{
+var AvedaCanadaTools = []openai.Tool{
 	/*
 		{
 			Type: openai.ToolTypeFunction,
@@ -183,4 +183,35 @@ var Tools = []openai.Tool{
 	// 		},
 	// 	},
 	// },
+}
+
+var AvedaSintaTools = []openai.Tool{
+	{
+		Type: openai.ToolTypeFunction,
+		Function: &openai.FunctionDefinition{
+			Name:        "send_summary",
+			Description: "Send a summary of the conversation (important information about the user, what they were interested in, etc.). Call this function when you give the user a link to a tour.",
+			Parameters: map[string]interface{}{
+				"type": "object",
+				"properties": map[string]interface{}{
+					"summary": map[string]interface{}{
+						"type":        "string",
+						"description": "Important information about the user, their interests, and context of the conversation.",
+					},
+				},
+				"required": []string{"summary"},
+			},
+		},
+	},
+	{
+		Type: openai.ToolTypeFunction,
+		Function: &openai.FunctionDefinition{
+			Name:        "close_conversation",
+			Description: "Call this function to end the conversation and stop responding to the user. Use this when the conversation is fully resolved or the user's intent requires no further action.",
+			Parameters: map[string]interface{}{
+				"type":       "object",
+				"properties": map[string]interface{}{},
+			},
+		},
+	},
 }

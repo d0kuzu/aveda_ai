@@ -130,7 +130,7 @@ func (s *AbandonedSummarizer) processAbandonedChats(ctx context.Context) {
 					Content: userMessagesText,
 				},
 			}
-			response, err := s.llmClient.GetAnswer(ctx, prompt)
+			response, err := s.llmClient.GetAnswer(ctx, "", prompt)
 			if err != nil || len(response.Choices) == 0 {
 				s.writeLog("Error getting LLM answer for chat %s: %v", chat.Id, err)
 				continue
