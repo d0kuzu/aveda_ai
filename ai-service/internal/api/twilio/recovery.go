@@ -10,6 +10,7 @@ import (
 	"time"
 
 	dbpb "diaxel/proto/db"
+
 	"github.com/gin-gonic/gin"
 	openapi "github.com/twilio/twilio-go/rest/api/v2010"
 )
@@ -144,7 +145,7 @@ func (h *TwilioWebhookHandler) runRecoveryJob(assistantID, accountSID, authToken
 		}
 
 		// First message must match the trigger pattern
-		if !strings.Contains(firstMsg.Body, "this is Ally from Aveda!") {
+		if !strings.Contains(firstMsg.Body, "this is Ava") {
 			log.Printf("[Recovery Job] SKIP %s: first message doesn't match AI trigger pattern. Message: %s", customerPhone, firstMsg.Body)
 			skippedNotAI++
 			continue
@@ -367,7 +368,7 @@ func (h *TwilioWebhookHandler) runRecoveryPhase2Job(assistantID string) {
 			for _, m := range messages {
 				if m.Role == "assistant" {
 					lowerContent := strings.ToLower(m.Content)
-					
+
 					// Check if this message contains the calendar link
 					if strings.Contains(lowerContent, "https://calendar.app.google") {
 						calendarLinkSent = true
@@ -412,7 +413,7 @@ func (h *TwilioWebhookHandler) runRecoveryPhase2Job(assistantID string) {
 									log.Printf("[Recovery Phase 2] WARN: Failed to create appointment for %s: %v", customerPhone, err)
 								}
 							}
-							
+
 							// Break out of the loop after finding the appointment message to avoid creating multiple
 							break
 						}
