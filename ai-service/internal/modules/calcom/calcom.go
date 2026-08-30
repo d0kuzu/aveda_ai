@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"net/url"
 	"strings"
 	"time"
 )
@@ -61,6 +62,24 @@ type BookingData struct {
 	Status string `json:"status"`
 	Start  string `json:"start"`
 	End    string `json:"end"`
+}
+
+// BookingsV2Response from Cal.com
+type BookingsV2Response struct {
+	Status     string               `json:"status"`
+	Data       []BookingV2Data      `json:"data"`
+	Pagination BookingsV2Pagination `json:"pagination"`
+}
+
+type BookingV2Data struct {
+	ID        int    `json:"id"`
+	Status    string `json:"status"`
+	CreatedAt string `json:"createdAt"`
+}
+
+type BookingsV2Pagination struct {
+	HasMore    bool   `json:"hasMore"`
+	NextCursor string `json:"nextCursor"`
 }
 
 func New(apiKey string, eventTypeID int) *Client {
@@ -187,4 +206,81 @@ func (c *Client) CreateBooking(ctx context.Context, startTime, attendeeName, att
 	}
 
 	return &bookingResp.Data, nil
+}
+
+// GetBookingsCount fetches and counts bookings from Cal.com matching status 'accepted' and creation date range.
+func (c *Client) GetBookingsCount(ctx context.Context, rangeStart, rangeEnd time.Time) (int, error) {
+	count := 0
+	cursor := ""
+
+	startISO := rangeStart.UTC().Format(time.RFC3339)
+	endISO := rangeEnd.UTC().Format(time.RFC3339)
+
+	for {
+		u, err := url.Parse(baseURL + "/bookings")
+		if err != nil {
+			return 0, err
+		}
+		
+		q := u.Query()
+		q.Set("take", "250")
+		q.Set("afterCreatedAt", startISO)
+		q.Set("beforeCreatedAt", endISO)
+		q.Set("sortCreated", "asc")
+		if cursor != "" {
+			q.Set("cursor", cursor)
+		}
+		u.RawQuery = q.Encode()
+
+		req, err := http.NewRequestWithContext(ctx, http.MethodGet, u.String(), nil)
+		if err != nil {
+			return 0, fmt.Errorf("failed to create request: %w", err)
+		}
+
+		req.Header.Set("Authorization", "Bearer "+c.apiKey)
+		req.Header.Set("cal-api-version", "2024-08-13")
+
+		resp, err := c.httpClient.Do(req)
+		if err != nil {
+			return 0, fmt.Errorf("failed to fetch bookings: %w", err)
+		}
+
+		body, err := io.ReadAll(resp.Body)
+		resp.Body.Close()
+		if err != nil {
+			return 0, fmt.Errorf("failed to read response: %w", err)
+		}
+
+		if resp.StatusCode != http.StatusOK {
+			return 0, fmt.Errorf("cal.com API returned status %d: %s", resp.StatusCode, string(body))
+		}
+
+		var bookingsResp BookingsV2Response
+		if err := json.Unmarshal(body, &bookingsResp); err != nil {
+			return 0, fmt.Errorf("failed to parse bookings response: %w", err)
+		}
+
+		for _, booking := range bookingsResp.Data {
+			if booking.Status != "accepted" {
+				continue
+			}
+
+			createdAt, err := time.Parse(time.RFC3339, booking.CreatedAt)
+			if err != nil {
+				continue
+			}
+
+			// Condition: rangeStart <= createdAt < rangeEnd
+			if (createdAt.Equal(rangeStart) || createdAt.After(rangeStart)) && createdAt.Before(rangeEnd) {
+				count++
+			}
+		}
+
+		if !bookingsResp.Pagination.HasMore || bookingsResp.Pagination.NextCursor == "" {
+			break
+		}
+		cursor = bookingsResp.Pagination.NextCursor
+	}
+
+	return count, nil
 }

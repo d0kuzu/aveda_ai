@@ -8,6 +8,7 @@ import (
 	"diaxel/internal/modules/llm"
 	"diaxel/internal/modules/telegram"
 	"diaxel/internal/modules/twilio"
+	"diaxel/internal/modules/calcom"
 )
 
 type LLM interface {
@@ -24,6 +25,7 @@ type App struct {
 	TgOrchestrator *telegram.Orchestrator
 	GoogleCalendar *googlecalendar.Client
 	CampusLogin    *campuslogin.Client
+	Calcom         *calcom.Client
 }
 
 func NewApp(
@@ -34,6 +36,7 @@ func NewApp(
 	tgOrch *telegram.Orchestrator,
 	gcClient *googlecalendar.Client,
 	campusLoginClient *campuslogin.Client,
+	calcomClient *calcom.Client,
 ) *App {
 	return &App{
 		LLM:            llmClient,
@@ -43,6 +46,7 @@ func NewApp(
 		TgOrchestrator: tgOrch,
 		GoogleCalendar: gcClient,
 		CampusLogin:    campusLoginClient,
+		Calcom:         calcomClient,
 	}
 }
 

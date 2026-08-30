@@ -79,14 +79,33 @@ func GetAnalytics(application *app.App) gin.HandlerFunc {
 				return PeriodMetrics{}, err
 			}
 
+			currBookedChats := currentResp.BookedChats
+			prevBookedChats := prevResp.BookedChats
+
+			if assistantID == constants.AvedaSintaAssistantID && application.Calcom != nil {
+				currCount, err := application.Calcom.GetBookingsCount(c.Request.Context(), startCurrent, endCurrent)
+				if err == nil {
+					currBookedChats = int32(currCount)
+				} else {
+					log.Printf("Failed to get calcom bookings for current period: %v", err)
+				}
+
+				prevCount, err := application.Calcom.GetBookingsCount(c.Request.Context(), startPrev, endPrev)
+				if err == nil {
+					prevBookedChats = int32(prevCount)
+				} else {
+					log.Printf("Failed to get calcom bookings for previous period: %v", err)
+				}
+			}
+
 			currConversion := 0.0
 			if currentResp.StartedChats > 0 {
-				currConversion = float64(currentResp.BookedChats) / float64(currentResp.StartedChats) * 100
+				currConversion = float64(currBookedChats) / float64(currentResp.StartedChats) * 100
 			}
 
 			prevConversion := 0.0
 			if prevResp.StartedChats > 0 {
-				prevConversion = float64(prevResp.BookedChats) / float64(prevResp.StartedChats) * 100
+				prevConversion = float64(prevBookedChats) / float64(prevResp.StartedChats) * 100
 			}
 
 			calcChange := func(curr, prev float64) float64 {
@@ -102,11 +121,11 @@ func GetAnalytics(application *app.App) gin.HandlerFunc {
 			return PeriodMetrics{
 				StartedChats:     currentResp.StartedChats,
 				CompletedChats:   currentResp.CompletedChats,
-				BookedMeetings:   currentResp.BookedChats,
+				BookedMeetings:   currBookedChats,
 				ConversionRate:   currConversion,
 				StartedChange:    calcChange(float64(currentResp.StartedChats), float64(prevResp.StartedChats)),
 				CompletedChange:  calcChange(float64(currentResp.CompletedChats), float64(prevResp.CompletedChats)),
-				BookedChange:     calcChange(float64(currentResp.BookedChats), float64(prevResp.BookedChats)),
+				BookedChange:     calcChange(float64(currBookedChats), float64(prevBookedChats)),
 				ConversionChange: currConversion - prevConversion,
 			}, nil
 		}

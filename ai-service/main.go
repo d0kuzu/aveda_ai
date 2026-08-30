@@ -18,6 +18,7 @@ import (
 	"diaxel/internal/modules/summary"
 	"diaxel/internal/modules/telegram"
 	"diaxel/internal/modules/twilio"
+	"diaxel/internal/modules/calcom"
 )
 
 func main() {
@@ -58,7 +59,9 @@ func main() {
 	// webhookWorker := googlecalendar.NewWebhookWorker(gcClient, grpcClient, "primary", webhookURL)
 	// go webhookWorker.Start(context.Background())
 
-	app := appModule.NewApp(llmClient, twilioClient, grpcClient, settings, tgOrchestrator, gcClient, campusloginClient)
+	calcomClient := calcom.New(settings.CalcomAPIKey, 0)
+
+	app := appModule.NewApp(llmClient, twilioClient, grpcClient, settings, tgOrchestrator, gcClient, campusloginClient, calcomClient)
 
 	api.RouterStart(app)
 }

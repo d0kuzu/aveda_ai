@@ -29,6 +29,7 @@ type Settings struct {
 	SlotDurationMinutes  int
 	WorkSchedule         string
 	AvedaCalendarSecret  string
+	CalcomAPIKey         string
 }
 
 func LoadConfig() (*Settings, error) {
@@ -71,6 +72,7 @@ func LoadConfig() (*Settings, error) {
 		SlotDurationMinutes: getEnvAsInt("SLOT_DURATION_MINUTES", 60),
 		WorkSchedule:        workSchedule,
 		AvedaCalendarSecret: os.Getenv("AVEDA_CALENDAR_SECRET"),
+		CalcomAPIKey:        os.Getenv("CAL_API_KEY"),
 	}, nil
 }
 
