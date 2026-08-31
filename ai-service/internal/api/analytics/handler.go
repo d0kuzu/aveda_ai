@@ -1,8 +1,10 @@
 package analytics
 
 import (
+	"context"
 	"log"
 	"net/http"
+	"sync"
 	"time"
 
 	"diaxel/internal/app"
@@ -83,19 +85,34 @@ func GetAnalytics(application *app.App) gin.HandlerFunc {
 			prevBookedChats := prevResp.BookedChats
 
 			if assistantID == constants.AvedaSintaAssistantID && application.Calcom != nil {
-				currCount, err := application.Calcom.GetBookingsCount(c.Request.Context(), startCurrent, endCurrent)
-				if err == nil {
-					currBookedChats = int32(currCount)
-				} else {
-					log.Printf("Failed to get calcom bookings for current period: %v", err)
-				}
+				var wg sync.WaitGroup
+				wg.Add(2)
 
-				prevCount, err := application.Calcom.GetBookingsCount(c.Request.Context(), startPrev, endPrev)
-				if err == nil {
-					prevBookedChats = int32(prevCount)
-				} else {
-					log.Printf("Failed to get calcom bookings for previous period: %v", err)
-				}
+				go func() {
+					defer wg.Done()
+					ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+					defer cancel()
+					count, err := application.Calcom.GetBookingsCount(ctx, startCurrent, endCurrent)
+					if err == nil {
+						currBookedChats = int32(count)
+					} else {
+						log.Printf("Failed to get calcom bookings for current period: %v", err)
+					}
+				}()
+
+				go func() {
+					defer wg.Done()
+					ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+					defer cancel()
+					count, err := application.Calcom.GetBookingsCount(ctx, startPrev, endPrev)
+					if err == nil {
+						prevBookedChats = int32(count)
+					} else {
+						log.Printf("Failed to get calcom bookings for previous period: %v", err)
+					}
+				}()
+
+				wg.Wait()
 			}
 
 			currConversion := 0.0
