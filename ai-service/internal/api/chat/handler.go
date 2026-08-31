@@ -3,6 +3,7 @@ package chat
 import (
 	"diaxel/internal/config"
 	"diaxel/internal/grpc/db"
+	dbpb "diaxel/proto/db"
 	"fmt"
 	"log"
 	"net/http"
@@ -15,6 +16,36 @@ import (
 type ChatHandler struct {
 	cfg *config.Settings
 	db  *db.Client
+}
+
+type ChatJSON struct {
+	ID            string `json:"id"`
+	AssistantID   string `json:"assistant_id"`
+	CustomerID    string `json:"customer_id"`
+	Platform      string `json:"platform"`
+	CreatedAt     string `json:"created_at"`
+	UpdatedAt     string `json:"updated_at"`
+	MessageCount  int32  `json:"message_count"`
+	IsEnd         bool   `json:"is_end"`
+	FollowupStage int32  `json:"followup_stage"`
+	IsReviewed    bool   `json:"is_reviewed"`
+	IsBooked      bool   `json:"is_booked"`
+}
+
+func chatToJSON(chat *dbpb.ChatResponse) ChatJSON {
+	return ChatJSON{
+		ID:            chat.Id,
+		AssistantID:   chat.AssistantId,
+		CustomerID:    chat.CustomerId,
+		Platform:      chat.Platform,
+		CreatedAt:     chat.CreatedAt,
+		UpdatedAt:     chat.UpdatedAt,
+		MessageCount:  chat.MessageCount,
+		IsEnd:         chat.IsEnd,
+		FollowupStage: chat.FollowupStage,
+		IsReviewed:    chat.IsReviewed,
+		IsBooked:      chat.IsBooked,
+	}
 }
 
 func NewChatHandler(cfg *config.Settings, db *db.Client) *ChatHandler {
@@ -74,7 +105,7 @@ func (h *ChatHandler) GetAllChats(c *gin.Context) {
 
 	if len(assistantIDs) == 0 {
 		log.Printf("[GetAllChats] No assistant IDs for user %s, returning empty result", userID)
-		c.JSON(http.StatusOK, gin.H{"answer": []string{}})
+		c.JSON(http.StatusOK, gin.H{"answer": []ChatJSON{}})
 		return
 	}
 
@@ -88,8 +119,13 @@ func (h *ChatHandler) GetAllChats(c *gin.Context) {
 		return
 	}
 
+	result := make([]ChatJSON, len(chats))
+	for i, chat := range chats {
+		result[i] = chatToJSON(chat)
+	}
+
 	c.JSON(http.StatusOK, gin.H{
-		"answer": chats,
+		"answer": result,
 	})
 }
 
