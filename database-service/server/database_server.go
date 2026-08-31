@@ -550,13 +550,17 @@ func (s *DatabaseServer) GetChatPageByUserID(ctx context.Context, req *proto.Get
 		}
 
 		protoChats = append(protoChats, &proto.ChatResponse{
-			Id:           chat.ID,
-			AssistantId:  chat.AssistantID,
-			CustomerId:   customerId,
-			Platform:     "", // Platform not stored in chat model
-			CreatedAt:    chat.CreatedAt.Format(time.RFC3339),
-			UpdatedAt:    chat.UpdatedAt.Format(time.RFC3339),
-			MessageCount: chat.MessageCount,
+			Id:            chat.ID,
+			AssistantId:   chat.AssistantID,
+			CustomerId:    customerId,
+			Platform:      "", // Platform not stored in chat model
+			CreatedAt:     chat.CreatedAt.Format(time.RFC3339),
+			UpdatedAt:     chat.UpdatedAt.Format(time.RFC3339),
+			MessageCount:  chat.MessageCount,
+			IsEnd:         chat.IsEnd,
+			IsBooked:      chat.IsBooked,
+			IsReviewed:    chat.IsReviewed,
+			FollowupStage: int32(chat.FollowupStage),
 		})
 	}
 
@@ -579,13 +583,17 @@ func (s *DatabaseServer) SearchChatsByCustomer(ctx context.Context, req *proto.S
 		}
 
 		protoChats = append(protoChats, &proto.ChatResponse{
-			Id:           chat.ID,
-			AssistantId:  chat.AssistantID,
-			CustomerId:   customerId,
-			Platform:     "", // Platform not stored in chat model
-			CreatedAt:    chat.CreatedAt.Format(time.RFC3339),
-			UpdatedAt:    chat.UpdatedAt.Format(time.RFC3339),
-			MessageCount: chat.MessageCount,
+			Id:            chat.ID,
+			AssistantId:   chat.AssistantID,
+			CustomerId:    customerId,
+			Platform:      "", // Platform not stored in chat model
+			CreatedAt:     chat.CreatedAt.Format(time.RFC3339),
+			UpdatedAt:     chat.UpdatedAt.Format(time.RFC3339),
+			MessageCount:  chat.MessageCount,
+			IsEnd:         chat.IsEnd,
+			IsBooked:      chat.IsBooked,
+			IsReviewed:    chat.IsReviewed,
+			FollowupStage: int32(chat.FollowupStage),
 		})
 	}
 
