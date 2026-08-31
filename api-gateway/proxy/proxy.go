@@ -29,7 +29,7 @@ func NewReverseProxy(targetURL string, stripPrefix string) gin.HandlerFunc {
 	}
 
 	proxy.Transport = &http.Transport{
-		ResponseHeaderTimeout: 5 * time.Second,
+		ResponseHeaderTimeout: 60 * time.Second,
 		IdleConnTimeout:       30 * time.Second,
 	}
 
