@@ -147,31 +147,37 @@ func GetAnalytics(application *app.App) gin.HandlerFunc {
 			}, nil
 		}
 
-		today, err := getMetrics(1)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-			return
+		type metricsResult struct {
+			metrics PeriodMetrics
+			err     error
 		}
-		d7, err := getMetrics(7)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-			return
+
+		periods := []int{1, 7, 30, 60, 90}
+		results := make([]metricsResult, len(periods))
+
+		var wgPeriods sync.WaitGroup
+		wgPeriods.Add(len(periods))
+		for i, days := range periods {
+			go func(idx, d int) {
+				defer wgPeriods.Done()
+				m, err := getMetrics(d)
+				results[idx] = metricsResult{metrics: m, err: err}
+			}(i, days)
 		}
-		d30, err := getMetrics(30)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-			return
+		wgPeriods.Wait()
+
+		for i, r := range results {
+			if r.err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": r.err.Error(), "period": periods[i]})
+				return
+			}
 		}
-		d60, err := getMetrics(60)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-			return
-		}
-		d90, err := getMetrics(90)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-			return
-		}
+
+		today := results[0].metrics
+		d7 := results[1].metrics
+		d30 := results[2].metrics
+		d60 := results[3].metrics
+		d90 := results[4].metrics
 
 		// Weekly chart data — last 7 days starting from 7 days ago
 		y, m, d := now.Date()
