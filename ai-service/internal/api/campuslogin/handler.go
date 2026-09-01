@@ -201,7 +201,7 @@ func (h *CampusLoginHandler) HandleTriggerTwilio(c *gin.Context) {
 	var systemPrompt string
 	if assistantID == constants.AvedaSintaAssistantID {
 		systemPrompt = fmt.Sprintf(
-			"This is a new lead. Name: %s. Greet them by name.",
+			"This is a new lead. Name: %s. Greet them by name and send the standard initial outreach message offering program details (do not ask about speaking with advisors).",
 			req.FirstName,
 		)
 	} else {
@@ -381,7 +381,7 @@ func (h *CampusLoginHandler) HandleTriggerTwilioReinquiry(c *gin.Context) {
 	var systemPrompt string
 	if assistantID == constants.AvedaSintaAssistantID {
 		systemPrompt = fmt.Sprintf(
-			"This is a new lead. Name: %s. Greet them by name.",
+			"This is a new lead. Name: %s. Greet them by name and send the standard initial outreach message offering program details (do not ask about speaking with advisors).",
 			firstName,
 		)
 	} else {
