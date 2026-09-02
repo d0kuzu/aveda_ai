@@ -15,7 +15,8 @@ import (
 
 // NotificationEmails — список email-адресов, которым отправляются уведомления при создании ивентов.
 var NotificationEmails = []string{
-	"cali@avedainstitutewinnipeg.ca",
+	// "cali@avedainstitutewinnipeg.ca",
+	"jenna@avedainstitutewinnipeg.ca",
 }
 
 type Client struct {
