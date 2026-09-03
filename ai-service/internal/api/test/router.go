@@ -9,7 +9,7 @@ import (
 )
 
 func TestRoutes(router *gin.Engine, app *appModule.App) {
-	h := NewTestHandler(app.GoogleCalendar, campuslogin.NewClient(app.Cfg.CampusLoginAPI), app.Db)
+	h := NewTestHandler(app.GoogleCalendar, campuslogin.NewClient(app.Cfg.CampusLoginAPI), app.Db, app.LLM)
 
 	group := router.Group("test")
 	{
@@ -18,6 +18,8 @@ func TestRoutes(router *gin.Engine, app *appModule.App) {
 		group.GET("/calendar/events", h.TestListEvents)
 		group.Any("/campuslogin/appointment", h.TestSendAppointment)
 		//group.POST("/appointments/:id/retry", h.RetryAppointment)
+		group.Any("/conversation", h.TestConversation)
+		group.Any("/conversation/:assistant_id", h.TestConversation)
 
 		// Эндпоинт для вывода всех данных запроса
 		group.Any("/echo", func(c *gin.Context) {
