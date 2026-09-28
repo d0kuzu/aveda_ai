@@ -6,8 +6,10 @@ import (
 	"log"
 	"os"
 	"runtime"
+	"strings"
 	"time"
 
+	"diaxel/internal/constants"
 	"diaxel/internal/grpc/db"
 	"diaxel/internal/modules/tgnotifier"
 )
@@ -74,7 +76,26 @@ func (w *Worker) nextSendTime(now time.Time, loc *time.Location) time.Time {
 	return next
 }
 
-// sendReport collects analytics and sends the Telegram message.
+type AssistantReportItem struct {
+	ID   string
+	Name string
+	Icon string
+}
+
+var TargetAssistants = []AssistantReportItem{
+	{
+		ID:   constants.AvedaSintaAssistantID,
+		Name: "Aveda Sinta (Ava)",
+		Icon: "🌿",
+	},
+	{
+		ID:   constants.AvedaCanadaAssistantID,
+		Name: "Aveda Canada (Ally)",
+		Icon: "🍁",
+	},
+}
+
+// sendReport collects analytics for each target assistant and sends the Telegram message.
 func (w *Worker) sendReport(ctx context.Context, loc *time.Location) {
 	log.Println("[DailyReport] Generating daily report...")
 
@@ -85,24 +106,47 @@ func (w *Worker) sendReport(ctx context.Context, loc *time.Location) {
 	startStr := startOfDay.UTC().Format(time.RFC3339)
 	endStr := endOfDay.UTC().Format(time.RFC3339)
 
-	// Collect metrics for all assistants (empty assistant_id = global)
-	metrics, err := w.db.GetPeriodMetrics("", startStr, endStr)
+	var assistantSections []string
+	var totalStarted, totalCompleted, totalBooked int32
 
-	var metricsBlock string
-	if err != nil {
-		log.Printf("[DailyReport] Error getting period metrics: %v", err)
-		metricsBlock = "⚠️ Не удалось получить метрики за период"
-	} else {
-		metricsBlock = fmt.Sprintf(
-			"📊 <b>Чаты за сегодня:</b>\n"+
-				"  • Начато: <b>%d</b>\n"+
+	for _, asst := range TargetAssistants {
+		metrics, err := w.db.GetPeriodMetrics(asst.ID, startStr, endStr)
+		if err != nil {
+			log.Printf("[DailyReport] Error getting period metrics for %s (%s): %v", asst.Name, asst.ID, err)
+			assistantSections = append(assistantSections, fmt.Sprintf(
+				"%s <b>%s</b>\n  ⚠️ Ошибка получения метрик",
+				asst.Icon, asst.Name,
+			))
+			continue
+		}
+
+		totalStarted += metrics.StartedChats
+		totalCompleted += metrics.CompletedChats
+		totalBooked += metrics.BookedChats
+
+		section := fmt.Sprintf(
+			"%s <b>%s</b>\n"+
+				"  • Начато диалогов: <b>%d</b>\n"+
 				"  • Завершено: <b>%d</b>\n"+
 				"  • Забронировано: <b>%d</b>",
+			asst.Icon,
+			asst.Name,
 			metrics.StartedChats,
 			metrics.CompletedChats,
 			metrics.BookedChats,
 		)
+		assistantSections = append(assistantSections, section)
 	}
+
+	totalsBlock := fmt.Sprintf(
+		"📊 <b>Итого за сегодня:</b>\n"+
+			"  • Всего начато: <b>%d</b>\n"+
+			"  • Всего завершено: <b>%d</b>\n"+
+			"  • Всего забронировано: <b>%d</b>",
+		totalStarted,
+		totalCompleted,
+		totalBooked,
+	)
 
 	// System health info
 	var memStats runtime.MemStats
@@ -110,20 +154,19 @@ func (w *Worker) sendReport(ctx context.Context, loc *time.Location) {
 
 	uptimeInfo := fmt.Sprintf(
 		"🖥 <b>Состояние сервера:</b>\n"+
-			"  • Горутины: <b>%d</b>\n"+
+			"  • Статус: ✅ <b>ai-service</b> онлайн\n"+
+			"  • Активных горутин: <b>%d</b>\n"+
 			"  • Память (Alloc): <b>%.1f MB</b>\n"+
-			"  • Память (Sys): <b>%.1f MB</b>\n"+
-			"  • GC циклов: <b>%d</b>",
+			"  • Память (Sys): <b>%.1f MB</b>",
 		runtime.NumGoroutine(),
 		float64(memStats.Alloc)/1024/1024,
 		float64(memStats.Sys)/1024/1024,
-		memStats.NumGC,
 	)
 
 	// Build the full report message
 	hostname, _ := os.Hostname()
 	report := fmt.Sprintf(
-		"📋 <b>Ежедневный отчёт</b>\n"+
+		"📋 <b>ЕЖЕДНЕВНЫЙ ОТЧЁТ</b>\n"+
 			"📅 %s\n"+
 			"🕐 %s (Астана)\n\n"+
 			"━━━━━━━━━━━━━━━━━━\n\n"+
@@ -131,18 +174,17 @@ func (w *Worker) sendReport(ctx context.Context, loc *time.Location) {
 			"━━━━━━━━━━━━━━━━━━\n\n"+
 			"%s\n\n"+
 			"━━━━━━━━━━━━━━━━━━\n\n"+
-			"✅ Сервис <b>ai-service</b> работает\n"+
-			"🏠 Хост: <b>%s</b>\n"+
-			"🔄 Go: <b>%s</b>",
+			"%s\n"+
+			"🏠 Хост: <b>%s</b>",
 		now.Format("02.01.2006"),
 		now.Format("15:04"),
-		metricsBlock,
+		strings.Join(assistantSections, "\n\n"),
+		totalsBlock,
 		uptimeInfo,
 		hostname,
-		runtime.Version(),
 	)
 
-	err = w.notifier.SendHTML(report)
+	err := w.notifier.SendHTML(report)
 	if err != nil {
 		log.Printf("[DailyReport] Failed to send report to Telegram: %v", err)
 	} else {
