@@ -14,10 +14,11 @@ type Client struct {
 	conn *websocket.Conn
 	chat string
 	Db   *db.Client
+	done chan struct{}
 }
 
 func NewWSClient(conn *websocket.Conn, chatID string, db *db.Client) *Client {
-	return &Client{conn: conn, chat: chatID, Db: db}
+	return &Client{conn: conn, chat: chatID, Db: db, done: make(chan struct{})}
 }
 
 var (
@@ -36,6 +37,11 @@ func UnregisterClient(c *Client) {
 	defer clientsMu.Unlock()
 	delete(clients, c)
 	c.conn.Close()
+	select {
+	case <-c.done:
+	default:
+		close(c.done)
+	}
 }
 
 func (c *Client) Broadcast(chatID string, msg []byte) {
@@ -47,6 +53,11 @@ func (c *Client) Broadcast(chatID string, msg []byte) {
 		log.Println("ws message write error:", err)
 		c.conn.Close()
 		delete(clients, c)
+		select {
+		case <-c.done:
+		default:
+			close(c.done)
+		}
 	}
 }
 

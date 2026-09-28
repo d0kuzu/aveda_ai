@@ -11,10 +11,20 @@ func (c *Client) PollLocalDB(chatID string) {
 	var lastMessageCount int
 
 	for {
+		select {
+		case <-c.done:
+			return
+		default:
+		}
+
 		messages, err := c.Db.GetChatMessages(chatID, 50, int32(lastMessageCount))
 		if err != nil {
 			log.Println("DB fetch error:", err)
-			time.Sleep(5 * time.Second)
+			select {
+			case <-c.done:
+				return
+			case <-time.After(5 * time.Second):
+			}
 			continue
 		}
 
@@ -65,6 +75,10 @@ func (c *Client) PollLocalDB(chatID string) {
 			lastMessageCount += newCount
 		}
 
-		time.Sleep(500 * time.Millisecond)
+		select {
+		case <-c.done:
+			return
+		case <-time.After(1 * time.Second):
+		}
 	}
 }
