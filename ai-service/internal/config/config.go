@@ -30,6 +30,11 @@ type Settings struct {
 	WorkSchedule         string
 	AvedaCalendarSecret  string
 	CalcomAPIKey         string
+
+	// Daily report Telegram notification settings
+	ReportBotToken string
+	ReportChatID   string
+	ReportSendTime string // HH:MM format, Asia/Almaty timezone
 }
 
 func LoadConfig() (*Settings, error) {
@@ -48,6 +53,11 @@ func LoadConfig() (*Settings, error) {
 	workSchedule := os.Getenv("WORK_SCHEDULE")
 	if workSchedule == "" {
 		workSchedule = "Tue=09:00-17:00,Wed=11:00-19:00,Thu=11:00-19:00,Fri=09:00-17:00,Sat=09:00-17:00"
+	}
+
+	reportSendTime := os.Getenv("REPORT_SEND_TIME")
+	if reportSendTime == "" {
+		reportSendTime = "21:00"
 	}
 
 	return &Settings{
@@ -73,6 +83,10 @@ func LoadConfig() (*Settings, error) {
 		WorkSchedule:        workSchedule,
 		AvedaCalendarSecret: os.Getenv("AVEDA_CALENDAR_SECRET"),
 		CalcomAPIKey:        os.Getenv("CAL_API_KEY"),
+
+		ReportBotToken: os.Getenv("REPORT_BOT_TOKEN"),
+		ReportChatID:   os.Getenv("REPORT_CHAT_ID"),
+		ReportSendTime: reportSendTime,
 	}, nil
 }
 

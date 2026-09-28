@@ -5,6 +5,7 @@ import (
 	"log"
 	"net"
 	"os"
+	"time"
 
 	_ "time/tzdata"
 
@@ -42,6 +43,11 @@ func main() {
 		log.Fatalf("Failed to get database instance: %v", err)
 	}
 	defer sqlDB.Close()
+
+	// Connection pool settings to prevent overwhelming PostgreSQL
+	sqlDB.SetMaxOpenConns(25)
+	sqlDB.SetMaxIdleConns(10)
+	sqlDB.SetConnMaxLifetime(5 * time.Minute)
 
 	if err := sqlDB.Ping(); err != nil {
 		log.Fatalf("Failed to ping database: %v", err)

@@ -12,11 +12,13 @@ import (
 	"diaxel/internal/config"
 	"diaxel/internal/grpc/db"
 	"diaxel/internal/modules/campuslogin"
+	"diaxel/internal/modules/dailyreport"
 	"diaxel/internal/modules/followup"
 	"diaxel/internal/modules/googlecalendar"
 	"diaxel/internal/modules/llm"
 	"diaxel/internal/modules/summary"
 	"diaxel/internal/modules/telegram"
+	"diaxel/internal/modules/tgnotifier"
 	"diaxel/internal/modules/twilio"
 	"diaxel/internal/modules/calcom"
 )
@@ -58,6 +60,15 @@ func main() {
 	// webhookURL := settings.WebhookBaseURL + "/google/webhook"
 	// webhookWorker := googlecalendar.NewWebhookWorker(gcClient, grpcClient, "primary", webhookURL)
 	// go webhookWorker.Start(context.Background())
+
+	// Daily report to Telegram channel
+	if settings.ReportBotToken != "" && settings.ReportChatID != "" {
+		reportNotifier := tgnotifier.New(settings.ReportBotToken, settings.ReportChatID)
+		reportWorker := dailyreport.NewWorker(grpcClient, reportNotifier, settings.ReportSendTime)
+		go reportWorker.Start(context.Background())
+	} else {
+		log.Println("[DailyReport] REPORT_BOT_TOKEN or REPORT_CHAT_ID not set, skipping daily report worker.")
+	}
 
 	calcomClient := calcom.New(settings.CalcomAPIKey, 0)
 
