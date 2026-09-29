@@ -38,6 +38,13 @@ func NewReverseProxy(targetURL string, stripPrefix string) gin.HandlerFunc {
 		w.Write([]byte("service unavailable"))
 	}
 
+	proxy.ModifyResponse = func(res *http.Response) error {
+		res.Header.Del("Access-Control-Allow-Origin")
+		res.Header.Del("Access-Control-Allow-Methods")
+		res.Header.Del("Access-Control-Allow-Headers")
+		return nil
+	}
+
 	return func(c *gin.Context) {
 		if userID, ok := c.Get("user_id"); ok {
 			c.Request.Header.Set("X-User-Id", fmt.Sprint(userID))

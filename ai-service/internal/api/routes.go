@@ -14,19 +14,13 @@ import (
 	appModule "diaxel/internal/app"
 	"log"
 
-	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
 func RouterStart(app *appModule.App) {
 	r := gin.Default()
 
-	r.Use(cors.New(cors.Config{
-		AllowOrigins: []string{"*"},
-		AllowMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowHeaders: []string{"Origin", "Content-Type", "Authorization"},
-		MaxAge:       12 * 60 * 60,
-	}))
+	// CORS is handled at API Gateway and Nginx reverse proxy level
 
 	webhook.WebhookRoutes(r, app)
 	twilio.TwilioWebhookRoutes(r, app)
