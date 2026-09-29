@@ -878,6 +878,7 @@ type ChatResponse struct {
 	FollowupStage int32                  `protobuf:"varint,11,opt,name=followup_stage,json=followupStage,proto3" json:"followup_stage,omitempty"`
 	IsReviewed    bool                   `protobuf:"varint,12,opt,name=is_reviewed,json=isReviewed,proto3" json:"is_reviewed,omitempty"`
 	IsBooked      bool                   `protobuf:"varint,13,opt,name=is_booked,json=isBooked,proto3" json:"is_booked,omitempty"`
+	StartedAt     string                 `protobuf:"bytes,14,opt,name=started_at,json=startedAt,proto3" json:"started_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -987,6 +988,13 @@ func (x *ChatResponse) GetIsBooked() bool {
 		return x.IsBooked
 	}
 	return false
+}
+
+func (x *ChatResponse) GetStartedAt() string {
+	if x != nil {
+		return x.StartedAt
+	}
+	return ""
 }
 
 type SaveMessageRequest struct {
@@ -4145,6 +4153,142 @@ func (x *GetPeriodMetricsResponse) GetBookedChats() int32 {
 	return 0
 }
 
+type GetPeriodChatsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	AssistantId   string                 `protobuf:"bytes,1,opt,name=assistant_id,json=assistantId,proto3" json:"assistant_id,omitempty"`
+	StartTime     string                 `protobuf:"bytes,2,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`
+	EndTime       string                 `protobuf:"bytes,3,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`
+	Category      string                 `protobuf:"bytes,4,opt,name=category,proto3" json:"category,omitempty"`
+	Limit         int32                  `protobuf:"varint,5,opt,name=limit,proto3" json:"limit,omitempty"`
+	Offset        int32                  `protobuf:"varint,6,opt,name=offset,proto3" json:"offset,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetPeriodChatsRequest) Reset() {
+	*x = GetPeriodChatsRequest{}
+	mi := &file_proto_db_database_proto_msgTypes[73]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetPeriodChatsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetPeriodChatsRequest) ProtoMessage() {}
+
+func (x *GetPeriodChatsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_db_database_proto_msgTypes[73]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetPeriodChatsRequest.ProtoReflect.Descriptor instead.
+func (*GetPeriodChatsRequest) Descriptor() ([]byte, []int) {
+	return file_proto_db_database_proto_rawDescGZIP(), []int{73}
+}
+
+func (x *GetPeriodChatsRequest) GetAssistantId() string {
+	if x != nil {
+		return x.AssistantId
+	}
+	return ""
+}
+
+func (x *GetPeriodChatsRequest) GetStartTime() string {
+	if x != nil {
+		return x.StartTime
+	}
+	return ""
+}
+
+func (x *GetPeriodChatsRequest) GetEndTime() string {
+	if x != nil {
+		return x.EndTime
+	}
+	return ""
+}
+
+func (x *GetPeriodChatsRequest) GetCategory() string {
+	if x != nil {
+		return x.Category
+	}
+	return ""
+}
+
+func (x *GetPeriodChatsRequest) GetLimit() int32 {
+	if x != nil {
+		return x.Limit
+	}
+	return 0
+}
+
+func (x *GetPeriodChatsRequest) GetOffset() int32 {
+	if x != nil {
+		return x.Offset
+	}
+	return 0
+}
+
+type GetPeriodChatsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Chats         []*ChatResponse        `protobuf:"bytes,1,rep,name=chats,proto3" json:"chats,omitempty"`
+	TotalCount    int64                  `protobuf:"varint,2,opt,name=total_count,json=totalCount,proto3" json:"total_count,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetPeriodChatsResponse) Reset() {
+	*x = GetPeriodChatsResponse{}
+	mi := &file_proto_db_database_proto_msgTypes[74]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetPeriodChatsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetPeriodChatsResponse) ProtoMessage() {}
+
+func (x *GetPeriodChatsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_db_database_proto_msgTypes[74]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetPeriodChatsResponse.ProtoReflect.Descriptor instead.
+func (*GetPeriodChatsResponse) Descriptor() ([]byte, []int) {
+	return file_proto_db_database_proto_rawDescGZIP(), []int{74}
+}
+
+func (x *GetPeriodChatsResponse) GetChats() []*ChatResponse {
+	if x != nil {
+		return x.Chats
+	}
+	return nil
+}
+
+func (x *GetPeriodChatsResponse) GetTotalCount() int64 {
+	if x != nil {
+		return x.TotalCount
+	}
+	return 0
+}
+
 type DailyCount struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Date          string                 `protobuf:"bytes,1,opt,name=date,proto3" json:"date,omitempty"`
@@ -4155,7 +4299,7 @@ type DailyCount struct {
 
 func (x *DailyCount) Reset() {
 	*x = DailyCount{}
-	mi := &file_proto_db_database_proto_msgTypes[73]
+	mi := &file_proto_db_database_proto_msgTypes[75]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4167,7 +4311,7 @@ func (x *DailyCount) String() string {
 func (*DailyCount) ProtoMessage() {}
 
 func (x *DailyCount) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_db_database_proto_msgTypes[73]
+	mi := &file_proto_db_database_proto_msgTypes[75]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4180,7 +4324,7 @@ func (x *DailyCount) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DailyCount.ProtoReflect.Descriptor instead.
 func (*DailyCount) Descriptor() ([]byte, []int) {
-	return file_proto_db_database_proto_rawDescGZIP(), []int{73}
+	return file_proto_db_database_proto_rawDescGZIP(), []int{75}
 }
 
 func (x *DailyCount) GetDate() string {
@@ -4208,7 +4352,7 @@ type GetWeeklyChatsStartedRequest struct {
 
 func (x *GetWeeklyChatsStartedRequest) Reset() {
 	*x = GetWeeklyChatsStartedRequest{}
-	mi := &file_proto_db_database_proto_msgTypes[74]
+	mi := &file_proto_db_database_proto_msgTypes[76]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4220,7 +4364,7 @@ func (x *GetWeeklyChatsStartedRequest) String() string {
 func (*GetWeeklyChatsStartedRequest) ProtoMessage() {}
 
 func (x *GetWeeklyChatsStartedRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_db_database_proto_msgTypes[74]
+	mi := &file_proto_db_database_proto_msgTypes[76]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4233,7 +4377,7 @@ func (x *GetWeeklyChatsStartedRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetWeeklyChatsStartedRequest.ProtoReflect.Descriptor instead.
 func (*GetWeeklyChatsStartedRequest) Descriptor() ([]byte, []int) {
-	return file_proto_db_database_proto_rawDescGZIP(), []int{74}
+	return file_proto_db_database_proto_rawDescGZIP(), []int{76}
 }
 
 func (x *GetWeeklyChatsStartedRequest) GetAssistantId() string {
@@ -4266,7 +4410,7 @@ type GetWeeklyChatsStartedResponse struct {
 
 func (x *GetWeeklyChatsStartedResponse) Reset() {
 	*x = GetWeeklyChatsStartedResponse{}
-	mi := &file_proto_db_database_proto_msgTypes[75]
+	mi := &file_proto_db_database_proto_msgTypes[77]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4278,7 +4422,7 @@ func (x *GetWeeklyChatsStartedResponse) String() string {
 func (*GetWeeklyChatsStartedResponse) ProtoMessage() {}
 
 func (x *GetWeeklyChatsStartedResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_db_database_proto_msgTypes[75]
+	mi := &file_proto_db_database_proto_msgTypes[77]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4291,7 +4435,7 @@ func (x *GetWeeklyChatsStartedResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetWeeklyChatsStartedResponse.ProtoReflect.Descriptor instead.
 func (*GetWeeklyChatsStartedResponse) Descriptor() ([]byte, []int) {
-	return file_proto_db_database_proto_rawDescGZIP(), []int{75}
+	return file_proto_db_database_proto_rawDescGZIP(), []int{77}
 }
 
 func (x *GetWeeklyChatsStartedResponse) GetDays() []*DailyCount {
@@ -4310,7 +4454,7 @@ type IsCustomerBlockedRequest struct {
 
 func (x *IsCustomerBlockedRequest) Reset() {
 	*x = IsCustomerBlockedRequest{}
-	mi := &file_proto_db_database_proto_msgTypes[76]
+	mi := &file_proto_db_database_proto_msgTypes[78]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4322,7 +4466,7 @@ func (x *IsCustomerBlockedRequest) String() string {
 func (*IsCustomerBlockedRequest) ProtoMessage() {}
 
 func (x *IsCustomerBlockedRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_db_database_proto_msgTypes[76]
+	mi := &file_proto_db_database_proto_msgTypes[78]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4335,7 +4479,7 @@ func (x *IsCustomerBlockedRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use IsCustomerBlockedRequest.ProtoReflect.Descriptor instead.
 func (*IsCustomerBlockedRequest) Descriptor() ([]byte, []int) {
-	return file_proto_db_database_proto_rawDescGZIP(), []int{76}
+	return file_proto_db_database_proto_rawDescGZIP(), []int{78}
 }
 
 func (x *IsCustomerBlockedRequest) GetUserId() string {
@@ -4354,7 +4498,7 @@ type IsCustomerBlockedResponse struct {
 
 func (x *IsCustomerBlockedResponse) Reset() {
 	*x = IsCustomerBlockedResponse{}
-	mi := &file_proto_db_database_proto_msgTypes[77]
+	mi := &file_proto_db_database_proto_msgTypes[79]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4366,7 +4510,7 @@ func (x *IsCustomerBlockedResponse) String() string {
 func (*IsCustomerBlockedResponse) ProtoMessage() {}
 
 func (x *IsCustomerBlockedResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_db_database_proto_msgTypes[77]
+	mi := &file_proto_db_database_proto_msgTypes[79]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4379,7 +4523,7 @@ func (x *IsCustomerBlockedResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use IsCustomerBlockedResponse.ProtoReflect.Descriptor instead.
 func (*IsCustomerBlockedResponse) Descriptor() ([]byte, []int) {
-	return file_proto_db_database_proto_rawDescGZIP(), []int{77}
+	return file_proto_db_database_proto_rawDescGZIP(), []int{79}
 }
 
 func (x *IsCustomerBlockedResponse) GetIsBlocked() bool {
@@ -4402,7 +4546,7 @@ type UpsertGoogleSyncTokenRequest struct {
 
 func (x *UpsertGoogleSyncTokenRequest) Reset() {
 	*x = UpsertGoogleSyncTokenRequest{}
-	mi := &file_proto_db_database_proto_msgTypes[78]
+	mi := &file_proto_db_database_proto_msgTypes[80]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4414,7 +4558,7 @@ func (x *UpsertGoogleSyncTokenRequest) String() string {
 func (*UpsertGoogleSyncTokenRequest) ProtoMessage() {}
 
 func (x *UpsertGoogleSyncTokenRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_db_database_proto_msgTypes[78]
+	mi := &file_proto_db_database_proto_msgTypes[80]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4427,7 +4571,7 @@ func (x *UpsertGoogleSyncTokenRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpsertGoogleSyncTokenRequest.ProtoReflect.Descriptor instead.
 func (*UpsertGoogleSyncTokenRequest) Descriptor() ([]byte, []int) {
-	return file_proto_db_database_proto_rawDescGZIP(), []int{78}
+	return file_proto_db_database_proto_rawDescGZIP(), []int{80}
 }
 
 func (x *UpsertGoogleSyncTokenRequest) GetCalendarId() string {
@@ -4474,7 +4618,7 @@ type GetGoogleSyncTokenRequest struct {
 
 func (x *GetGoogleSyncTokenRequest) Reset() {
 	*x = GetGoogleSyncTokenRequest{}
-	mi := &file_proto_db_database_proto_msgTypes[79]
+	mi := &file_proto_db_database_proto_msgTypes[81]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4486,7 +4630,7 @@ func (x *GetGoogleSyncTokenRequest) String() string {
 func (*GetGoogleSyncTokenRequest) ProtoMessage() {}
 
 func (x *GetGoogleSyncTokenRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_db_database_proto_msgTypes[79]
+	mi := &file_proto_db_database_proto_msgTypes[81]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4499,7 +4643,7 @@ func (x *GetGoogleSyncTokenRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetGoogleSyncTokenRequest.ProtoReflect.Descriptor instead.
 func (*GetGoogleSyncTokenRequest) Descriptor() ([]byte, []int) {
-	return file_proto_db_database_proto_rawDescGZIP(), []int{79}
+	return file_proto_db_database_proto_rawDescGZIP(), []int{81}
 }
 
 func (x *GetGoogleSyncTokenRequest) GetCalendarId() string {
@@ -4523,7 +4667,7 @@ type GoogleSyncTokenResponse struct {
 
 func (x *GoogleSyncTokenResponse) Reset() {
 	*x = GoogleSyncTokenResponse{}
-	mi := &file_proto_db_database_proto_msgTypes[80]
+	mi := &file_proto_db_database_proto_msgTypes[82]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4535,7 +4679,7 @@ func (x *GoogleSyncTokenResponse) String() string {
 func (*GoogleSyncTokenResponse) ProtoMessage() {}
 
 func (x *GoogleSyncTokenResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_db_database_proto_msgTypes[80]
+	mi := &file_proto_db_database_proto_msgTypes[82]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4548,7 +4692,7 @@ func (x *GoogleSyncTokenResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GoogleSyncTokenResponse.ProtoReflect.Descriptor instead.
 func (*GoogleSyncTokenResponse) Descriptor() ([]byte, []int) {
-	return file_proto_db_database_proto_rawDescGZIP(), []int{80}
+	return file_proto_db_database_proto_rawDescGZIP(), []int{82}
 }
 
 func (x *GoogleSyncTokenResponse) GetCalendarId() string {
@@ -4610,7 +4754,7 @@ type CreateAppointmentRequest struct {
 
 func (x *CreateAppointmentRequest) Reset() {
 	*x = CreateAppointmentRequest{}
-	mi := &file_proto_db_database_proto_msgTypes[81]
+	mi := &file_proto_db_database_proto_msgTypes[83]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4622,7 +4766,7 @@ func (x *CreateAppointmentRequest) String() string {
 func (*CreateAppointmentRequest) ProtoMessage() {}
 
 func (x *CreateAppointmentRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_db_database_proto_msgTypes[81]
+	mi := &file_proto_db_database_proto_msgTypes[83]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4635,7 +4779,7 @@ func (x *CreateAppointmentRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateAppointmentRequest.ProtoReflect.Descriptor instead.
 func (*CreateAppointmentRequest) Descriptor() ([]byte, []int) {
-	return file_proto_db_database_proto_rawDescGZIP(), []int{81}
+	return file_proto_db_database_proto_rawDescGZIP(), []int{83}
 }
 
 func (x *CreateAppointmentRequest) GetGoogleEventId() string {
@@ -4719,7 +4863,7 @@ type AppointmentResponse struct {
 
 func (x *AppointmentResponse) Reset() {
 	*x = AppointmentResponse{}
-	mi := &file_proto_db_database_proto_msgTypes[82]
+	mi := &file_proto_db_database_proto_msgTypes[84]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4731,7 +4875,7 @@ func (x *AppointmentResponse) String() string {
 func (*AppointmentResponse) ProtoMessage() {}
 
 func (x *AppointmentResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_db_database_proto_msgTypes[82]
+	mi := &file_proto_db_database_proto_msgTypes[84]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4744,7 +4888,7 @@ func (x *AppointmentResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AppointmentResponse.ProtoReflect.Descriptor instead.
 func (*AppointmentResponse) Descriptor() ([]byte, []int) {
-	return file_proto_db_database_proto_rawDescGZIP(), []int{82}
+	return file_proto_db_database_proto_rawDescGZIP(), []int{84}
 }
 
 func (x *AppointmentResponse) GetId() string {
@@ -4826,7 +4970,7 @@ type GetAppointmentByGoogleEventIDRequest struct {
 
 func (x *GetAppointmentByGoogleEventIDRequest) Reset() {
 	*x = GetAppointmentByGoogleEventIDRequest{}
-	mi := &file_proto_db_database_proto_msgTypes[83]
+	mi := &file_proto_db_database_proto_msgTypes[85]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4838,7 +4982,7 @@ func (x *GetAppointmentByGoogleEventIDRequest) String() string {
 func (*GetAppointmentByGoogleEventIDRequest) ProtoMessage() {}
 
 func (x *GetAppointmentByGoogleEventIDRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_db_database_proto_msgTypes[83]
+	mi := &file_proto_db_database_proto_msgTypes[85]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4851,7 +4995,7 @@ func (x *GetAppointmentByGoogleEventIDRequest) ProtoReflect() protoreflect.Messa
 
 // Deprecated: Use GetAppointmentByGoogleEventIDRequest.ProtoReflect.Descriptor instead.
 func (*GetAppointmentByGoogleEventIDRequest) Descriptor() ([]byte, []int) {
-	return file_proto_db_database_proto_rawDescGZIP(), []int{83}
+	return file_proto_db_database_proto_rawDescGZIP(), []int{85}
 }
 
 func (x *GetAppointmentByGoogleEventIDRequest) GetGoogleEventId() string {
@@ -4870,7 +5014,7 @@ type BlockCustomerRequest struct {
 
 func (x *BlockCustomerRequest) Reset() {
 	*x = BlockCustomerRequest{}
-	mi := &file_proto_db_database_proto_msgTypes[84]
+	mi := &file_proto_db_database_proto_msgTypes[86]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4882,7 +5026,7 @@ func (x *BlockCustomerRequest) String() string {
 func (*BlockCustomerRequest) ProtoMessage() {}
 
 func (x *BlockCustomerRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_db_database_proto_msgTypes[84]
+	mi := &file_proto_db_database_proto_msgTypes[86]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4895,7 +5039,7 @@ func (x *BlockCustomerRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BlockCustomerRequest.ProtoReflect.Descriptor instead.
 func (*BlockCustomerRequest) Descriptor() ([]byte, []int) {
-	return file_proto_db_database_proto_rawDescGZIP(), []int{84}
+	return file_proto_db_database_proto_rawDescGZIP(), []int{86}
 }
 
 func (x *BlockCustomerRequest) GetUserId() string {
@@ -4914,7 +5058,7 @@ type BlockCustomerResponse struct {
 
 func (x *BlockCustomerResponse) Reset() {
 	*x = BlockCustomerResponse{}
-	mi := &file_proto_db_database_proto_msgTypes[85]
+	mi := &file_proto_db_database_proto_msgTypes[87]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4926,7 +5070,7 @@ func (x *BlockCustomerResponse) String() string {
 func (*BlockCustomerResponse) ProtoMessage() {}
 
 func (x *BlockCustomerResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_db_database_proto_msgTypes[85]
+	mi := &file_proto_db_database_proto_msgTypes[87]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4939,7 +5083,7 @@ func (x *BlockCustomerResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BlockCustomerResponse.ProtoReflect.Descriptor instead.
 func (*BlockCustomerResponse) Descriptor() ([]byte, []int) {
-	return file_proto_db_database_proto_rawDescGZIP(), []int{85}
+	return file_proto_db_database_proto_rawDescGZIP(), []int{87}
 }
 
 func (x *BlockCustomerResponse) GetSuccess() bool {
@@ -4957,7 +5101,7 @@ type GetAllBlockedCustomersRequest struct {
 
 func (x *GetAllBlockedCustomersRequest) Reset() {
 	*x = GetAllBlockedCustomersRequest{}
-	mi := &file_proto_db_database_proto_msgTypes[86]
+	mi := &file_proto_db_database_proto_msgTypes[88]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4969,7 +5113,7 @@ func (x *GetAllBlockedCustomersRequest) String() string {
 func (*GetAllBlockedCustomersRequest) ProtoMessage() {}
 
 func (x *GetAllBlockedCustomersRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_db_database_proto_msgTypes[86]
+	mi := &file_proto_db_database_proto_msgTypes[88]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4982,7 +5126,7 @@ func (x *GetAllBlockedCustomersRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetAllBlockedCustomersRequest.ProtoReflect.Descriptor instead.
 func (*GetAllBlockedCustomersRequest) Descriptor() ([]byte, []int) {
-	return file_proto_db_database_proto_rawDescGZIP(), []int{86}
+	return file_proto_db_database_proto_rawDescGZIP(), []int{88}
 }
 
 type GetAllBlockedCustomersResponse struct {
@@ -4994,7 +5138,7 @@ type GetAllBlockedCustomersResponse struct {
 
 func (x *GetAllBlockedCustomersResponse) Reset() {
 	*x = GetAllBlockedCustomersResponse{}
-	mi := &file_proto_db_database_proto_msgTypes[87]
+	mi := &file_proto_db_database_proto_msgTypes[89]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5006,7 +5150,7 @@ func (x *GetAllBlockedCustomersResponse) String() string {
 func (*GetAllBlockedCustomersResponse) ProtoMessage() {}
 
 func (x *GetAllBlockedCustomersResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_db_database_proto_msgTypes[87]
+	mi := &file_proto_db_database_proto_msgTypes[89]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5019,7 +5163,7 @@ func (x *GetAllBlockedCustomersResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetAllBlockedCustomersResponse.ProtoReflect.Descriptor instead.
 func (*GetAllBlockedCustomersResponse) Descriptor() ([]byte, []int) {
-	return file_proto_db_database_proto_rawDescGZIP(), []int{87}
+	return file_proto_db_database_proto_rawDescGZIP(), []int{89}
 }
 
 func (x *GetAllBlockedCustomersResponse) GetUserIds() []string {
@@ -5039,7 +5183,7 @@ type CountAppointmentsBySlotRequest struct {
 
 func (x *CountAppointmentsBySlotRequest) Reset() {
 	*x = CountAppointmentsBySlotRequest{}
-	mi := &file_proto_db_database_proto_msgTypes[88]
+	mi := &file_proto_db_database_proto_msgTypes[90]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5051,7 +5195,7 @@ func (x *CountAppointmentsBySlotRequest) String() string {
 func (*CountAppointmentsBySlotRequest) ProtoMessage() {}
 
 func (x *CountAppointmentsBySlotRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_db_database_proto_msgTypes[88]
+	mi := &file_proto_db_database_proto_msgTypes[90]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5064,7 +5208,7 @@ func (x *CountAppointmentsBySlotRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CountAppointmentsBySlotRequest.ProtoReflect.Descriptor instead.
 func (*CountAppointmentsBySlotRequest) Descriptor() ([]byte, []int) {
-	return file_proto_db_database_proto_rawDescGZIP(), []int{88}
+	return file_proto_db_database_proto_rawDescGZIP(), []int{90}
 }
 
 func (x *CountAppointmentsBySlotRequest) GetCalendarId() string {
@@ -5090,7 +5234,7 @@ type CountAppointmentsBySlotResponse struct {
 
 func (x *CountAppointmentsBySlotResponse) Reset() {
 	*x = CountAppointmentsBySlotResponse{}
-	mi := &file_proto_db_database_proto_msgTypes[89]
+	mi := &file_proto_db_database_proto_msgTypes[91]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5102,7 +5246,7 @@ func (x *CountAppointmentsBySlotResponse) String() string {
 func (*CountAppointmentsBySlotResponse) ProtoMessage() {}
 
 func (x *CountAppointmentsBySlotResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_db_database_proto_msgTypes[89]
+	mi := &file_proto_db_database_proto_msgTypes[91]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5115,7 +5259,7 @@ func (x *CountAppointmentsBySlotResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CountAppointmentsBySlotResponse.ProtoReflect.Descriptor instead.
 func (*CountAppointmentsBySlotResponse) Descriptor() ([]byte, []int) {
-	return file_proto_db_database_proto_rawDescGZIP(), []int{89}
+	return file_proto_db_database_proto_rawDescGZIP(), []int{91}
 }
 
 func (x *CountAppointmentsBySlotResponse) GetCount() int32 {
@@ -5134,7 +5278,7 @@ type GetAppointmentByIDRequest struct {
 
 func (x *GetAppointmentByIDRequest) Reset() {
 	*x = GetAppointmentByIDRequest{}
-	mi := &file_proto_db_database_proto_msgTypes[90]
+	mi := &file_proto_db_database_proto_msgTypes[92]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5146,7 +5290,7 @@ func (x *GetAppointmentByIDRequest) String() string {
 func (*GetAppointmentByIDRequest) ProtoMessage() {}
 
 func (x *GetAppointmentByIDRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_db_database_proto_msgTypes[90]
+	mi := &file_proto_db_database_proto_msgTypes[92]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5159,7 +5303,7 @@ func (x *GetAppointmentByIDRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetAppointmentByIDRequest.ProtoReflect.Descriptor instead.
 func (*GetAppointmentByIDRequest) Descriptor() ([]byte, []int) {
-	return file_proto_db_database_proto_rawDescGZIP(), []int{90}
+	return file_proto_db_database_proto_rawDescGZIP(), []int{92}
 }
 
 func (x *GetAppointmentByIDRequest) GetId() string {
@@ -5177,7 +5321,7 @@ type GetUnsyncedCampusloginAppointmentsRequest struct {
 
 func (x *GetUnsyncedCampusloginAppointmentsRequest) Reset() {
 	*x = GetUnsyncedCampusloginAppointmentsRequest{}
-	mi := &file_proto_db_database_proto_msgTypes[91]
+	mi := &file_proto_db_database_proto_msgTypes[93]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5189,7 +5333,7 @@ func (x *GetUnsyncedCampusloginAppointmentsRequest) String() string {
 func (*GetUnsyncedCampusloginAppointmentsRequest) ProtoMessage() {}
 
 func (x *GetUnsyncedCampusloginAppointmentsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_db_database_proto_msgTypes[91]
+	mi := &file_proto_db_database_proto_msgTypes[93]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5202,7 +5346,7 @@ func (x *GetUnsyncedCampusloginAppointmentsRequest) ProtoReflect() protoreflect.
 
 // Deprecated: Use GetUnsyncedCampusloginAppointmentsRequest.ProtoReflect.Descriptor instead.
 func (*GetUnsyncedCampusloginAppointmentsRequest) Descriptor() ([]byte, []int) {
-	return file_proto_db_database_proto_rawDescGZIP(), []int{91}
+	return file_proto_db_database_proto_rawDescGZIP(), []int{93}
 }
 
 type AppointmentsResponse struct {
@@ -5214,7 +5358,7 @@ type AppointmentsResponse struct {
 
 func (x *AppointmentsResponse) Reset() {
 	*x = AppointmentsResponse{}
-	mi := &file_proto_db_database_proto_msgTypes[92]
+	mi := &file_proto_db_database_proto_msgTypes[94]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5226,7 +5370,7 @@ func (x *AppointmentsResponse) String() string {
 func (*AppointmentsResponse) ProtoMessage() {}
 
 func (x *AppointmentsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_db_database_proto_msgTypes[92]
+	mi := &file_proto_db_database_proto_msgTypes[94]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5239,7 +5383,7 @@ func (x *AppointmentsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AppointmentsResponse.ProtoReflect.Descriptor instead.
 func (*AppointmentsResponse) Descriptor() ([]byte, []int) {
-	return file_proto_db_database_proto_rawDescGZIP(), []int{92}
+	return file_proto_db_database_proto_rawDescGZIP(), []int{94}
 }
 
 func (x *AppointmentsResponse) GetAppointments() []*AppointmentResponse {
@@ -5259,7 +5403,7 @@ type UpdateAppointmentCampusloginStatusRequest struct {
 
 func (x *UpdateAppointmentCampusloginStatusRequest) Reset() {
 	*x = UpdateAppointmentCampusloginStatusRequest{}
-	mi := &file_proto_db_database_proto_msgTypes[93]
+	mi := &file_proto_db_database_proto_msgTypes[95]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5271,7 +5415,7 @@ func (x *UpdateAppointmentCampusloginStatusRequest) String() string {
 func (*UpdateAppointmentCampusloginStatusRequest) ProtoMessage() {}
 
 func (x *UpdateAppointmentCampusloginStatusRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_db_database_proto_msgTypes[93]
+	mi := &file_proto_db_database_proto_msgTypes[95]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5284,7 +5428,7 @@ func (x *UpdateAppointmentCampusloginStatusRequest) ProtoReflect() protoreflect.
 
 // Deprecated: Use UpdateAppointmentCampusloginStatusRequest.ProtoReflect.Descriptor instead.
 func (*UpdateAppointmentCampusloginStatusRequest) Descriptor() ([]byte, []int) {
-	return file_proto_db_database_proto_rawDescGZIP(), []int{93}
+	return file_proto_db_database_proto_rawDescGZIP(), []int{95}
 }
 
 func (x *UpdateAppointmentCampusloginStatusRequest) GetId() string {
@@ -5371,7 +5515,7 @@ const file_proto_db_database_proto_rawDesc = "" +
 	"customerId\x12\x1a\n" +
 	"\bplatform\x18\x03 \x01(\tR\bplatform\x12\x1d\n" +
 	"\n" +
-	"started_at\x18\x04 \x01(\tR\tstartedAt\"\xdd\x02\n" +
+	"started_at\x18\x04 \x01(\tR\tstartedAt\"\xfc\x02\n" +
 	"\fChatResponse\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12!\n" +
 	"\fassistant_id\x18\x02 \x01(\tR\vassistantId\x12\x1f\n" +
@@ -5388,7 +5532,9 @@ const file_proto_db_database_proto_rawDesc = "" +
 	"\x0efollowup_stage\x18\v \x01(\x05R\rfollowupStage\x12\x1f\n" +
 	"\vis_reviewed\x18\f \x01(\bR\n" +
 	"isReviewed\x12\x1b\n" +
-	"\tis_booked\x18\r \x01(\bR\bisBooked\"\x8b\x01\n" +
+	"\tis_booked\x18\r \x01(\bR\bisBooked\x12\x1d\n" +
+	"\n" +
+	"started_at\x18\x0e \x01(\tR\tstartedAt\"\x8b\x01\n" +
 	"\x12SaveMessageRequest\x12\x17\n" +
 	"\achat_id\x18\x01 \x01(\tR\x06chatId\x12\x12\n" +
 	"\x04role\x18\x02 \x01(\tR\x04role\x12\x18\n" +
@@ -5606,7 +5752,19 @@ const file_proto_db_database_proto_rawDesc = "" +
 	"\x18GetPeriodMetricsResponse\x12#\n" +
 	"\rstarted_chats\x18\x01 \x01(\x05R\fstartedChats\x12'\n" +
 	"\x0fcompleted_chats\x18\x02 \x01(\x05R\x0ecompletedChats\x12!\n" +
-	"\fbooked_chats\x18\x03 \x01(\x05R\vbookedChats\"6\n" +
+	"\fbooked_chats\x18\x03 \x01(\x05R\vbookedChats\"\xbe\x01\n" +
+	"\x15GetPeriodChatsRequest\x12!\n" +
+	"\fassistant_id\x18\x01 \x01(\tR\vassistantId\x12\x1d\n" +
+	"\n" +
+	"start_time\x18\x02 \x01(\tR\tstartTime\x12\x19\n" +
+	"\bend_time\x18\x03 \x01(\tR\aendTime\x12\x1a\n" +
+	"\bcategory\x18\x04 \x01(\tR\bcategory\x12\x14\n" +
+	"\x05limit\x18\x05 \x01(\x05R\x05limit\x12\x16\n" +
+	"\x06offset\x18\x06 \x01(\x05R\x06offset\"g\n" +
+	"\x16GetPeriodChatsResponse\x12,\n" +
+	"\x05chats\x18\x01 \x03(\v2\x16.database.ChatResponseR\x05chats\x12\x1f\n" +
+	"\vtotal_count\x18\x02 \x01(\x03R\n" +
+	"totalCount\"6\n" +
 	"\n" +
 	"DailyCount\x12\x12\n" +
 	"\x04date\x18\x01 \x01(\tR\x04date\x12\x14\n" +
@@ -5701,7 +5859,7 @@ const file_proto_db_database_proto_rawDesc = "" +
 	"\fappointments\x18\x01 \x03(\v2\x1d.database.AppointmentResponseR\fappointments\"^\n" +
 	")UpdateAppointmentCampusloginStatusRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12!\n" +
-	"\fcampus_login\x18\x02 \x01(\bR\vcampusLogin2\xcd)\n" +
+	"\fcampus_login\x18\x02 \x01(\bR\vcampusLogin2\xa2*\n" +
 	"\x0fDatabaseService\x12G\n" +
 	"\fGetAnalytics\x12\x1a.database.AnalyticsRequest\x1a\x1b.database.AnalyticsResponse\x12]\n" +
 	"\x17GetAnalyticsByAssistant\x12%.database.AnalyticsByAssistantRequest\x1a\x1b.database.AnalyticsResponse\x12A\n" +
@@ -5756,7 +5914,8 @@ const file_proto_db_database_proto_rawDesc = "" +
 	"\x12UpdateChatIsBooked\x12#.database.UpdateChatIsBookedRequest\x1a\x16.database.ChatResponse\x12U\n" +
 	"\x14UpdateChatIsReviewed\x12%.database.UpdateChatIsReviewedRequest\x1a\x16.database.ChatResponse\x12^\n" +
 	"\x18GetUnreviewedActiveChats\x12).database.GetUnreviewedActiveChatsRequest\x1a\x17.database.ChatsResponse\x12Y\n" +
-	"\x10GetPeriodMetrics\x12!.database.GetPeriodMetricsRequest\x1a\".database.GetPeriodMetricsResponse\x12h\n" +
+	"\x10GetPeriodMetrics\x12!.database.GetPeriodMetricsRequest\x1a\".database.GetPeriodMetricsResponse\x12S\n" +
+	"\x0eGetPeriodChats\x12\x1f.database.GetPeriodChatsRequest\x1a .database.GetPeriodChatsResponse\x12h\n" +
 	"\x15GetWeeklyChatsStarted\x12&.database.GetWeeklyChatsStartedRequest\x1a'.database.GetWeeklyChatsStartedResponse\x12\\\n" +
 	"\x11IsCustomerBlocked\x12\".database.IsCustomerBlockedRequest\x1a#.database.IsCustomerBlockedResponse\x12b\n" +
 	"\x15UpsertGoogleSyncToken\x12&.database.UpsertGoogleSyncTokenRequest\x1a!.database.GoogleSyncTokenResponse\x12\\\n" +
@@ -5782,7 +5941,7 @@ func file_proto_db_database_proto_rawDescGZIP() []byte {
 	return file_proto_db_database_proto_rawDescData
 }
 
-var file_proto_db_database_proto_msgTypes = make([]protoimpl.MessageInfo, 94)
+var file_proto_db_database_proto_msgTypes = make([]protoimpl.MessageInfo, 96)
 var file_proto_db_database_proto_goTypes = []any{
 	(*DeleteAllChatsAndMessagesRequest)(nil),          // 0: database.DeleteAllChatsAndMessagesRequest
 	(*DeleteAllChatsAndMessagesResponse)(nil),         // 1: database.DeleteAllChatsAndMessagesResponse
@@ -5857,160 +6016,165 @@ var file_proto_db_database_proto_goTypes = []any{
 	(*GetUnreviewedActiveChatsRequest)(nil),           // 70: database.GetUnreviewedActiveChatsRequest
 	(*GetPeriodMetricsRequest)(nil),                   // 71: database.GetPeriodMetricsRequest
 	(*GetPeriodMetricsResponse)(nil),                  // 72: database.GetPeriodMetricsResponse
-	(*DailyCount)(nil),                                // 73: database.DailyCount
-	(*GetWeeklyChatsStartedRequest)(nil),              // 74: database.GetWeeklyChatsStartedRequest
-	(*GetWeeklyChatsStartedResponse)(nil),             // 75: database.GetWeeklyChatsStartedResponse
-	(*IsCustomerBlockedRequest)(nil),                  // 76: database.IsCustomerBlockedRequest
-	(*IsCustomerBlockedResponse)(nil),                 // 77: database.IsCustomerBlockedResponse
-	(*UpsertGoogleSyncTokenRequest)(nil),              // 78: database.UpsertGoogleSyncTokenRequest
-	(*GetGoogleSyncTokenRequest)(nil),                 // 79: database.GetGoogleSyncTokenRequest
-	(*GoogleSyncTokenResponse)(nil),                   // 80: database.GoogleSyncTokenResponse
-	(*CreateAppointmentRequest)(nil),                  // 81: database.CreateAppointmentRequest
-	(*AppointmentResponse)(nil),                       // 82: database.AppointmentResponse
-	(*GetAppointmentByGoogleEventIDRequest)(nil),      // 83: database.GetAppointmentByGoogleEventIDRequest
-	(*BlockCustomerRequest)(nil),                      // 84: database.BlockCustomerRequest
-	(*BlockCustomerResponse)(nil),                     // 85: database.BlockCustomerResponse
-	(*GetAllBlockedCustomersRequest)(nil),             // 86: database.GetAllBlockedCustomersRequest
-	(*GetAllBlockedCustomersResponse)(nil),            // 87: database.GetAllBlockedCustomersResponse
-	(*CountAppointmentsBySlotRequest)(nil),            // 88: database.CountAppointmentsBySlotRequest
-	(*CountAppointmentsBySlotResponse)(nil),           // 89: database.CountAppointmentsBySlotResponse
-	(*GetAppointmentByIDRequest)(nil),                 // 90: database.GetAppointmentByIDRequest
-	(*GetUnsyncedCampusloginAppointmentsRequest)(nil), // 91: database.GetUnsyncedCampusloginAppointmentsRequest
-	(*AppointmentsResponse)(nil),                      // 92: database.AppointmentsResponse
-	(*UpdateAppointmentCampusloginStatusRequest)(nil), // 93: database.UpdateAppointmentCampusloginStatusRequest
+	(*GetPeriodChatsRequest)(nil),                     // 73: database.GetPeriodChatsRequest
+	(*GetPeriodChatsResponse)(nil),                    // 74: database.GetPeriodChatsResponse
+	(*DailyCount)(nil),                                // 75: database.DailyCount
+	(*GetWeeklyChatsStartedRequest)(nil),              // 76: database.GetWeeklyChatsStartedRequest
+	(*GetWeeklyChatsStartedResponse)(nil),             // 77: database.GetWeeklyChatsStartedResponse
+	(*IsCustomerBlockedRequest)(nil),                  // 78: database.IsCustomerBlockedRequest
+	(*IsCustomerBlockedResponse)(nil),                 // 79: database.IsCustomerBlockedResponse
+	(*UpsertGoogleSyncTokenRequest)(nil),              // 80: database.UpsertGoogleSyncTokenRequest
+	(*GetGoogleSyncTokenRequest)(nil),                 // 81: database.GetGoogleSyncTokenRequest
+	(*GoogleSyncTokenResponse)(nil),                   // 82: database.GoogleSyncTokenResponse
+	(*CreateAppointmentRequest)(nil),                  // 83: database.CreateAppointmentRequest
+	(*AppointmentResponse)(nil),                       // 84: database.AppointmentResponse
+	(*GetAppointmentByGoogleEventIDRequest)(nil),      // 85: database.GetAppointmentByGoogleEventIDRequest
+	(*BlockCustomerRequest)(nil),                      // 86: database.BlockCustomerRequest
+	(*BlockCustomerResponse)(nil),                     // 87: database.BlockCustomerResponse
+	(*GetAllBlockedCustomersRequest)(nil),             // 88: database.GetAllBlockedCustomersRequest
+	(*GetAllBlockedCustomersResponse)(nil),            // 89: database.GetAllBlockedCustomersResponse
+	(*CountAppointmentsBySlotRequest)(nil),            // 90: database.CountAppointmentsBySlotRequest
+	(*CountAppointmentsBySlotResponse)(nil),           // 91: database.CountAppointmentsBySlotResponse
+	(*GetAppointmentByIDRequest)(nil),                 // 92: database.GetAppointmentByIDRequest
+	(*GetUnsyncedCampusloginAppointmentsRequest)(nil), // 93: database.GetUnsyncedCampusloginAppointmentsRequest
+	(*AppointmentsResponse)(nil),                      // 94: database.AppointmentsResponse
+	(*UpdateAppointmentCampusloginStatusRequest)(nil), // 95: database.UpdateAppointmentCampusloginStatusRequest
 }
 var file_proto_db_database_proto_depIdxs = []int32{
 	17, // 0: database.MessagesResponse.messages:type_name -> database.MessageResponse
 	15, // 1: database.ChatsResponse.chats:type_name -> database.ChatResponse
 	15, // 2: database.SearchChatsByCustomerResponse.chats:type_name -> database.ChatResponse
 	42, // 3: database.AssistantsResponse.assistants:type_name -> database.AssistantResponse
-	73, // 4: database.GetWeeklyChatsStartedResponse.days:type_name -> database.DailyCount
-	82, // 5: database.AppointmentsResponse.appointments:type_name -> database.AppointmentResponse
-	2,  // 6: database.DatabaseService.GetAnalytics:input_type -> database.AnalyticsRequest
-	3,  // 7: database.DatabaseService.GetAnalyticsByAssistant:input_type -> database.AnalyticsByAssistantRequest
-	5,  // 8: database.DatabaseService.CreateUser:input_type -> database.CreateUserRequest
-	6,  // 9: database.DatabaseService.GetUser:input_type -> database.GetUserRequest
-	21, // 10: database.DatabaseService.GetUserByEmail:input_type -> database.GetUserByEmailRequest
-	22, // 11: database.DatabaseService.UpdateUser:input_type -> database.UpdateUserRequest
-	23, // 12: database.DatabaseService.DeleteUser:input_type -> database.DeleteUserRequest
-	8,  // 13: database.DatabaseService.SaveRefreshToken:input_type -> database.SaveRefreshTokenRequest
-	10, // 14: database.DatabaseService.GetRefreshToken:input_type -> database.GetRefreshTokenRequest
-	12, // 15: database.DatabaseService.DeleteRefreshToken:input_type -> database.DeleteRefreshTokenRequest
-	41, // 16: database.DatabaseService.CreateAssistant:input_type -> database.CreateAssistantRequest
-	43, // 17: database.DatabaseService.GetAssistant:input_type -> database.GetAssistantRequest
-	44, // 18: database.DatabaseService.GetAssistantByAPIToken:input_type -> database.GetAssistantByAPITokenRequest
-	45, // 19: database.DatabaseService.UpdateAssistant:input_type -> database.UpdateAssistantRequest
-	46, // 20: database.DatabaseService.DeleteAssistant:input_type -> database.DeleteAssistantRequest
-	48, // 21: database.DatabaseService.GetAssistantsByUserID:input_type -> database.GetAssistantsByUserIDRequest
-	14, // 22: database.DatabaseService.CreateChat:input_type -> database.CreateChatRequest
-	25, // 23: database.DatabaseService.GetChat:input_type -> database.GetChatRequest
-	26, // 24: database.DatabaseService.GetChatsByUser:input_type -> database.GetChatsByUserRequest
-	28, // 25: database.DatabaseService.UpdateChat:input_type -> database.UpdateChatRequest
-	29, // 26: database.DatabaseService.DeleteChat:input_type -> database.DeleteChatRequest
-	16, // 27: database.DatabaseService.SaveMessage:input_type -> database.SaveMessageRequest
-	18, // 28: database.DatabaseService.GetChatMessages:input_type -> database.GetChatMessagesRequest
-	19, // 29: database.DatabaseService.GetAllChatMessages:input_type -> database.GetAllChatMessagesRequest
-	31, // 30: database.DatabaseService.UpdateMessage:input_type -> database.UpdateMessageRequest
-	32, // 31: database.DatabaseService.DeleteMessage:input_type -> database.DeleteMessageRequest
-	34, // 32: database.DatabaseService.GetChatPagesCount:input_type -> database.GetChatPagesCountRequest
-	36, // 33: database.DatabaseService.GetChatPage:input_type -> database.GetChatPageRequest
-	37, // 34: database.DatabaseService.GetChatPagesCountByUserID:input_type -> database.GetChatPagesCountByUserIDRequest
-	38, // 35: database.DatabaseService.GetChatPageByUserID:input_type -> database.GetChatPageByUserIDRequest
-	39, // 36: database.DatabaseService.SearchChatsByCustomer:input_type -> database.SearchChatsByCustomerRequest
-	50, // 37: database.DatabaseService.GetLatestChatByCustomer:input_type -> database.GetLatestChatByCustomerRequest
-	51, // 38: database.DatabaseService.SaveTwilioConfig:input_type -> database.SaveTwilioConfigRequest
-	52, // 39: database.DatabaseService.GetTwilioConfig:input_type -> database.GetTwilioConfigRequest
-	54, // 40: database.DatabaseService.DeleteTwilioConfig:input_type -> database.DeleteTwilioConfigRequest
-	68, // 41: database.DatabaseService.GetChatsForFollowup:input_type -> database.GetChatsForFollowupRequest
-	62, // 42: database.DatabaseService.UpdateChatFollowupStage:input_type -> database.UpdateChatFollowupStageRequest
-	56, // 43: database.DatabaseService.GetCampusloginByUserId:input_type -> database.CampusloginRequest
-	57, // 44: database.DatabaseService.GetCampusloginByPhone:input_type -> database.CampusloginPhoneRequest
-	58, // 45: database.DatabaseService.UpsertCampuslogin:input_type -> database.UpsertCampusloginRequest
-	60, // 46: database.DatabaseService.SetCampusloginFlags:input_type -> database.SetCampusloginFlagsRequest
-	0,  // 47: database.DatabaseService.DeleteAllChatsAndMessages:input_type -> database.DeleteAllChatsAndMessagesRequest
-	64, // 48: database.DatabaseService.DeleteChatAndMessages:input_type -> database.DeleteChatAndMessagesRequest
-	66, // 49: database.DatabaseService.UpdateChatIsEnd:input_type -> database.UpdateChatIsEndRequest
-	67, // 50: database.DatabaseService.UpdateChatIsBooked:input_type -> database.UpdateChatIsBookedRequest
-	69, // 51: database.DatabaseService.UpdateChatIsReviewed:input_type -> database.UpdateChatIsReviewedRequest
-	70, // 52: database.DatabaseService.GetUnreviewedActiveChats:input_type -> database.GetUnreviewedActiveChatsRequest
-	71, // 53: database.DatabaseService.GetPeriodMetrics:input_type -> database.GetPeriodMetricsRequest
-	74, // 54: database.DatabaseService.GetWeeklyChatsStarted:input_type -> database.GetWeeklyChatsStartedRequest
-	76, // 55: database.DatabaseService.IsCustomerBlocked:input_type -> database.IsCustomerBlockedRequest
-	78, // 56: database.DatabaseService.UpsertGoogleSyncToken:input_type -> database.UpsertGoogleSyncTokenRequest
-	79, // 57: database.DatabaseService.GetGoogleSyncToken:input_type -> database.GetGoogleSyncTokenRequest
-	81, // 58: database.DatabaseService.CreateAppointment:input_type -> database.CreateAppointmentRequest
-	83, // 59: database.DatabaseService.GetAppointmentByGoogleEventID:input_type -> database.GetAppointmentByGoogleEventIDRequest
-	88, // 60: database.DatabaseService.CountAppointmentsBySlot:input_type -> database.CountAppointmentsBySlotRequest
-	84, // 61: database.DatabaseService.BlockCustomer:input_type -> database.BlockCustomerRequest
-	86, // 62: database.DatabaseService.GetAllBlockedCustomers:input_type -> database.GetAllBlockedCustomersRequest
-	91, // 63: database.DatabaseService.GetUnsyncedCampusloginAppointments:input_type -> database.GetUnsyncedCampusloginAppointmentsRequest
-	93, // 64: database.DatabaseService.UpdateAppointmentCampusloginStatus:input_type -> database.UpdateAppointmentCampusloginStatusRequest
-	90, // 65: database.DatabaseService.GetAppointmentByID:input_type -> database.GetAppointmentByIDRequest
-	4,  // 66: database.DatabaseService.GetAnalytics:output_type -> database.AnalyticsResponse
-	4,  // 67: database.DatabaseService.GetAnalyticsByAssistant:output_type -> database.AnalyticsResponse
-	7,  // 68: database.DatabaseService.CreateUser:output_type -> database.UserResponse
-	7,  // 69: database.DatabaseService.GetUser:output_type -> database.UserResponse
-	7,  // 70: database.DatabaseService.GetUserByEmail:output_type -> database.UserResponse
-	7,  // 71: database.DatabaseService.UpdateUser:output_type -> database.UserResponse
-	24, // 72: database.DatabaseService.DeleteUser:output_type -> database.DeleteUserResponse
-	9,  // 73: database.DatabaseService.SaveRefreshToken:output_type -> database.SaveRefreshTokenResponse
-	11, // 74: database.DatabaseService.GetRefreshToken:output_type -> database.RefreshTokenResponse
-	13, // 75: database.DatabaseService.DeleteRefreshToken:output_type -> database.DeleteRefreshTokenResponse
-	42, // 76: database.DatabaseService.CreateAssistant:output_type -> database.AssistantResponse
-	42, // 77: database.DatabaseService.GetAssistant:output_type -> database.AssistantResponse
-	42, // 78: database.DatabaseService.GetAssistantByAPIToken:output_type -> database.AssistantResponse
-	42, // 79: database.DatabaseService.UpdateAssistant:output_type -> database.AssistantResponse
-	47, // 80: database.DatabaseService.DeleteAssistant:output_type -> database.DeleteAssistantResponse
-	49, // 81: database.DatabaseService.GetAssistantsByUserID:output_type -> database.AssistantsResponse
-	15, // 82: database.DatabaseService.CreateChat:output_type -> database.ChatResponse
-	15, // 83: database.DatabaseService.GetChat:output_type -> database.ChatResponse
-	27, // 84: database.DatabaseService.GetChatsByUser:output_type -> database.ChatsResponse
-	15, // 85: database.DatabaseService.UpdateChat:output_type -> database.ChatResponse
-	30, // 86: database.DatabaseService.DeleteChat:output_type -> database.DeleteChatResponse
-	17, // 87: database.DatabaseService.SaveMessage:output_type -> database.MessageResponse
-	20, // 88: database.DatabaseService.GetChatMessages:output_type -> database.MessagesResponse
-	20, // 89: database.DatabaseService.GetAllChatMessages:output_type -> database.MessagesResponse
-	17, // 90: database.DatabaseService.UpdateMessage:output_type -> database.MessageResponse
-	33, // 91: database.DatabaseService.DeleteMessage:output_type -> database.DeleteMessageResponse
-	35, // 92: database.DatabaseService.GetChatPagesCount:output_type -> database.ChatPagesCountResponse
-	27, // 93: database.DatabaseService.GetChatPage:output_type -> database.ChatsResponse
-	35, // 94: database.DatabaseService.GetChatPagesCountByUserID:output_type -> database.ChatPagesCountResponse
-	27, // 95: database.DatabaseService.GetChatPageByUserID:output_type -> database.ChatsResponse
-	40, // 96: database.DatabaseService.SearchChatsByCustomer:output_type -> database.SearchChatsByCustomerResponse
-	15, // 97: database.DatabaseService.GetLatestChatByCustomer:output_type -> database.ChatResponse
-	53, // 98: database.DatabaseService.SaveTwilioConfig:output_type -> database.TwilioConfigResponse
-	53, // 99: database.DatabaseService.GetTwilioConfig:output_type -> database.TwilioConfigResponse
-	55, // 100: database.DatabaseService.DeleteTwilioConfig:output_type -> database.DeleteTwilioConfigResponse
-	27, // 101: database.DatabaseService.GetChatsForFollowup:output_type -> database.ChatsResponse
-	15, // 102: database.DatabaseService.UpdateChatFollowupStage:output_type -> database.ChatResponse
-	59, // 103: database.DatabaseService.GetCampusloginByUserId:output_type -> database.CampusloginResponse
-	59, // 104: database.DatabaseService.GetCampusloginByPhone:output_type -> database.CampusloginResponse
-	63, // 105: database.DatabaseService.UpsertCampuslogin:output_type -> database.UpsertCampusloginResponse
-	61, // 106: database.DatabaseService.SetCampusloginFlags:output_type -> database.SetCampusloginFlagsResponse
-	1,  // 107: database.DatabaseService.DeleteAllChatsAndMessages:output_type -> database.DeleteAllChatsAndMessagesResponse
-	65, // 108: database.DatabaseService.DeleteChatAndMessages:output_type -> database.DeleteChatAndMessagesResponse
-	15, // 109: database.DatabaseService.UpdateChatIsEnd:output_type -> database.ChatResponse
-	15, // 110: database.DatabaseService.UpdateChatIsBooked:output_type -> database.ChatResponse
-	15, // 111: database.DatabaseService.UpdateChatIsReviewed:output_type -> database.ChatResponse
-	27, // 112: database.DatabaseService.GetUnreviewedActiveChats:output_type -> database.ChatsResponse
-	72, // 113: database.DatabaseService.GetPeriodMetrics:output_type -> database.GetPeriodMetricsResponse
-	75, // 114: database.DatabaseService.GetWeeklyChatsStarted:output_type -> database.GetWeeklyChatsStartedResponse
-	77, // 115: database.DatabaseService.IsCustomerBlocked:output_type -> database.IsCustomerBlockedResponse
-	80, // 116: database.DatabaseService.UpsertGoogleSyncToken:output_type -> database.GoogleSyncTokenResponse
-	80, // 117: database.DatabaseService.GetGoogleSyncToken:output_type -> database.GoogleSyncTokenResponse
-	82, // 118: database.DatabaseService.CreateAppointment:output_type -> database.AppointmentResponse
-	82, // 119: database.DatabaseService.GetAppointmentByGoogleEventID:output_type -> database.AppointmentResponse
-	89, // 120: database.DatabaseService.CountAppointmentsBySlot:output_type -> database.CountAppointmentsBySlotResponse
-	85, // 121: database.DatabaseService.BlockCustomer:output_type -> database.BlockCustomerResponse
-	87, // 122: database.DatabaseService.GetAllBlockedCustomers:output_type -> database.GetAllBlockedCustomersResponse
-	92, // 123: database.DatabaseService.GetUnsyncedCampusloginAppointments:output_type -> database.AppointmentsResponse
-	82, // 124: database.DatabaseService.UpdateAppointmentCampusloginStatus:output_type -> database.AppointmentResponse
-	82, // 125: database.DatabaseService.GetAppointmentByID:output_type -> database.AppointmentResponse
-	66, // [66:126] is the sub-list for method output_type
-	6,  // [6:66] is the sub-list for method input_type
-	6,  // [6:6] is the sub-list for extension type_name
-	6,  // [6:6] is the sub-list for extension extendee
-	0,  // [0:6] is the sub-list for field type_name
+	15, // 4: database.GetPeriodChatsResponse.chats:type_name -> database.ChatResponse
+	75, // 5: database.GetWeeklyChatsStartedResponse.days:type_name -> database.DailyCount
+	84, // 6: database.AppointmentsResponse.appointments:type_name -> database.AppointmentResponse
+	2,  // 7: database.DatabaseService.GetAnalytics:input_type -> database.AnalyticsRequest
+	3,  // 8: database.DatabaseService.GetAnalyticsByAssistant:input_type -> database.AnalyticsByAssistantRequest
+	5,  // 9: database.DatabaseService.CreateUser:input_type -> database.CreateUserRequest
+	6,  // 10: database.DatabaseService.GetUser:input_type -> database.GetUserRequest
+	21, // 11: database.DatabaseService.GetUserByEmail:input_type -> database.GetUserByEmailRequest
+	22, // 12: database.DatabaseService.UpdateUser:input_type -> database.UpdateUserRequest
+	23, // 13: database.DatabaseService.DeleteUser:input_type -> database.DeleteUserRequest
+	8,  // 14: database.DatabaseService.SaveRefreshToken:input_type -> database.SaveRefreshTokenRequest
+	10, // 15: database.DatabaseService.GetRefreshToken:input_type -> database.GetRefreshTokenRequest
+	12, // 16: database.DatabaseService.DeleteRefreshToken:input_type -> database.DeleteRefreshTokenRequest
+	41, // 17: database.DatabaseService.CreateAssistant:input_type -> database.CreateAssistantRequest
+	43, // 18: database.DatabaseService.GetAssistant:input_type -> database.GetAssistantRequest
+	44, // 19: database.DatabaseService.GetAssistantByAPIToken:input_type -> database.GetAssistantByAPITokenRequest
+	45, // 20: database.DatabaseService.UpdateAssistant:input_type -> database.UpdateAssistantRequest
+	46, // 21: database.DatabaseService.DeleteAssistant:input_type -> database.DeleteAssistantRequest
+	48, // 22: database.DatabaseService.GetAssistantsByUserID:input_type -> database.GetAssistantsByUserIDRequest
+	14, // 23: database.DatabaseService.CreateChat:input_type -> database.CreateChatRequest
+	25, // 24: database.DatabaseService.GetChat:input_type -> database.GetChatRequest
+	26, // 25: database.DatabaseService.GetChatsByUser:input_type -> database.GetChatsByUserRequest
+	28, // 26: database.DatabaseService.UpdateChat:input_type -> database.UpdateChatRequest
+	29, // 27: database.DatabaseService.DeleteChat:input_type -> database.DeleteChatRequest
+	16, // 28: database.DatabaseService.SaveMessage:input_type -> database.SaveMessageRequest
+	18, // 29: database.DatabaseService.GetChatMessages:input_type -> database.GetChatMessagesRequest
+	19, // 30: database.DatabaseService.GetAllChatMessages:input_type -> database.GetAllChatMessagesRequest
+	31, // 31: database.DatabaseService.UpdateMessage:input_type -> database.UpdateMessageRequest
+	32, // 32: database.DatabaseService.DeleteMessage:input_type -> database.DeleteMessageRequest
+	34, // 33: database.DatabaseService.GetChatPagesCount:input_type -> database.GetChatPagesCountRequest
+	36, // 34: database.DatabaseService.GetChatPage:input_type -> database.GetChatPageRequest
+	37, // 35: database.DatabaseService.GetChatPagesCountByUserID:input_type -> database.GetChatPagesCountByUserIDRequest
+	38, // 36: database.DatabaseService.GetChatPageByUserID:input_type -> database.GetChatPageByUserIDRequest
+	39, // 37: database.DatabaseService.SearchChatsByCustomer:input_type -> database.SearchChatsByCustomerRequest
+	50, // 38: database.DatabaseService.GetLatestChatByCustomer:input_type -> database.GetLatestChatByCustomerRequest
+	51, // 39: database.DatabaseService.SaveTwilioConfig:input_type -> database.SaveTwilioConfigRequest
+	52, // 40: database.DatabaseService.GetTwilioConfig:input_type -> database.GetTwilioConfigRequest
+	54, // 41: database.DatabaseService.DeleteTwilioConfig:input_type -> database.DeleteTwilioConfigRequest
+	68, // 42: database.DatabaseService.GetChatsForFollowup:input_type -> database.GetChatsForFollowupRequest
+	62, // 43: database.DatabaseService.UpdateChatFollowupStage:input_type -> database.UpdateChatFollowupStageRequest
+	56, // 44: database.DatabaseService.GetCampusloginByUserId:input_type -> database.CampusloginRequest
+	57, // 45: database.DatabaseService.GetCampusloginByPhone:input_type -> database.CampusloginPhoneRequest
+	58, // 46: database.DatabaseService.UpsertCampuslogin:input_type -> database.UpsertCampusloginRequest
+	60, // 47: database.DatabaseService.SetCampusloginFlags:input_type -> database.SetCampusloginFlagsRequest
+	0,  // 48: database.DatabaseService.DeleteAllChatsAndMessages:input_type -> database.DeleteAllChatsAndMessagesRequest
+	64, // 49: database.DatabaseService.DeleteChatAndMessages:input_type -> database.DeleteChatAndMessagesRequest
+	66, // 50: database.DatabaseService.UpdateChatIsEnd:input_type -> database.UpdateChatIsEndRequest
+	67, // 51: database.DatabaseService.UpdateChatIsBooked:input_type -> database.UpdateChatIsBookedRequest
+	69, // 52: database.DatabaseService.UpdateChatIsReviewed:input_type -> database.UpdateChatIsReviewedRequest
+	70, // 53: database.DatabaseService.GetUnreviewedActiveChats:input_type -> database.GetUnreviewedActiveChatsRequest
+	71, // 54: database.DatabaseService.GetPeriodMetrics:input_type -> database.GetPeriodMetricsRequest
+	73, // 55: database.DatabaseService.GetPeriodChats:input_type -> database.GetPeriodChatsRequest
+	76, // 56: database.DatabaseService.GetWeeklyChatsStarted:input_type -> database.GetWeeklyChatsStartedRequest
+	78, // 57: database.DatabaseService.IsCustomerBlocked:input_type -> database.IsCustomerBlockedRequest
+	80, // 58: database.DatabaseService.UpsertGoogleSyncToken:input_type -> database.UpsertGoogleSyncTokenRequest
+	81, // 59: database.DatabaseService.GetGoogleSyncToken:input_type -> database.GetGoogleSyncTokenRequest
+	83, // 60: database.DatabaseService.CreateAppointment:input_type -> database.CreateAppointmentRequest
+	85, // 61: database.DatabaseService.GetAppointmentByGoogleEventID:input_type -> database.GetAppointmentByGoogleEventIDRequest
+	90, // 62: database.DatabaseService.CountAppointmentsBySlot:input_type -> database.CountAppointmentsBySlotRequest
+	86, // 63: database.DatabaseService.BlockCustomer:input_type -> database.BlockCustomerRequest
+	88, // 64: database.DatabaseService.GetAllBlockedCustomers:input_type -> database.GetAllBlockedCustomersRequest
+	93, // 65: database.DatabaseService.GetUnsyncedCampusloginAppointments:input_type -> database.GetUnsyncedCampusloginAppointmentsRequest
+	95, // 66: database.DatabaseService.UpdateAppointmentCampusloginStatus:input_type -> database.UpdateAppointmentCampusloginStatusRequest
+	92, // 67: database.DatabaseService.GetAppointmentByID:input_type -> database.GetAppointmentByIDRequest
+	4,  // 68: database.DatabaseService.GetAnalytics:output_type -> database.AnalyticsResponse
+	4,  // 69: database.DatabaseService.GetAnalyticsByAssistant:output_type -> database.AnalyticsResponse
+	7,  // 70: database.DatabaseService.CreateUser:output_type -> database.UserResponse
+	7,  // 71: database.DatabaseService.GetUser:output_type -> database.UserResponse
+	7,  // 72: database.DatabaseService.GetUserByEmail:output_type -> database.UserResponse
+	7,  // 73: database.DatabaseService.UpdateUser:output_type -> database.UserResponse
+	24, // 74: database.DatabaseService.DeleteUser:output_type -> database.DeleteUserResponse
+	9,  // 75: database.DatabaseService.SaveRefreshToken:output_type -> database.SaveRefreshTokenResponse
+	11, // 76: database.DatabaseService.GetRefreshToken:output_type -> database.RefreshTokenResponse
+	13, // 77: database.DatabaseService.DeleteRefreshToken:output_type -> database.DeleteRefreshTokenResponse
+	42, // 78: database.DatabaseService.CreateAssistant:output_type -> database.AssistantResponse
+	42, // 79: database.DatabaseService.GetAssistant:output_type -> database.AssistantResponse
+	42, // 80: database.DatabaseService.GetAssistantByAPIToken:output_type -> database.AssistantResponse
+	42, // 81: database.DatabaseService.UpdateAssistant:output_type -> database.AssistantResponse
+	47, // 82: database.DatabaseService.DeleteAssistant:output_type -> database.DeleteAssistantResponse
+	49, // 83: database.DatabaseService.GetAssistantsByUserID:output_type -> database.AssistantsResponse
+	15, // 84: database.DatabaseService.CreateChat:output_type -> database.ChatResponse
+	15, // 85: database.DatabaseService.GetChat:output_type -> database.ChatResponse
+	27, // 86: database.DatabaseService.GetChatsByUser:output_type -> database.ChatsResponse
+	15, // 87: database.DatabaseService.UpdateChat:output_type -> database.ChatResponse
+	30, // 88: database.DatabaseService.DeleteChat:output_type -> database.DeleteChatResponse
+	17, // 89: database.DatabaseService.SaveMessage:output_type -> database.MessageResponse
+	20, // 90: database.DatabaseService.GetChatMessages:output_type -> database.MessagesResponse
+	20, // 91: database.DatabaseService.GetAllChatMessages:output_type -> database.MessagesResponse
+	17, // 92: database.DatabaseService.UpdateMessage:output_type -> database.MessageResponse
+	33, // 93: database.DatabaseService.DeleteMessage:output_type -> database.DeleteMessageResponse
+	35, // 94: database.DatabaseService.GetChatPagesCount:output_type -> database.ChatPagesCountResponse
+	27, // 95: database.DatabaseService.GetChatPage:output_type -> database.ChatsResponse
+	35, // 96: database.DatabaseService.GetChatPagesCountByUserID:output_type -> database.ChatPagesCountResponse
+	27, // 97: database.DatabaseService.GetChatPageByUserID:output_type -> database.ChatsResponse
+	40, // 98: database.DatabaseService.SearchChatsByCustomer:output_type -> database.SearchChatsByCustomerResponse
+	15, // 99: database.DatabaseService.GetLatestChatByCustomer:output_type -> database.ChatResponse
+	53, // 100: database.DatabaseService.SaveTwilioConfig:output_type -> database.TwilioConfigResponse
+	53, // 101: database.DatabaseService.GetTwilioConfig:output_type -> database.TwilioConfigResponse
+	55, // 102: database.DatabaseService.DeleteTwilioConfig:output_type -> database.DeleteTwilioConfigResponse
+	27, // 103: database.DatabaseService.GetChatsForFollowup:output_type -> database.ChatsResponse
+	15, // 104: database.DatabaseService.UpdateChatFollowupStage:output_type -> database.ChatResponse
+	59, // 105: database.DatabaseService.GetCampusloginByUserId:output_type -> database.CampusloginResponse
+	59, // 106: database.DatabaseService.GetCampusloginByPhone:output_type -> database.CampusloginResponse
+	63, // 107: database.DatabaseService.UpsertCampuslogin:output_type -> database.UpsertCampusloginResponse
+	61, // 108: database.DatabaseService.SetCampusloginFlags:output_type -> database.SetCampusloginFlagsResponse
+	1,  // 109: database.DatabaseService.DeleteAllChatsAndMessages:output_type -> database.DeleteAllChatsAndMessagesResponse
+	65, // 110: database.DatabaseService.DeleteChatAndMessages:output_type -> database.DeleteChatAndMessagesResponse
+	15, // 111: database.DatabaseService.UpdateChatIsEnd:output_type -> database.ChatResponse
+	15, // 112: database.DatabaseService.UpdateChatIsBooked:output_type -> database.ChatResponse
+	15, // 113: database.DatabaseService.UpdateChatIsReviewed:output_type -> database.ChatResponse
+	27, // 114: database.DatabaseService.GetUnreviewedActiveChats:output_type -> database.ChatsResponse
+	72, // 115: database.DatabaseService.GetPeriodMetrics:output_type -> database.GetPeriodMetricsResponse
+	74, // 116: database.DatabaseService.GetPeriodChats:output_type -> database.GetPeriodChatsResponse
+	77, // 117: database.DatabaseService.GetWeeklyChatsStarted:output_type -> database.GetWeeklyChatsStartedResponse
+	79, // 118: database.DatabaseService.IsCustomerBlocked:output_type -> database.IsCustomerBlockedResponse
+	82, // 119: database.DatabaseService.UpsertGoogleSyncToken:output_type -> database.GoogleSyncTokenResponse
+	82, // 120: database.DatabaseService.GetGoogleSyncToken:output_type -> database.GoogleSyncTokenResponse
+	84, // 121: database.DatabaseService.CreateAppointment:output_type -> database.AppointmentResponse
+	84, // 122: database.DatabaseService.GetAppointmentByGoogleEventID:output_type -> database.AppointmentResponse
+	91, // 123: database.DatabaseService.CountAppointmentsBySlot:output_type -> database.CountAppointmentsBySlotResponse
+	87, // 124: database.DatabaseService.BlockCustomer:output_type -> database.BlockCustomerResponse
+	89, // 125: database.DatabaseService.GetAllBlockedCustomers:output_type -> database.GetAllBlockedCustomersResponse
+	94, // 126: database.DatabaseService.GetUnsyncedCampusloginAppointments:output_type -> database.AppointmentsResponse
+	84, // 127: database.DatabaseService.UpdateAppointmentCampusloginStatus:output_type -> database.AppointmentResponse
+	84, // 128: database.DatabaseService.GetAppointmentByID:output_type -> database.AppointmentResponse
+	68, // [68:129] is the sub-list for method output_type
+	7,  // [7:68] is the sub-list for method input_type
+	7,  // [7:7] is the sub-list for extension type_name
+	7,  // [7:7] is the sub-list for extension extendee
+	0,  // [0:7] is the sub-list for field type_name
 }
 
 func init() { file_proto_db_database_proto_init() }
@@ -6024,7 +6188,7 @@ func file_proto_db_database_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_db_database_proto_rawDesc), len(file_proto_db_database_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   94,
+			NumMessages:   96,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

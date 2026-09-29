@@ -67,6 +67,7 @@ const (
 	DatabaseService_UpdateChatIsReviewed_FullMethodName               = "/database.DatabaseService/UpdateChatIsReviewed"
 	DatabaseService_GetUnreviewedActiveChats_FullMethodName           = "/database.DatabaseService/GetUnreviewedActiveChats"
 	DatabaseService_GetPeriodMetrics_FullMethodName                   = "/database.DatabaseService/GetPeriodMetrics"
+	DatabaseService_GetPeriodChats_FullMethodName                     = "/database.DatabaseService/GetPeriodChats"
 	DatabaseService_GetWeeklyChatsStarted_FullMethodName              = "/database.DatabaseService/GetWeeklyChatsStarted"
 	DatabaseService_IsCustomerBlocked_FullMethodName                  = "/database.DatabaseService/IsCustomerBlocked"
 	DatabaseService_UpsertGoogleSyncToken_FullMethodName              = "/database.DatabaseService/UpsertGoogleSyncToken"
@@ -133,6 +134,7 @@ type DatabaseServiceClient interface {
 	UpdateChatIsReviewed(ctx context.Context, in *UpdateChatIsReviewedRequest, opts ...grpc.CallOption) (*ChatResponse, error)
 	GetUnreviewedActiveChats(ctx context.Context, in *GetUnreviewedActiveChatsRequest, opts ...grpc.CallOption) (*ChatsResponse, error)
 	GetPeriodMetrics(ctx context.Context, in *GetPeriodMetricsRequest, opts ...grpc.CallOption) (*GetPeriodMetricsResponse, error)
+	GetPeriodChats(ctx context.Context, in *GetPeriodChatsRequest, opts ...grpc.CallOption) (*GetPeriodChatsResponse, error)
 	GetWeeklyChatsStarted(ctx context.Context, in *GetWeeklyChatsStartedRequest, opts ...grpc.CallOption) (*GetWeeklyChatsStartedResponse, error)
 	IsCustomerBlocked(ctx context.Context, in *IsCustomerBlockedRequest, opts ...grpc.CallOption) (*IsCustomerBlockedResponse, error)
 	UpsertGoogleSyncToken(ctx context.Context, in *UpsertGoogleSyncTokenRequest, opts ...grpc.CallOption) (*GoogleSyncTokenResponse, error)
@@ -635,6 +637,16 @@ func (c *databaseServiceClient) GetPeriodMetrics(ctx context.Context, in *GetPer
 	return out, nil
 }
 
+func (c *databaseServiceClient) GetPeriodChats(ctx context.Context, in *GetPeriodChatsRequest, opts ...grpc.CallOption) (*GetPeriodChatsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetPeriodChatsResponse)
+	err := c.cc.Invoke(ctx, DatabaseService_GetPeriodChats_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *databaseServiceClient) GetWeeklyChatsStarted(ctx context.Context, in *GetWeeklyChatsStartedRequest, opts ...grpc.CallOption) (*GetWeeklyChatsStartedResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetWeeklyChatsStartedResponse)
@@ -807,6 +819,7 @@ type DatabaseServiceServer interface {
 	UpdateChatIsReviewed(context.Context, *UpdateChatIsReviewedRequest) (*ChatResponse, error)
 	GetUnreviewedActiveChats(context.Context, *GetUnreviewedActiveChatsRequest) (*ChatsResponse, error)
 	GetPeriodMetrics(context.Context, *GetPeriodMetricsRequest) (*GetPeriodMetricsResponse, error)
+	GetPeriodChats(context.Context, *GetPeriodChatsRequest) (*GetPeriodChatsResponse, error)
 	GetWeeklyChatsStarted(context.Context, *GetWeeklyChatsStartedRequest) (*GetWeeklyChatsStartedResponse, error)
 	IsCustomerBlocked(context.Context, *IsCustomerBlockedRequest) (*IsCustomerBlockedResponse, error)
 	UpsertGoogleSyncToken(context.Context, *UpsertGoogleSyncTokenRequest) (*GoogleSyncTokenResponse, error)
@@ -972,6 +985,9 @@ func (UnimplementedDatabaseServiceServer) GetUnreviewedActiveChats(context.Conte
 }
 func (UnimplementedDatabaseServiceServer) GetPeriodMetrics(context.Context, *GetPeriodMetricsRequest) (*GetPeriodMetricsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetPeriodMetrics not implemented")
+}
+func (UnimplementedDatabaseServiceServer) GetPeriodChats(context.Context, *GetPeriodChatsRequest) (*GetPeriodChatsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetPeriodChats not implemented")
 }
 func (UnimplementedDatabaseServiceServer) GetWeeklyChatsStarted(context.Context, *GetWeeklyChatsStartedRequest) (*GetWeeklyChatsStartedResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetWeeklyChatsStarted not implemented")
@@ -1894,6 +1910,24 @@ func _DatabaseService_GetPeriodMetrics_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _DatabaseService_GetPeriodChats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetPeriodChatsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DatabaseServiceServer).GetPeriodChats(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DatabaseService_GetPeriodChats_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DatabaseServiceServer).GetPeriodChats(ctx, req.(*GetPeriodChatsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _DatabaseService_GetWeeklyChatsStarted_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetWeeklyChatsStartedRequest)
 	if err := dec(in); err != nil {
@@ -2308,6 +2342,10 @@ var DatabaseService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetPeriodMetrics",
 			Handler:    _DatabaseService_GetPeriodMetrics_Handler,
+		},
+		{
+			MethodName: "GetPeriodChats",
+			Handler:    _DatabaseService_GetPeriodChats_Handler,
 		},
 		{
 			MethodName: "GetWeeklyChatsStarted",

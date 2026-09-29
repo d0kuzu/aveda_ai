@@ -550,6 +550,22 @@ func (c *Client) GetPeriodMetrics(assistantID, startTime, endTime string) (*dbpb
 	return c.DB.GetPeriodMetrics(ctx, req)
 }
 
+func (c *Client) GetPeriodChats(assistantID, startTime, endTime, category string, limit, offset int32) (*dbpb.GetPeriodChatsResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	req := &dbpb.GetPeriodChatsRequest{
+		AssistantId: assistantID,
+		StartTime:   startTime,
+		EndTime:     endTime,
+		Category:    category,
+		Limit:       limit,
+		Offset:      offset,
+	}
+
+	return c.DB.GetPeriodChats(ctx, req)
+}
+
 func (c *Client) GetWeeklyChatsStarted(assistantID, startTime, timezone string) (*dbpb.GetWeeklyChatsStartedResponse, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()

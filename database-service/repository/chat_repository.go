@@ -35,6 +35,7 @@ type ChatRepository interface {
 	GetChatsForFollowup(ctx context.Context) ([]*models.Chat, error)
 	UpdateChatFollowupStage(ctx context.Context, id string, stage int) (*models.Chat, error)
 	GetPeriodMetrics(ctx context.Context, assistantID string, startTime, endTime time.Time) (int32, int32, int32, error)
+	GetPeriodChats(ctx context.Context, assistantID string, startTime, endTime time.Time, category string, limit, offset int32) ([]*models.Chat, int64, error)
 	GetWeeklyChatsStarted(ctx context.Context, assistantID string, startTime time.Time, timezone string) ([]DailyCount, error)
 }
 
@@ -500,3 +501,41 @@ func (r *chatRepository) GetWeeklyChatsStarted(ctx context.Context, assistantID 
 
 	return days, nil
 }
+
+func (r *chatRepository) GetPeriodChats(ctx context.Context, assistantID string, startTime, endTime time.Time, category string, limit, offset int32) ([]*models.Chat, int64, error) {
+	var chats []*models.Chat
+	var totalCount int64
+
+	query := r.db.WithContext(ctx).Model(&models.Chat{}).Where("started_at >= ? AND started_at < ?", startTime, endTime)
+	if assistantID != "" {
+		query = query.Where("assistant_id = ?", assistantID)
+	}
+
+	switch category {
+	case "completed":
+		query = query.Where("is_end = ?", true)
+	case "booked":
+		query = query.Where("is_booked = ?", true)
+	case "started", "all", "":
+		// no additional filter
+	}
+
+	if err := query.Count(&totalCount).Error; err != nil {
+		return nil, 0, fmt.Errorf("failed to count period chats: %w", err)
+	}
+
+	fetchQuery := query.Order("started_at DESC")
+	if limit > 0 {
+		fetchQuery = fetchQuery.Limit(int(limit))
+	}
+	if offset > 0 {
+		fetchQuery = fetchQuery.Offset(int(offset))
+	}
+
+	if err := fetchQuery.Find(&chats).Error; err != nil {
+		return nil, 0, fmt.Errorf("failed to get period chats: %w", err)
+	}
+
+	return chats, totalCount, nil
+}
+

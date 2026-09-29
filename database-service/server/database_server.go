@@ -931,6 +931,50 @@ func (s *DatabaseServer) GetPeriodMetrics(ctx context.Context, req *proto.GetPer
 	}, nil
 }
 
+func (s *DatabaseServer) GetPeriodChats(ctx context.Context, req *proto.GetPeriodChatsRequest) (*proto.GetPeriodChatsResponse, error) {
+	startTime, err := time.Parse(time.RFC3339, req.StartTime)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "invalid start_time: %v", err)
+	}
+	endTime, err := time.Parse(time.RFC3339, req.EndTime)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "invalid end_time: %v", err)
+	}
+
+	chats, totalCount, err := s.chatRepo.GetPeriodChats(ctx, req.AssistantId, startTime, endTime, req.Category, req.Limit, req.Offset)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to get period chats: %v", err)
+	}
+
+	var protoChats []*proto.ChatResponse
+	for _, chat := range chats {
+		customerId := ""
+		if chat.CustomerID != nil {
+			customerId = *chat.CustomerID
+		}
+
+		protoChats = append(protoChats, &proto.ChatResponse{
+			Id:            chat.ID,
+			AssistantId:   chat.AssistantID,
+			CustomerId:    customerId,
+			Platform:      "",
+			CreatedAt:     chat.CreatedAt.Format(time.RFC3339),
+			UpdatedAt:     chat.UpdatedAt.Format(time.RFC3339),
+			StartedAt:     chat.StartedAt.Format(time.RFC3339),
+			MessageCount:  chat.MessageCount,
+			IsEnd:         chat.IsEnd,
+			IsBooked:      chat.IsBooked,
+			IsReviewed:    chat.IsReviewed,
+			FollowupStage: int32(chat.FollowupStage),
+		})
+	}
+
+	return &proto.GetPeriodChatsResponse{
+		Chats:      protoChats,
+		TotalCount: totalCount,
+	}, nil
+}
+
 func (s *DatabaseServer) GetWeeklyChatsStarted(ctx context.Context, req *proto.GetWeeklyChatsStartedRequest) (*proto.GetWeeklyChatsStartedResponse, error) {
 	startTime, err := time.Parse(time.RFC3339, req.StartTime)
 	if err != nil {

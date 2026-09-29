@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"net/http"
+	"strconv"
 	"sync"
 	"time"
 
@@ -38,6 +39,43 @@ type AnalyticsResponse struct {
 	WeeklyConversationsStarted []DailyCount  `json:"weekly_conversations_started"`
 }
 
+type AnalyticsChatJSON struct {
+	ID            string `json:"id"`
+	AssistantID   string `json:"assistant_id"`
+	CustomerID    string `json:"customer_id"`
+	Platform      string `json:"platform"`
+	CreatedAt     string `json:"created_at"`
+	UpdatedAt     string `json:"updated_at"`
+	StartedAt     string `json:"started_at"`
+	MessageCount  int32  `json:"message_count"`
+	IsEnd         bool   `json:"is_end"`
+	FollowupStage int32  `json:"followup_stage"`
+	IsReviewed    bool   `json:"is_reviewed"`
+	IsBooked      bool   `json:"is_booked"`
+}
+
+type AnalyticsChatsResponse struct {
+	Category    string              `json:"category"`
+	Days        int                 `json:"days"`
+	TotalCount  int64               `json:"total_count"`
+	TotalPages  int64               `json:"total_pages"`
+	CurrentPage int                 `json:"current_page"`
+	Limit       int                 `json:"limit"`
+	Chats       []AnalyticsChatJSON `json:"chats"`
+}
+
+func CalculatePeriodRange(now time.Time, location *time.Location, days int) (startCurrent, endCurrent time.Time) {
+	y, m, d := now.Date()
+	if days == 1 {
+		startCurrent = time.Date(y, m, d, 0, 0, 0, 0, location)
+		endCurrent = startCurrent.AddDate(0, 0, 1)
+	} else {
+		startCurrent = time.Date(y, m, d, 0, 0, 0, 0, location).AddDate(0, 0, -days+1)
+		endCurrent = time.Date(y, m, d, 0, 0, 0, 0, location).AddDate(0, 0, 1)
+	}
+	return startCurrent, endCurrent
+}
+
 func GetAnalytics(application *app.App) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		assistantID := c.Query("assistant_id")
@@ -55,19 +93,7 @@ func GetAnalytics(application *app.App) gin.HandlerFunc {
 		now := time.Now().In(location)
 
 		getMetrics := func(days int) (PeriodMetrics, error) {
-			var startCurrent, endCurrent time.Time
-
-			if days == 1 {
-				// today
-				y, m, d := now.Date()
-				startCurrent = time.Date(y, m, d, 0, 0, 0, 0, location)
-				endCurrent = startCurrent.AddDate(0, 0, 1)
-			} else {
-				y, m, d := now.Date()
-				startCurrent = time.Date(y, m, d, 0, 0, 0, 0, location).AddDate(0, 0, -days+1)
-				endCurrent = time.Date(y, m, d, 0, 0, 0, 0, location).AddDate(0, 0, 1)
-			}
-
+			startCurrent, endCurrent := CalculatePeriodRange(now, location, days)
 			startPrev := startCurrent.AddDate(0, 0, -days)
 			endPrev := startCurrent
 
@@ -203,3 +229,117 @@ func GetAnalytics(application *app.App) gin.HandlerFunc {
 		})
 	}
 }
+
+func GetAnalyticsChatsByCategory(application *app.App, forcedCategory string) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		assistantID := c.Query("assistant_id")
+		if assistantID == "" {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "assistant_id is required"})
+			return
+		}
+
+		daysStr := c.Query("days")
+		if daysStr == "" {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "days parameter is required (1, 7, 30, 60, or 90)"})
+			return
+		}
+		days, err := strconv.Atoi(daysStr)
+		if err != nil || (days != 1 && days != 7 && days != 30 && days != 60 && days != 90) {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid days: must be 1, 7, 30, 60 or 90"})
+			return
+		}
+
+		category := forcedCategory
+		if category == "" {
+			category = c.Query("category")
+		}
+		if category != "started" && category != "completed" && category != "booked" {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid category: must be started, completed, or booked"})
+			return
+		}
+
+		pageStr := c.DefaultQuery("page", "1")
+		page, err := strconv.Atoi(pageStr)
+		if err != nil || page < 1 {
+			page = 1
+		}
+
+		limitStr := c.DefaultQuery("limit", "20")
+		limit, err := strconv.Atoi(limitStr)
+		if err != nil || limit < 1 {
+			limit = 20
+		}
+		if limit > 100 {
+			limit = 100
+		}
+		offset := (page - 1) * limit
+
+		location, err := time.LoadLocation(constants.DefaultTimezone)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "invalid timezone"})
+			return
+		}
+
+		now := time.Now().In(location)
+		startCurrent, endCurrent := CalculatePeriodRange(now, location, days)
+
+		resp, err := application.Db.GetPeriodChats(
+			assistantID,
+			startCurrent.Format(time.RFC3339),
+			endCurrent.Format(time.RFC3339),
+			category,
+			int32(limit),
+			int32(offset),
+		)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get period chats: " + err.Error()})
+			return
+		}
+
+		chatsJSON := make([]AnalyticsChatJSON, len(resp.Chats))
+		for i, chat := range resp.Chats {
+			chatsJSON[i] = AnalyticsChatJSON{
+				ID:            chat.Id,
+				AssistantID:   chat.AssistantId,
+				CustomerID:    chat.CustomerId,
+				Platform:      chat.Platform,
+				CreatedAt:     chat.CreatedAt,
+				UpdatedAt:     chat.UpdatedAt,
+				StartedAt:     chat.StartedAt,
+				MessageCount:  chat.MessageCount,
+				IsEnd:         chat.IsEnd,
+				FollowupStage: chat.FollowupStage,
+				IsReviewed:    chat.IsReviewed,
+				IsBooked:      chat.IsBooked,
+			}
+		}
+
+		var totalPages int64 = 0
+		if resp.TotalCount > 0 {
+			totalPages = (resp.TotalCount + int64(limit) - 1) / int64(limit)
+		}
+
+		c.JSON(http.StatusOK, AnalyticsChatsResponse{
+			Category:    category,
+			Days:        days,
+			TotalCount:  resp.TotalCount,
+			TotalPages:  totalPages,
+			CurrentPage: page,
+			Limit:       limit,
+			Chats:       chatsJSON,
+		})
+	}
+}
+
+func GetStartedChats(application *app.App) gin.HandlerFunc {
+	return GetAnalyticsChatsByCategory(application, "started")
+}
+
+func GetCompletedChats(application *app.App) gin.HandlerFunc {
+	return GetAnalyticsChatsByCategory(application, "completed")
+}
+
+func GetBookedChats(application *app.App) gin.HandlerFunc {
+	return GetAnalyticsChatsByCategory(application, "booked")
+}
+

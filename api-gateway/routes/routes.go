@@ -56,7 +56,7 @@ func SetupRoutes(r *gin.Engine, cfg *config.Config, db *db.Client) {
 		)
 
 		userPrivate.Any("/api/analytics/*any",
-			proxy.NewReverseProxy(cfg.AIServiceURL, "/api/analytics"),
+			proxy.NewReverseProxy(cfg.AIServiceURL, "/api"),
 		)
 
 		userPrivate.Any("/ai/*any",
