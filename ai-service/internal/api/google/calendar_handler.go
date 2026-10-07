@@ -330,6 +330,9 @@ func (h *CalendarHandler) BookSlot(c *gin.Context) {
 	// Попытка отправить запись в CampusLogin если есть телефон
 	success := TrySendCampusLogin(c.Request.Context(), h.db, h.cl, event.Description+" "+event.Summary, startTime, endTime, event.Description)
 
+	// Останавливаем follow-up сообщения для этого клиента — тур уже забронирован
+	MarkChatsBookedByPhone(h.db, event.Description+" "+event.Summary)
+
 	// Сохраняем запись в БД
 	_, err = h.db.CreateAppointment(
 		createdEvent.Id,

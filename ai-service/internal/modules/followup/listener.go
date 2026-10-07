@@ -81,6 +81,11 @@ func (l *Listener) processFollowups(ctx context.Context) {
 			l.writeLog("Chat %s has empty CustomerId, skipping.", chat.Id)
 			continue
 		}
+		if chat.IsBooked {
+			l.writeLog("Chat %s (%s) already booked a tour. Ending chat.", chat.Id, chat.CustomerId)
+			l.dbClient.UpdateChatIsEnd(chat.Id, true)
+			continue
+		}
 		campusLogin, err := l.dbClient.GetCampusloginByUserId(chat.CustomerId)
 		if err != nil {
 			l.writeLog("Could not get campuslogin for %s: %v, skipping.", chat.CustomerId, err)

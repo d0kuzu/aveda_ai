@@ -60,3 +60,42 @@ func TrySendCampusLogin(ctx context.Context, dbClient *db.Client, cl *campuslogi
 	log.Printf("[CampusLoginHelper] successfully sent appointment to CampusLogin for phone %s", phoneSuffix)
 	return true
 }
+
+// MarkChatsBookedByPhone извлекает телефон из текста бронирования и помечает все активные чаты
+// этого клиента как забронированные и завершённые, чтобы follow-up сообщения больше не отправлялись.
+func MarkChatsBookedByPhone(dbClient *db.Client, text string) {
+	if dbClient == nil {
+		return
+	}
+
+	phoneStr := phoneRegex.FindString(text)
+	if phoneStr == "" {
+		log.Printf("[CampusLoginHelper] MarkChatsBookedByPhone: no phone found in booking text")
+		return
+	}
+	digits := nonDigitRegex.ReplaceAllString(phoneStr, "")
+	if len(digits) < 10 {
+		return
+	}
+	phoneSuffix := digits[len(digits)-10:]
+
+	chats, err := dbClient.GetChatsForFollowup()
+	if err != nil {
+		log.Printf("[CampusLoginHelper] MarkChatsBookedByPhone: failed to get active chats: %v", err)
+		return
+	}
+
+	for _, chat := range chats {
+		customerDigits := nonDigitRegex.ReplaceAllString(chat.CustomerId, "")
+		if len(customerDigits) < 10 || customerDigits[len(customerDigits)-10:] != phoneSuffix {
+			continue
+		}
+		if _, err := dbClient.UpdateChatIsBooked(chat.Id, true); err != nil {
+			log.Printf("[CampusLoginHelper] failed to set is_booked for chat %s: %v", chat.Id, err)
+		}
+		if _, err := dbClient.UpdateChatIsEnd(chat.Id, true); err != nil {
+			log.Printf("[CampusLoginHelper] failed to set is_end for chat %s: %v", chat.Id, err)
+		}
+		log.Printf("[CampusLoginHelper] chat %s (customer %s) marked as booked, follow-ups stopped", chat.Id, chat.CustomerId)
+	}
+}
