@@ -1,6 +1,7 @@
 package test
 
 import (
+	"diaxel/internal/constants"
 	"diaxel/internal/grpc/db"
 	"diaxel/internal/modules/campuslogin"
 	"diaxel/internal/modules/googlecalendar"
@@ -236,11 +237,14 @@ func (h *TestHandler) RetryAppointment(c *gin.Context) {
 }
 
 type TestConversationRequest struct {
-	AssistantID string `json:"assistant_id" form:"assistant_id"`
-	From        string `json:"from" form:"from"`
-	Message     string `json:"message" form:"message"`
-	Trigger     bool   `json:"trigger" form:"trigger"`
-	Name        string `json:"name" form:"name"`
+	AssistantID   string `json:"assistant_id" form:"assistant_id"`
+	From          string `json:"from" form:"from"`
+	Message       string `json:"message" form:"message"`
+	Trigger       bool   `json:"trigger" form:"trigger"`
+	Name          string `json:"name" form:"name"`
+	Type          string `json:"type" form:"type"`
+	ProgramID     string `json:"program_id" form:"program_id"`
+	International *bool  `json:"international" form:"international"`
 }
 
 func (h *TestHandler) TestConversation(c *gin.Context) {
@@ -250,7 +254,10 @@ func (h *TestHandler) TestConversation(c *gin.Context) {
 	}
 
 	var req TestConversationRequest
-	_ = c.ShouldBind(&req)
+	if err := c.ShouldBind(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request: " + err.Error()})
+		return
+	}
 
 	assistantID := c.Param("assistant_id")
 	if assistantID == "" {
@@ -283,6 +290,18 @@ func (h *TestHandler) TestConversation(c *gin.Context) {
 
 	isTrigger := req.Trigger || c.Query("trigger") == "true"
 	if isTrigger {
+		isCanada := strings.EqualFold(req.Type, "canada")
+		if isCanada {
+			if req.ProgramID == "" {
+				c.JSON(http.StatusBadRequest, gin.H{"error": "program_id is required for Canada"})
+				return
+			}
+			if req.International == nil {
+				c.JSON(http.StatusBadRequest, gin.H{"error": "international is required for Canada"})
+				return
+			}
+		}
+
 		if h.db != nil {
 			existingChat, checkErr := h.db.GetLatestChatByCustomer(assistantID, from)
 			if checkErr == nil && existingChat != nil && existingChat.Id != "" {
@@ -295,10 +314,38 @@ func (h *TestHandler) TestConversation(c *gin.Context) {
 			name = "Lead"
 		}
 
-		systemPrompt := fmt.Sprintf(
-			"This is a new lead. Name: %s. Greet them by name and send the standard initial outreach message offering program details (do not ask about speaking with advisors).",
-			name,
-		)
+		var systemPrompt string
+		if isCanada {
+			programName := req.ProgramID
+			if pName, ok := constants.ProgramIDToName[req.ProgramID]; ok {
+				programName = pName
+			}
+
+			isInternational := "no"
+			if *req.International {
+				isInternational = "yes"
+			}
+
+			systemPrompt = fmt.Sprintf(
+				"This is a new lead. Name: %s, program: %s, International: %s. Greet them by name and mention the program they chose.",
+				name,
+				programName,
+				isInternational,
+			)
+
+			if h.db != nil {
+				programIDInt, _ := strconv.Atoi(req.ProgramID)
+				if id, ok := constants.ProgramNameToID[programName]; ok {
+					programIDInt = id
+				}
+				_ = h.db.UpsertCampuslogin(from, 5972449, programIDInt, false, *req.International, name, "test@example.com")
+			}
+		} else {
+			systemPrompt = fmt.Sprintf(
+				"This is a new lead. Name: %s. Greet them by name and send the standard initial outreach message offering program details (do not ask about speaking with advisors).",
+				name,
+			)
+		}
 
 		log.Printf("[Test Conversation] Triggering initial outreach for %s, prompt: %s", from, systemPrompt)
 
@@ -312,6 +359,7 @@ func (h *TestHandler) TestConversation(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"status":        "ok",
 			"is_trigger":    true,
+			"type":          req.Type,
 			"assistant_id":  assistantID,
 			"from":          from,
 			"system_prompt": systemPrompt,
