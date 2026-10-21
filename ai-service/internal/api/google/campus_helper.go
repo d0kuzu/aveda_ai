@@ -6,6 +6,7 @@ import (
 	"regexp"
 	"time"
 
+	"diaxel/internal/constants"
 	"diaxel/internal/grpc/db"
 	"diaxel/internal/modules/campuslogin"
 )
@@ -51,7 +52,7 @@ func TrySendCampusLogin(ctx context.Context, dbClient *db.Client, cl *campuslogi
 	programID := int(campusRecord.ProgramId)
 	log.Printf("[CampusLoginHelper] Program ID: %d", programID)
 
-	err = cl.SendAppointment(ctx, "Campus Tour for "+campusRecord.FirstName, startTimeFormatted, endTimeFormatted, contactID, programID, description)
+	err = cl.SendAppointment(ctx, constants.CampusLoginCanadaOrgID, constants.CampusLoginCanadaStaffID, "Campus Tour for "+campusRecord.FirstName, startTimeFormatted, endTimeFormatted, contactID, programID, description)
 	if err != nil {
 		log.Printf("[CampusLoginHelper] failed to send appointment to CampusLogin for phone %s: %v", phoneSuffix, err)
 		return false

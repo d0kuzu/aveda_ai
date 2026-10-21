@@ -508,7 +508,7 @@ func (c *Client) createCampusLoginAppointmentInternal(ctx context.Context, start
 		programID = int(campusRecord.ProgramId)
 	}
 
-	err = c.campuslogin.SendAppointment(ctx, "Campus Tour for "+campusRecord.FirstName, startTime, endTime, contactID, programID, description)
+	err = c.campuslogin.SendAppointment(ctx, constants.CampusLoginCanadaOrgID, constants.CampusLoginCanadaStaffID, "Campus Tour for "+campusRecord.FirstName, startTime, endTime, contactID, programID, description)
 	if err != nil {
 		return err
 	}

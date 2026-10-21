@@ -119,7 +119,7 @@ func (h *TestHandler) TestSendAppointment(c *gin.Context) {
 	programID, _ := strconv.Atoi(c.DefaultQuery("program_id", "0"))
 	description := c.DefaultQuery("description", "Test Appointment from AI Service")
 
-	err := h.cl.SendAppointment(c.Request.Context(), "Testing", startTime, endTime, contactID, programID, description)
+	err := h.cl.SendAppointment(c.Request.Context(), constants.CampusLoginCanadaOrgID, constants.CampusLoginCanadaStaffID, "Testing", startTime, endTime, contactID, programID, description)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"status":  "error",
@@ -222,7 +222,7 @@ func (h *TestHandler) RetryAppointment(c *gin.Context) {
 	startTimeFormatted := startTime.In(loc).Format("2006-01-02T15:04:05")
 	endTimeFormatted := endTime.In(loc).Format("2006-01-02T15:04:05")
 
-	err = h.cl.SendAppointment(c.Request.Context(), "Campus Tour for "+campusRecord.FirstName, startTimeFormatted, endTimeFormatted, int(campusRecord.ContactId), int(campusRecord.ProgramId), app.Description)
+	err = h.cl.SendAppointment(c.Request.Context(), constants.CampusLoginCanadaOrgID, constants.CampusLoginCanadaStaffID, "Campus Tour for "+campusRecord.FirstName, startTimeFormatted, endTimeFormatted, int(campusRecord.ContactId), int(campusRecord.ProgramId), app.Description)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to send appointment to CampusLogin API", "details": err.Error(), "campusRecord": campusRecord})
 		return

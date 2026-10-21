@@ -222,8 +222,8 @@ func (h *AIHandler) HandleCalWebhook(c *gin.Context) {
 		}
 	}
 
-	// Отправляем встречу в CampusLogin
-	err = h.campusLogin.SendAppointment(c.Request.Context(), tourTitle, startTimeFormatted, endTimeFormatted, contactID, programID, description)
+	// Отправляем встречу в CampusLogin (Aveda Cinta: OrgID 17600, StaffID 12001)
+	err = h.campusLogin.SendAppointment(c.Request.Context(), constants.CampusLoginCintaOrgID, constants.CampusLoginCintaStaffID, tourTitle, startTimeFormatted, endTimeFormatted, contactID, programID, description)
 	if err != nil {
 		failReason := fmt.Sprintf("Ошибка отправки в API CampusLogin: %v", err)
 		log.Printf("[CalCom Webhook] %s for phone %s", failReason, phoneSuffix)

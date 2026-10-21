@@ -6,4 +6,12 @@ const (
 	FollowupText           = "test follow-up"
 	AvedaSintaAssistantID  = "7de674c1-6029-4609-92c4-074fab740bad"
 	AvedaCanadaAssistantID = "194f277c-0911-4ca7-bba2-665036627bc0"
+
+	// CampusLogin IDs for Canada (Aveda Canada)
+	CampusLoginCanadaOrgID   = 24900
+	CampusLoginCanadaStaffID = 7547 // 6710 - cali, 7547 - jenna
+
+	// CampusLogin IDs for Cinta (Aveda Cinta / Cal.com)
+	CampusLoginCintaOrgID   = 17600
+	CampusLoginCintaStaffID = 12001
 )
