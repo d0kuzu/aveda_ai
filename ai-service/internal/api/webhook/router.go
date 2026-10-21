@@ -7,7 +7,7 @@ import (
 )
 
 func WebhookRoutes(router *gin.Engine, app *appModule.App) {
-	aiHandler := NewAIHandler(app.Cfg, app.LLM, app.Db, app.TgOrchestrator)
+	aiHandler := NewAIHandler(app.Cfg, app.LLM, app.Db, app.TgOrchestrator, app.CampusLogin)
 
 	webhookGroup := router.Group("webhooks")
 	{

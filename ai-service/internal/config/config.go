@@ -35,6 +35,10 @@ type Settings struct {
 	ReportBotToken string
 	ReportChatID   string
 	ReportSendTime string // HH:MM format, Asia/Almaty timezone
+
+	// Cal.com booking Telegram notification settings
+	CalcomNotifyBotToken string
+	CalcomNotifyChatID   string
 }
 
 func LoadConfig() (*Settings, error) {
@@ -87,6 +91,9 @@ func LoadConfig() (*Settings, error) {
 		ReportBotToken: os.Getenv("REPORT_BOT_TOKEN"),
 		ReportChatID:   os.Getenv("REPORT_CHAT_ID"),
 		ReportSendTime: reportSendTime,
+
+		CalcomNotifyBotToken: os.Getenv("CALCOM_NOTIFY_BOT_TOKEN"),
+		CalcomNotifyChatID:   os.Getenv("CALCOM_NOTIFY_CHAT_ID"),
 	}, nil
 }
 

@@ -4,14 +4,15 @@ import (
 	"bytes"
 	"diaxel/internal/config"
 	"diaxel/internal/grpc/db"
+	"diaxel/internal/modules/campuslogin"
 	"diaxel/internal/modules/llm"
+	"diaxel/internal/modules/telegram"
+	"diaxel/internal/modules/tgnotifier"
 	"diaxel/internal/modules/token"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"strconv"
-
-	"diaxel/internal/modules/telegram"
 
 	"github.com/gin-gonic/gin"
 )
@@ -21,10 +22,23 @@ type AIHandler struct {
 	LLM          *llm.Client
 	db           *db.Client
 	orchestrator *telegram.Orchestrator
+	campusLogin  *campuslogin.Client
+	tgNotifier   *tgnotifier.Client
 }
 
-func NewAIHandler(cfg *config.Settings, llmClient *llm.Client, db *db.Client, tgOrch *telegram.Orchestrator) *AIHandler {
-	return &AIHandler{cfg: cfg, LLM: llmClient, db: db, orchestrator: tgOrch}
+func NewAIHandler(cfg *config.Settings, llmClient *llm.Client, db *db.Client, tgOrch *telegram.Orchestrator, campusLogin *campuslogin.Client) *AIHandler {
+	var notifier *tgnotifier.Client
+	if cfg.CalcomNotifyBotToken != "" && cfg.CalcomNotifyChatID != "" {
+		notifier = tgnotifier.New(cfg.CalcomNotifyBotToken, cfg.CalcomNotifyChatID)
+	}
+	return &AIHandler{
+		cfg:          cfg,
+		LLM:          llmClient,
+		db:           db,
+		orchestrator: tgOrch,
+		campusLogin:  campusLogin,
+		tgNotifier:   notifier,
+	}
 }
 
 type RegisterBotRequest struct {
