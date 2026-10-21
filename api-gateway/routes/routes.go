@@ -27,6 +27,10 @@ func SetupRoutes(r *gin.Engine, cfg *config.Config, db *db.Client) {
 			proxy.NewReverseProxy(cfg.AIServiceURL, ""),
 		)
 
+		public.Any("/webhooks/cal/callback/*any",
+			proxy.NewReverseProxy(cfg.AIServiceURL, ""),
+		)
+
 		public.Any("/twilio/webhook/*any",
 			proxy.NewReverseProxy(cfg.AIServiceURL, ""),
 		)

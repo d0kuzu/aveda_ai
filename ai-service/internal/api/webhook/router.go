@@ -18,5 +18,7 @@ func WebhookRoutes(router *gin.Engine, app *appModule.App) {
 		webhookGroup.POST("/twilio/register", aiHandler.RegisterTwilioBot)
 
 		webhookGroup.POST("/telegram/callback/:assistant_id", aiHandler.HandleTelegramWebhook)
+
+		webhookGroup.POST("/cal/callback/:assistant_id", aiHandler.HandleCalWebhook)
 	}
 }
