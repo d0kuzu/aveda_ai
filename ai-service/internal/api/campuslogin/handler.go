@@ -4,6 +4,7 @@ import (
 	"diaxel/internal/config"
 	"diaxel/internal/constants"
 	"diaxel/internal/grpc/db"
+	campusloginModule "diaxel/internal/modules/campuslogin"
 	"diaxel/internal/modules/llm"
 	twilio "diaxel/internal/modules/twilio"
 	"encoding/json"
@@ -12,6 +13,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -463,3 +465,95 @@ func (h *CampusLoginHandler) UpdateAppointmentSyncStatus(c *gin.Context) {
 		"appointment": resp,
 	})
 }
+
+// GetBookingAvailability возвращает список свободных слотов для бронирования (для фронтенда календаря)
+func (h *CampusLoginHandler) GetBookingAvailability(c *gin.Context) {
+	org := strings.ToLower(strings.TrimSpace(c.DefaultQuery("organization", c.DefaultQuery("org", "cinta"))))
+
+	var defaultStaffID int
+	var defaultOrgID int
+	var apiKey string
+
+	switch org {
+	case "canada":
+		defaultStaffID = constants.CampusLoginCanadaStaffID
+		defaultOrgID = constants.CampusLoginCanadaOrgID
+		apiKey = h.cfg.CampusLoginAPI
+	case "cinta":
+		fallthrough
+	default:
+		org = "cinta"
+		defaultStaffID = constants.CampusLoginCintaStaffID
+		defaultOrgID = constants.CampusLoginCintaOrgID
+		apiKey = h.cfg.CampusLoginCintaAPI
+	}
+
+	// Возможность переопределить API ключ через query параметр
+	if customKey := c.Query("api_key"); customKey != "" {
+		apiKey = customKey
+	}
+
+	if apiKey == "" {
+		log.Printf("[CampusLogin Booking] API key is not configured for organization: %s", org)
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": fmt.Sprintf("CampusLogin API key is not configured for organization '%s'", org),
+		})
+		return
+	}
+
+	staffID := defaultStaffID
+	if staffParam := c.DefaultQuery("staff_id", c.Query("staffId")); staffParam != "" {
+		if parsed, err := strconv.Atoi(staffParam); err == nil && parsed > 0 {
+			staffID = parsed
+		}
+	}
+
+	duration := 60
+	if durParam := c.Query("duration"); durParam != "" {
+		if parsed, err := strconv.Atoi(durParam); err == nil && parsed > 0 {
+			duration = parsed
+		}
+	}
+
+	fromDate := c.DefaultQuery("from_date", c.Query("fromDate"))
+	toDate := c.DefaultQuery("to_date", c.Query("toDate"))
+
+	if fromDate == "" {
+		fromDate = time.Now().Format("2006-01-02")
+	}
+	if toDate == "" {
+		parsedFrom, err := time.Parse("2006-01-02", fromDate)
+		if err != nil {
+			parsedFrom = time.Now()
+		}
+		toDate = parsedFrom.AddDate(0, 0, 7).Format("2006-01-02")
+	}
+
+	client := campusloginModule.NewClient(apiKey)
+	resp, err := client.GetAvailability(c.Request.Context(), campusloginModule.GetAvailabilityParams{
+		APIKey:   apiKey,
+		OrgID:    defaultOrgID,
+		StaffID:  staffID,
+		Duration: duration,
+		FromDate: fromDate,
+		ToDate:   toDate,
+	})
+	if err != nil {
+		log.Printf("[CampusLogin Booking] Error fetching availability for staff %d: %v", staffID, err)
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": fmt.Sprintf("Failed to get availability: %v", err),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":       "success",
+		"organization": org,
+		"staff_id":     staffID,
+		"duration":     duration,
+		"from_date":    fromDate,
+		"to_date":      toDate,
+		"slots":        resp.Data.Slots,
+	})
+}
+

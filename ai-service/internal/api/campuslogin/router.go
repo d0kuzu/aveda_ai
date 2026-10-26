@@ -15,5 +15,9 @@ func CampusLoginRoutes(router *gin.Engine, app *appModule.App) {
 		group.POST("/triger-twilio/reinquiry/:assistant_id", h.HandleTriggerTwilioReinquiry)
 		group.GET("/appointments/pending", h.GetPendingAppointments)
 		group.PUT("/appointments/:id/sync", h.UpdateAppointmentSyncStatus)
+
+		// Получение свободных слотов для календаря бронирования
+		group.GET("/booking/availability", h.GetBookingAvailability)
+		group.GET("/appointments/availability", h.GetBookingAvailability)
 	}
 }

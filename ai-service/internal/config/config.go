@@ -23,7 +23,8 @@ type Settings struct {
 	TokenPrefix string
 	TokenLength int
 
-	CampusLoginAPI string
+	CampusLoginAPI      string
+	CampusLoginCintaAPI string
 
 	MaxSlotCapacity      int
 	SlotDurationMinutes  int
@@ -80,7 +81,8 @@ func LoadConfig() (*Settings, error) {
 		TokenPrefix: os.Getenv("TOKEN_PREFIX"),
 		TokenLength: getEnvAsInt("TOKEN_LENGTH", 32),
 
-		CampusLoginAPI: os.Getenv("CAMPUSLOGIN_API"),
+		CampusLoginAPI:      os.Getenv("CAMPUSLOGIN_API"),
+		CampusLoginCintaAPI: os.Getenv("CAMPUSLOGIN_CINTA_API"),
 
 		MaxSlotCapacity:     getEnvAsInt("MAX_SLOT_CAPACITY", 10),
 		SlotDurationMinutes: getEnvAsInt("SLOT_DURATION_MINUTES", 60),
