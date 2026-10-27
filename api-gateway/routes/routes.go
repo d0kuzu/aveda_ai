@@ -51,6 +51,10 @@ func SetupRoutes(r *gin.Engine, cfg *config.Config, db *db.Client) {
 			proxy.NewReverseProxy(cfg.AIServiceURL, ""),
 		)
 
+		public.Any("/campuslogin/booking",
+			proxy.NewReverseProxy(cfg.AIServiceURL, ""),
+		)
+
 		public.Any("/campuslogin/booking/*any",
 			proxy.NewReverseProxy(cfg.AIServiceURL, ""),
 		)

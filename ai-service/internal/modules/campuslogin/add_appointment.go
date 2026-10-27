@@ -5,63 +5,172 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"time"
+
+	"diaxel/internal/constants"
 )
 
 type AppointmentRequest struct {
-	OrgId                int    `json:"OrgId"`
-	AppointmentID        int    `json:"AppointmentID"`
-	SchoolID             int    `json:"SchoolID"`
-	CampusID             int    `json:"CampusID"`
-	MailListID           int    `json:"MailListID"`
-	ContactID            int    `json:"ContactID"`
-	DateFrom             string `json:"DateFrom"`
-	DateTo               string `json:"DateTo"`
-	Text                 string `json:"Text"`
-	Description          string `json:"Description"`
-	WebinarLink          string `json:"WebinarLink"`
-	StaffID              int    `json:"StaffID"`
-	EmployeeID           int    `json:"EmployeeID"`
-	EmployeeIDs          string `json:"EmployeeIDs"`
-	CreateDate           string `json:"CreateDate"`
-	StageID              int    `json:"StageID"`
-	SubStageID           int    `json:"SubStageID"`
-	ShowUp               string `json:"ShowUp"`
-	NoteOptions          string `json:"NoteOptions"`
-	OutcomeDataID        int    `json:"OutcomeDataID"`
-	ShowOnBookerCalendar int    `json:"ShowOnBookerCalendar"`
-	Scheduled            int    `json:"Scheduled"`
-	LocationCampusID     int    `json:"LocationCampusID"`
-	LocationDetails      string `json:"LocationDetails"`
-	InitAppointmentID    int    `json:"InitAppointmentID"`
-	EventUrl             string `json:"EventUrl"`
-	ProgramID            int    `json:"ProgramID"`
-	ApplicationID        int    `json:"ApplicationID"`
-	CampaignID           int    `json:"CampaignID"`
-	ContactType          string `json:"ContactType"`
-	TakenBy              int    `json:"TakenBy"`
-	TakenOn              string `json:"TakenOn"`
-	Office365GID         string `json:"Office365GID"`
-	GoogleGID            string `json:"GoogleGID"`
-	Automation           string `json:"Automation"`
+	OrgId                int    `json:"orgId"`
+	AppointmentID        int    `json:"appointmentID"`
+	SchoolID             int    `json:"schoolID"`
+	CampusID             int    `json:"campusID"`
+	MailListID           int    `json:"mailListID"`
+	ContactID            int    `json:"contactID"`
+	DateFrom             string `json:"dateFrom"`
+	DateTo               string `json:"dateTo"`
+	Text                 string `json:"text"`
+	Description          string `json:"description"`
+	WebinarLink          string `json:"webinarLink"`
+	StaffID              int    `json:"staffID"`
+	EmployeeID           int    `json:"employeeID"`
+	EmployeeIDs          string `json:"employeeIDs"`
+	CreateDate           string `json:"createDate"`
+	StageID              int    `json:"stageID"`
+	SubStageID           int    `json:"subStageID"`
+	ShowUp               int    `json:"showUp"`
+	NoteOptions          string `json:"noteOptions"`
+	OutcomeDataID        int    `json:"outcomeDataID"`
+	ShowOnBookerCalendar int    `json:"showOnBookerCalendar"`
+	Scheduled            int    `json:"scheduled"`
+	LocationCampusID     int    `json:"locationCampusID"`
+	LocationDetails      string `json:"locationDetails"`
+	InitAppointmentID    int    `json:"initAppointmentID"`
+	EventUrl             string `json:"eventUrl"`
+	ProgramID            int    `json:"programID"`
+	ApplicationID        int    `json:"applicationID"`
+	CampaignID           int    `json:"campaignID"`
+	ContactType          string `json:"contactType"`
+	TakenBy              int    `json:"takenBy"`
+	TakenOn              string `json:"takenOn"`
+	Office365GID         string `json:"office365GID"`
+	GoogleGID            string `json:"googleGID"`
+	Automation           string `json:"automation"`
+}
+
+type ImportAppointmentResponse struct {
+	OrgId                int    `json:"orgId"`
+	APIAccountId         int    `json:"apiAccountId"`
+	IsSuccessful         bool   `json:"isSuccessful"`
+	ErrorMessage         string `json:"errorMessage"`
+	AppointmentID        int    `json:"appointmentID"`
+	SchoolID             int    `json:"schoolID"`
+	CampusID             int    `json:"campusID"`
+	MailListID           int    `json:"mailListID"`
+	ContactID            int    `json:"contactID"`
+	DateFrom             string `json:"dateFrom"`
+	DateTo               string `json:"dateTo"`
+	Text                 string `json:"text"`
+	Description          string `json:"description"`
+	WebinarLink          string `json:"webinarLink"`
+	StaffID              int    `json:"staffID"`
+	EmployeeID           int    `json:"employeeID"`
+	EmployeeIDs          string `json:"employeeIDs"`
+	CreateDate           string `json:"createDate"`
+	StageID              int    `json:"stageID"`
+	SubStageID           int    `json:"subStageID"`
+	ShowUp               int    `json:"showUp"`
+	NoteOptions          string `json:"noteOptions"`
+	OutcomeDataID        int    `json:"outcomeDataID"`
+	ShowOnBookerCalendar int    `json:"showOnBookerCalendar"`
+	Scheduled            int    `json:"scheduled"`
+	LocationCampusID     int    `json:"locationCampusID"`
+	LocationDetails      string `json:"locationDetails"`
+	InitAppointmentID    int    `json:"initAppointmentID"`
+	EventUrl             string `json:"eventUrl"`
+	ProgramID            int    `json:"programID"`
+	ApplicationID        int    `json:"applicationID"`
+	CampaignID           int    `json:"campaignID"`
+	ContactType          string `json:"contactType"`
+	TakenBy              int    `json:"takenBy"`
+	TakenOn              string `json:"takenOn"`
+	Office365GID         string `json:"office365GID"`
+	GoogleGID            string `json:"googleGID"`
+	Automation           string `json:"automation"`
+}
+
+// ImportAppointment отправляет запрос на импорт встречи напрямую в CampusLogin
+func (c *Client) ImportAppointment(ctx context.Context, req AppointmentRequest) (*ImportAppointmentResponse, error) {
+	bodyBytes, err := json.Marshal(req)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal request: %w", err)
+	}
+
+	httpReq, err := http.NewRequestWithContext(ctx, "POST", "https://connectorapi.campuslogin.com/api/Appointments/ImportAppointment", bytes.NewBuffer(bodyBytes))
+	if err != nil {
+		return nil, fmt.Errorf("failed to create request: %w", err)
+	}
+
+	httpReq.Header.Set("Content-Type", "application/json")
+	httpReq.Header.Set("X-Api-Key", c.apiKey)
+
+	resp, err := c.client.Do(httpReq)
+	if err != nil {
+		return nil, fmt.Errorf("failed to execute request: %w", err)
+	}
+	defer resp.Body.Close()
+
+	respBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read response: %w", err)
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("unexpected status code %d: %s", resp.StatusCode, string(respBytes))
+	}
+
+	var result ImportAppointmentResponse
+	if err := json.Unmarshal(respBytes, &result); err != nil {
+		return nil, fmt.Errorf("failed to decode response: %w (body: %s)", err, string(respBytes))
+	}
+
+	if !result.IsSuccessful && result.ErrorMessage != "" {
+		return &result, fmt.Errorf("campuslogin error: %s", result.ErrorMessage)
+	}
+
+	return &result, nil
 }
 
 func (c *Client) SendAppointment(ctx context.Context, orgID int, staffID int, title, startTime, endTime string, contactID int, programID int, description string) error {
-	loc, err := time.LoadLocation("America/Winnipeg")
-	var currentTime string
-	if err != nil {
-		currentTime = time.Now().Format("2006-01-02T15:04:05")
+	var schoolID, campusID, mailListID, stageID, subStageID, outcomeDataID int
+	var loc *time.Location
+
+	if orgID == constants.CampusLoginCintaOrgID {
+		schoolID = constants.CampusLoginCintaSchoolID
+		campusID = constants.CampusLoginCintaCampusIDSF
+		mailListID = constants.CampusLoginCintaMailListID
+		stageID = constants.CampusLoginCintaStageID
+		subStageID = constants.CampusLoginCintaSubStageID
+		outcomeDataID = constants.CampusLoginCintaTypeCPS
+		var err error
+		loc, err = time.LoadLocation("America/Los_Angeles")
+		if err != nil {
+			loc = time.FixedZone("PDT", -7*3600)
+		}
 	} else {
-		currentTime = time.Now().In(loc).Format("2006-01-02T15:04:05")
+		schoolID = constants.CampusLoginCanadaSchoolID
+		campusID = constants.CampusLoginCanadaCampusID
+		mailListID = constants.CampusLoginCanadaMailListID
+		stageID = constants.CampusLoginCanadaStageID
+		subStageID = constants.CampusLoginCanadaSubStageID
+		outcomeDataID = 1
+		var err error
+		loc, err = time.LoadLocation("America/Winnipeg")
+		if err != nil {
+			loc = time.UTC
+		}
 	}
+
+	currentTime := time.Now().In(loc).Format("2006-01-02T15:04:05")
 
 	reqBody := AppointmentRequest{
 		OrgId:                orgID,
 		AppointmentID:        0,
-		SchoolID:             24901,
-		CampusID:             12490101,
-		MailListID:           24901001,
+		SchoolID:             schoolID,
+		CampusID:             campusID,
+		MailListID:           mailListID,
 		ContactID:            contactID,
 		DateFrom:             startTime,
 		DateTo:               endTime,
@@ -72,11 +181,11 @@ func (c *Client) SendAppointment(ctx context.Context, orgID int, staffID int, ti
 		EmployeeID:           1,
 		EmployeeIDs:          "",
 		CreateDate:           currentTime,
-		StageID:              2638,
-		SubStageID:           1,
-		ShowUp:               "0",
+		StageID:              stageID,
+		SubStageID:           subStageID,
+		ShowUp:               0,
 		NoteOptions:          "",
-		OutcomeDataID:        1,
+		OutcomeDataID:        outcomeDataID,
 		ShowOnBookerCalendar: 1,
 		Scheduled:            1,
 		LocationCampusID:     1,
@@ -94,29 +203,6 @@ func (c *Client) SendAppointment(ctx context.Context, orgID int, staffID int, ti
 		Automation:           "",
 	}
 
-	bodyBytes, err := json.Marshal(reqBody)
-	if err != nil {
-		return fmt.Errorf("failed to marshal request: %w", err)
-	}
-
-	req, err := http.NewRequestWithContext(ctx, "POST", "https://connectorapi.campuslogin.com/api/Appointments/ImportAppointment", bytes.NewBuffer(bodyBytes))
-	if err != nil {
-		return fmt.Errorf("failed to create request: %w", err)
-	}
-
-	req.Header.Set("Content-Type", "application/json")
-	// Using the provided API key
-	req.Header.Set("X-Api-Key", c.apiKey)
-
-	resp, err := c.client.Do(req)
-	if err != nil {
-		return fmt.Errorf("failed to execute request: %w", err)
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("unexpected status code: %d", resp.StatusCode)
-	}
-
-	return nil
+	_, err := c.ImportAppointment(ctx, reqBody)
+	return err
 }

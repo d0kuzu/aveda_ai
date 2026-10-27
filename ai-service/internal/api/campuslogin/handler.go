@@ -1,22 +1,28 @@
 package campuslogin
 
 import (
+	"diaxel/internal/api/google"
 	"diaxel/internal/config"
 	"diaxel/internal/constants"
 	"diaxel/internal/grpc/db"
 	campusloginModule "diaxel/internal/modules/campuslogin"
 	"diaxel/internal/modules/llm"
+	"diaxel/internal/modules/tgnotifier"
 	twilio "diaxel/internal/modules/twilio"
 	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
 )
+
+var phoneDigitsRegex = regexp.MustCompile(`\D`)
+
 
 type CampusLoginHandler struct {
 	cfg    *config.Settings
@@ -556,4 +562,272 @@ func (h *CampusLoginHandler) GetBookingAvailability(c *gin.Context) {
 		"slots":        resp.Data.Slots,
 	})
 }
+
+type CreateBookingRequest struct {
+	Phone    string `json:"phone" form:"phone"`
+	SlotTime string `json:"slot_time" form:"slot_time"`
+	Duration int    `json:"duration" form:"duration"`
+	StaffID  int    `json:"staff_id" form:"staff_id"`
+	Name     string `json:"name" form:"name"`
+	Email    string `json:"email" form:"email"`
+	Notes    string `json:"notes" form:"notes"`
+	Org      string `json:"org" form:"org"`
+}
+
+// HandleCreateBooking создает запись на тур в CampusLogin по номеру телефона
+func (h *CampusLoginHandler) HandleCreateBooking(c *gin.Context) {
+	var req CreateBookingRequest
+	if err := c.ShouldBind(&req); err != nil {
+		log.Printf("[CampusLogin Booking] Request binding error: %v", err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body: " + err.Error()})
+		return
+	}
+
+	rawPhone := strings.TrimSpace(req.Phone)
+	if rawPhone == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Phone number is required"})
+		return
+	}
+
+	digits := phoneDigitsRegex.ReplaceAllString(rawPhone, "")
+	if len(digits) < 10 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Phone number must contain at least 10 digits"})
+		return
+	}
+	phoneSuffix := digits[len(digits)-10:]
+
+	if req.SlotTime == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "slot_time is required"})
+		return
+	}
+
+	// 1. Поиск контакта в базе данных по номеру телефона
+	campusRecord, err := h.db.GetCampusloginByPhone(phoneSuffix)
+	if err != nil || campusRecord == nil {
+		log.Printf("[CampusLogin Booking] Phone %s not found in DB: %v", phoneSuffix, err)
+		c.JSON(http.StatusNotFound, gin.H{
+			"status": "error",
+			"code":   "contact_not_found",
+			"error":  fmt.Sprintf("Contact with phone number %s was not found in CampusLogin. Please verify your phone number or contact admissions.", phoneSuffix),
+		})
+		return
+	}
+
+	contactID := int(campusRecord.ContactId)
+	programID := int(campusRecord.ProgramId)
+	if programID <= 0 {
+		programID = 1
+	}
+
+	fullName := strings.TrimSpace(req.Name)
+	if fullName == "" {
+		if campusRecord.FirstName != "" {
+			fullName = campusRecord.FirstName
+		} else {
+			fullName = "Guest"
+		}
+	}
+
+	userEmail := strings.TrimSpace(req.Email)
+	if userEmail == "" && campusRecord.Email != "" {
+		userEmail = campusRecord.Email
+	}
+
+	// 2. Определение организации, таймзоны и параметров школы
+	org := strings.ToLower(strings.TrimSpace(req.Org))
+	if org == "" {
+		org = "cinta"
+	}
+
+	var apiKey string
+	var orgID, defaultStaffID, schoolID, campusID, mailListID, stageID, subStageID, outcomeDataID int
+	var loc *time.Location
+
+	switch org {
+	case "canada":
+		apiKey = h.cfg.CampusLoginAPI
+		orgID = constants.CampusLoginCanadaOrgID
+		defaultStaffID = constants.CampusLoginCanadaStaffID
+		schoolID = constants.CampusLoginCanadaSchoolID
+		campusID = constants.CampusLoginCanadaCampusID
+		mailListID = constants.CampusLoginCanadaMailListID
+		stageID = constants.CampusLoginCanadaStageID
+		subStageID = constants.CampusLoginCanadaSubStageID
+		outcomeDataID = 1
+		loc, _ = time.LoadLocation("America/Winnipeg")
+		if loc == nil {
+			loc = time.UTC
+		}
+	case "cinta":
+		fallthrough
+	default:
+		org = "cinta"
+		apiKey = h.cfg.CampusLoginCintaAPI
+		orgID = constants.CampusLoginCintaOrgID
+		defaultStaffID = constants.CampusLoginCintaStaffID
+		schoolID = constants.CampusLoginCintaSchoolID
+		campusID = constants.CampusLoginCintaCampusIDSF
+		mailListID = constants.CampusLoginCintaMailListID
+		stageID = constants.CampusLoginCintaStageID
+		subStageID = constants.CampusLoginCintaSubStageID
+		outcomeDataID = constants.CampusLoginCintaTypeCPS
+		loc, _ = time.LoadLocation("America/Los_Angeles")
+		if loc == nil {
+			loc = time.FixedZone("PDT", -7*3600)
+		}
+	}
+
+	if apiKey == "" {
+		log.Printf("[CampusLogin Booking] API key missing for organization: %s", org)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "CampusLogin API key is not configured for organization: " + org})
+		return
+	}
+
+	staffID := defaultStaffID
+	if req.StaffID > 0 {
+		staffID = req.StaffID
+	}
+
+	duration := 60
+	if req.Duration > 0 {
+		duration = req.Duration
+	}
+
+	// 3. Парсинг времени слота
+	var startTime time.Time
+	var parseErr error
+	formats := []string{
+		time.RFC3339,
+		"2006-01-02T15:04:05Z07:00",
+		"2006-01-02T15:04:05",
+		"2006-01-02 15:04:05",
+		"2006-01-02T15:04",
+		"2006-01-02 15:04",
+	}
+
+	for _, format := range formats {
+		if strings.Contains(format, "Z") || strings.Contains(format, "07:00") {
+			startTime, parseErr = time.Parse(format, req.SlotTime)
+		} else {
+			startTime, parseErr = time.ParseInLocation(format, req.SlotTime, loc)
+		}
+		if parseErr == nil {
+			break
+		}
+	}
+
+	if parseErr != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": fmt.Sprintf("Invalid slot_time format '%s'. Expected ISO format (e.g. '2026-10-30T10:00:00')", req.SlotTime),
+		})
+		return
+	}
+
+	startTimeFormatted := startTime.In(loc).Format("2006-01-02T15:04:05")
+	endTimeFormatted := startTime.Add(time.Duration(duration) * time.Minute).In(loc).Format("2006-01-02T15:04:05")
+	currentTimeFormatted := time.Now().In(loc).Format("2006-01-02T15:04:05")
+
+	tourTitle := "Campus Tour for " + fullName
+	description := req.Notes
+
+	// 4. Отправка записи в CampusLogin через ImportAppointment
+	client := campusloginModule.NewClient(apiKey)
+	importReq := campusloginModule.AppointmentRequest{
+		OrgId:                orgID,
+		AppointmentID:        0,
+		SchoolID:             schoolID,
+		CampusID:             campusID,
+		MailListID:           mailListID,
+		ContactID:            contactID,
+		DateFrom:             startTimeFormatted,
+		DateTo:               endTimeFormatted,
+		Text:                 tourTitle,
+		Description:          description,
+		WebinarLink:          "",
+		StaffID:              staffID,
+		EmployeeID:           1,
+		EmployeeIDs:          "",
+		CreateDate:           currentTimeFormatted,
+		StageID:              stageID,
+		SubStageID:           subStageID,
+		ShowUp:               0,
+		NoteOptions:          "",
+		OutcomeDataID:        outcomeDataID,
+		ShowOnBookerCalendar: 1,
+		Scheduled:            1,
+		LocationCampusID:     1,
+		LocationDetails:      "",
+		InitAppointmentID:    0,
+		EventUrl:             "",
+		ProgramID:            programID,
+		ApplicationID:        1,
+		CampaignID:           1,
+		ContactType:          "",
+		TakenBy:              1,
+		TakenOn:              currentTimeFormatted,
+		Office365GID:         "",
+		GoogleGID:            "",
+		Automation:           "",
+	}
+
+	resp, err := client.ImportAppointment(c.Request.Context(), importReq)
+	if err != nil {
+		log.Printf("[CampusLogin Booking] ImportAppointment failed for phone %s: %v", phoneSuffix, err)
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"status": "error",
+			"error":  fmt.Sprintf("Failed to schedule appointment in CampusLogin: %v", err),
+		})
+		return
+	}
+
+	// 5. Остановка автоматических follow-up сообщений в чатах
+	google.MarkChatsBookedByPhone(h.db, phoneSuffix)
+
+	// 6. Уведомление в Telegram (если настроено)
+	go func() {
+		token := h.cfg.CalcomNotifyBotToken
+		chatID := h.cfg.CalcomNotifyChatID
+		if token != "" && chatID != "" {
+			tg := tgnotifier.New(token, chatID)
+			msg := fmt.Sprintf(
+				"🎉 <b>New Campus Tour Booking</b>\n\n"+
+					"👤 <b>Name:</b> %s\n"+
+					"📞 <b>Phone:</b> +1%s\n"+
+					"📧 <b>Email:</b> %s\n"+
+					"📅 <b>Time:</b> %s - %s (%s)\n"+
+					"🏢 <b>Org:</b> %s (ID: %d)\n"+
+					"🆔 <b>Contact ID:</b> %d\n"+
+					"🔖 <b>Appointment ID:</b> %d",
+				fullName, phoneSuffix, userEmail,
+				startTimeFormatted, endTimeFormatted, loc.String(),
+				strings.ToUpper(org), orgID, contactID, resp.AppointmentID,
+			)
+			if description != "" {
+				msg += "\n📝 <b>Notes:</b> " + description
+			}
+			_ = tg.SendHTML(msg)
+		}
+	}()
+
+	log.Printf("[CampusLogin Booking] Successfully booked appointment %d for phone %s (%s - %s)",
+		resp.AppointmentID, phoneSuffix, startTimeFormatted, endTimeFormatted)
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":         "success",
+		"message":        "Appointment successfully booked",
+		"appointment_id": resp.AppointmentID,
+		"contact_id":     contactID,
+		"program_id":     programID,
+		"name":           fullName,
+		"first_name":     campusRecord.FirstName,
+		"email":          userEmail,
+		"phone":          phoneSuffix,
+		"date_from":      startTimeFormatted,
+		"date_to":        endTimeFormatted,
+		"timezone":       loc.String(),
+		"staff_id":       staffID,
+		"title":          tourTitle,
+	})
+}
+
 

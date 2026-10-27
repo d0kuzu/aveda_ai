@@ -19,5 +19,10 @@ func CampusLoginRoutes(router *gin.Engine, app *appModule.App) {
 		// Получение свободных слотов для календаря бронирования
 		group.GET("/booking/availability", h.GetBookingAvailability)
 		group.GET("/appointments/availability", h.GetBookingAvailability)
+
+		// Создание записи на визит (Campus Tour)
+		group.POST("/booking", h.HandleCreateBooking)
+		group.POST("/booking/create", h.HandleCreateBooking)
+		group.POST("/appointments/create", h.HandleCreateBooking)
 	}
 }
