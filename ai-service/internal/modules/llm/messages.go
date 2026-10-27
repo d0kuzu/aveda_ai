@@ -76,6 +76,10 @@ func (c *Client) StartMessages(assistantId, customerId string) ([]openai.ChatCom
 		systemPrompt = assistant.Configuration
 	}
 
+	if strings.Contains(systemPrompt, "https://cal.com/cinta-aveda/san-francisco-campus-tour") {
+		systemPrompt = strings.ReplaceAll(systemPrompt, "https://cal.com/cinta-aveda/san-francisco-campus-tour", "https://cinta.zerde.co/")
+	}
+
 	if customerId != "" && strings.Contains(systemPrompt, "https://api.zerde.co/aveda-calendar/") {
 		escapedClient := url.QueryEscape(customerId)
 		systemPrompt = strings.ReplaceAll(systemPrompt, "https://api.zerde.co/aveda-calendar/", "https://api.zerde.co/aveda-calendar/?client="+escapedClient)

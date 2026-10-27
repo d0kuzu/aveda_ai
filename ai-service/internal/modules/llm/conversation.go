@@ -518,5 +518,5 @@ func (c *Client) createCampusLoginAppointmentInternal(ctx context.Context, start
 func (c *Client) handleBookCampusSinta(ctx context.Context, functionName, userId, assistantId string) (string, error) {
 	escapedPhone := url.QueryEscape(userId)
 
-	return "Appointment link create, please return that link to the customer to let him book his appointment: : Here is the link to schedule your campus visit in San Francisco:https://cal.com/cinta-aveda/san-francisco-campus-tour?phone=" + escapedPhone, nil
+	return "Appointment link create, please return that link to the customer to let him book his appointment: : Here is the link to schedule your campus visit in San Francisco:https://cinta.zerde.co/?phone=" + escapedPhone, nil
 }
