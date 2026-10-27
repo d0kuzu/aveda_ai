@@ -527,29 +527,64 @@ func (h *CampusLoginHandler) GetBookingAvailability(c *gin.Context) {
 	if fromDate == "" {
 		fromDate = time.Now().Format("2006-01-02")
 	}
+
+	parsedFrom, err := time.Parse("2006-01-02", fromDate)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid from_date format, expected YYYY-MM-DD"})
+		return
+	}
+
 	if toDate == "" {
-		parsedFrom, err := time.Parse("2006-01-02", fromDate)
-		if err != nil {
-			parsedFrom = time.Now()
-		}
-		toDate = parsedFrom.AddDate(0, 0, 7).Format("2006-01-02")
+		toDate = parsedFrom.AddDate(0, 0, 30).Format("2006-01-02")
+	}
+
+	parsedTo, err := time.Parse("2006-01-02", toDate)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid to_date format, expected YYYY-MM-DD"})
+		return
+	}
+
+	if parsedTo.Before(parsedFrom) {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "to_date cannot be before from_date"})
+		return
 	}
 
 	client := campusloginModule.NewClient(apiKey)
-	resp, err := client.GetAvailability(c.Request.Context(), campusloginModule.GetAvailabilityParams{
-		APIKey:   apiKey,
-		OrgID:    defaultOrgID,
-		StaffID:  staffID,
-		Duration: duration,
-		FromDate: fromDate,
-		ToDate:   toDate,
-	})
-	if err != nil {
-		log.Printf("[CampusLogin Booking] Error fetching availability for staff %d: %v", staffID, err)
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": fmt.Sprintf("Failed to get availability: %v", err),
+	allSlots := make(map[string][]campusloginModule.AvailabilitySlot)
+
+	// CampusLogin API limits date range to at most 31 days per request.
+	// We chunk queries into intervals of <= 30 days and merge the results.
+	currStart := parsedFrom
+	for !currStart.After(parsedTo) {
+		currEnd := currStart.AddDate(0, 0, 30)
+		if currEnd.After(parsedTo) {
+			currEnd = parsedTo
+		}
+
+		chunkResp, err := client.GetAvailability(c.Request.Context(), campusloginModule.GetAvailabilityParams{
+			APIKey:   apiKey,
+			OrgID:    defaultOrgID,
+			StaffID:  staffID,
+			Duration: duration,
+			FromDate: currStart.Format("2006-01-02"),
+			ToDate:   currEnd.Format("2006-01-02"),
 		})
-		return
+		if err != nil {
+			log.Printf("[CampusLogin Booking] Error fetching availability for staff %d (%s to %s): %v",
+				staffID, currStart.Format("2006-01-02"), currEnd.Format("2006-01-02"), err)
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error": fmt.Sprintf("Failed to get availability: %v", err),
+			})
+			return
+		}
+
+		if chunkResp.Data.Slots != nil {
+			for dateKey, slots := range chunkResp.Data.Slots {
+				allSlots[dateKey] = slots
+			}
+		}
+
+		currStart = currEnd.AddDate(0, 0, 1)
 	}
 
 	c.JSON(http.StatusOK, gin.H{
@@ -559,7 +594,7 @@ func (h *CampusLoginHandler) GetBookingAvailability(c *gin.Context) {
 		"duration":     duration,
 		"from_date":    fromDate,
 		"to_date":      toDate,
-		"slots":        resp.Data.Slots,
+		"slots":        allSlots,
 	})
 }
 
