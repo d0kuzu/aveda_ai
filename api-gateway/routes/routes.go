@@ -50,6 +50,10 @@ func SetupRoutes(r *gin.Engine, cfg *config.Config, db *db.Client) {
 		public.Any("/google/*any",
 			proxy.NewReverseProxy(cfg.AIServiceURL, ""),
 		)
+
+		public.Any("/campuslogin/booking/*any",
+			proxy.NewReverseProxy(cfg.AIServiceURL, ""),
+		)
 	}
 
 	userPrivate := r.Group("/")
