@@ -535,7 +535,7 @@ func (h *CampusLoginHandler) GetBookingAvailability(c *gin.Context) {
 	}
 
 	if toDate == "" {
-		toDate = parsedFrom.AddDate(0, 0, 30).Format("2006-01-02")
+		toDate = parsedFrom.AddDate(0, 0, 7).Format("2006-01-02")
 	}
 
 	parsedTo, err := time.Parse("2006-01-02", toDate)
