@@ -668,8 +668,8 @@ func (h *CampusLoginHandler) HandleCreateBooking(c *gin.Context) {
 		schoolID = constants.CampusLoginCintaSchoolID
 		campusID = constants.CampusLoginCintaCampusIDSF
 		mailListID = constants.CampusLoginCintaMailListID
-		stageID = constants.CampusLoginCintaStageID
-		subStageID = constants.CampusLoginCintaSubStageID
+		stageID = constants.CampusLoginCintaTypeCPS // 651: CPS (Career Planning Session / In-Person Tour)
+		subStageID = 0
 		outcomeDataID = constants.CampusLoginCintaTypeCPS
 		loc, _ = time.LoadLocation("America/Los_Angeles")
 		if loc == nil {
@@ -745,7 +745,7 @@ func (h *CampusLoginHandler) HandleCreateBooking(c *gin.Context) {
 		Description:          description,
 		WebinarLink:          "",
 		StaffID:              staffID,
-		EmployeeID:           1,
+		EmployeeID:           staffID,
 		EmployeeIDs:          "",
 		CreateDate:           currentTimeFormatted,
 		StageID:              stageID,
@@ -755,7 +755,7 @@ func (h *CampusLoginHandler) HandleCreateBooking(c *gin.Context) {
 		OutcomeDataID:        outcomeDataID,
 		ShowOnBookerCalendar: 1,
 		Scheduled:            1,
-		LocationCampusID:     1,
+		LocationCampusID:     campusID,
 		LocationDetails:      "",
 		InitAppointmentID:    0,
 		EventUrl:             "",
