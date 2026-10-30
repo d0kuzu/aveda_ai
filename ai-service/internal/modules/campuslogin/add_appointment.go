@@ -134,7 +134,7 @@ func (c *Client) ImportAppointment(ctx context.Context, req AppointmentRequest) 
 }
 
 func (c *Client) SendAppointment(ctx context.Context, orgID int, staffID int, title, startTime, endTime string, contactID int, programID int, description string) error {
-	var schoolID, campusID, mailListID, stageID, subStageID, outcomeDataID int
+	var schoolID, campusID, mailListID, stageID, subStageID, outcomeDataID, takenBy int
 	var loc *time.Location
 
 	if orgID == constants.CampusLoginCintaOrgID {
@@ -144,6 +144,7 @@ func (c *Client) SendAppointment(ctx context.Context, orgID int, staffID int, ti
 		stageID = constants.CampusLoginCintaTypeCPS // 651: CPS (Career Planning Session / In-Person Tour)
 		subStageID = 0
 		outcomeDataID = constants.CampusLoginCintaTypeCPS
+		takenBy = constants.CampusLoginCintaTakenByAvaAI
 		var err error
 		loc, err = time.LoadLocation("America/Los_Angeles")
 		if err != nil {
@@ -156,6 +157,7 @@ func (c *Client) SendAppointment(ctx context.Context, orgID int, staffID int, ti
 		stageID = constants.CampusLoginCanadaStageID
 		subStageID = constants.CampusLoginCanadaSubStageID
 		outcomeDataID = 1
+		takenBy = 1
 		var err error
 		loc, err = time.LoadLocation("America/Winnipeg")
 		if err != nil {
@@ -196,7 +198,7 @@ func (c *Client) SendAppointment(ctx context.Context, orgID int, staffID int, ti
 		ApplicationID:        1,
 		CampaignID:           1,
 		ContactType:          "",
-		TakenBy:              1,
+		TakenBy:              takenBy,
 		TakenOn:              currentTime,
 		Office365GID:         "",
 		GoogleGID:            "",

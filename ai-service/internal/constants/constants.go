@@ -26,4 +26,5 @@ const (
 	CampusLoginCintaStageID    = 649 // Contacted
 	CampusLoginCintaSubStageID = 22
 	CampusLoginCintaTypeCPS    = 651 // CPS / In-person admissions tour
+	CampusLoginCintaTakenByAvaAI = 13028 // Ava AI user in CampusLogin
 )

@@ -675,7 +675,7 @@ func (h *CampusLoginHandler) HandleCreateBooking(c *gin.Context) {
 	}
 
 	var apiKey string
-	var orgID, defaultStaffID, schoolID, campusID, mailListID, stageID, subStageID, outcomeDataID int
+	var orgID, defaultStaffID, schoolID, campusID, mailListID, stageID, subStageID, outcomeDataID, takenBy int
 	var loc *time.Location
 
 	switch org {
@@ -689,6 +689,7 @@ func (h *CampusLoginHandler) HandleCreateBooking(c *gin.Context) {
 		stageID = constants.CampusLoginCanadaStageID
 		subStageID = constants.CampusLoginCanadaSubStageID
 		outcomeDataID = 1
+		takenBy = 1
 		loc, _ = time.LoadLocation("America/Winnipeg")
 		if loc == nil {
 			loc = time.UTC
@@ -706,6 +707,7 @@ func (h *CampusLoginHandler) HandleCreateBooking(c *gin.Context) {
 		stageID = constants.CampusLoginCintaTypeCPS // 651: CPS (Career Planning Session / In-Person Tour)
 		subStageID = 0
 		outcomeDataID = constants.CampusLoginCintaTypeCPS
+		takenBy = constants.CampusLoginCintaTakenByAvaAI
 		loc, _ = time.LoadLocation("America/Los_Angeles")
 		if loc == nil {
 			loc = time.FixedZone("PDT", -7*3600)
@@ -798,7 +800,7 @@ func (h *CampusLoginHandler) HandleCreateBooking(c *gin.Context) {
 		ApplicationID:        1,
 		CampaignID:           1,
 		ContactType:          "",
-		TakenBy:              1,
+		TakenBy:              takenBy,
 		TakenOn:              currentTimeFormatted,
 		Office365GID:         "",
 		GoogleGID:            "",
