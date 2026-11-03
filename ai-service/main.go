@@ -4,8 +4,6 @@ import (
 	"context"
 	"log"
 
-	_ "time/tzdata"
-
 	"diaxel/internal/api"
 	appModule "diaxel/internal/app"
 	"diaxel/internal/cleanup"

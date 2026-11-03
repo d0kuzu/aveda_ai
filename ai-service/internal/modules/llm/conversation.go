@@ -435,7 +435,7 @@ func (c *Client) handleGoogleCalendarCreateEvent(ctx context.Context, argsJSON, 
 	winnipegLoc, err := time.LoadLocation("America/Winnipeg")
 	if err != nil {
 		log.Printf("Failed to load America/Winnipeg timezone: %v", err)
-		winnipegLoc = time.FixedZone("CST", -5*3600)
+		winnipegLoc = time.FixedZone("CST", -6*3600)
 	}
 
 	tMin, err := time.Parse(time.RFC3339, args.Start)
