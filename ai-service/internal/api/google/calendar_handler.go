@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 	"strings"
 	"time"
 
@@ -52,8 +51,7 @@ type CalendarHandler struct {
 	cfg *config.Settings
 
 	// Парсированное расписание: day of week -> workWindow
-	schedule     map[time.Weekday]workWindow
-	schedule2027 map[time.Weekday]workWindow
+	schedule map[time.Weekday]workWindow
 	loc      *time.Location
 }
 
@@ -73,13 +71,6 @@ func NewCalendarHandler(gc *googlecalendar.Client, db *db.Client, cl *campuslogi
 	h.loc = loc
 
 	h.schedule = parseWorkSchedule(cfg.WorkSchedule)
-
-	// Starting January 1st, 2027, Jenna's hours for tours are 9am-5pm Tuesday-Saturday
-	schedule2027Str := os.Getenv("WORK_SCHEDULE_2027")
-	if schedule2027Str == "" {
-		schedule2027Str = "Tue=09:00-17:00,Wed=09:00-17:00,Thu=09:00-17:00,Fri=09:00-17:00,Sat=09:00-17:00"
-	}
-	h.schedule2027 = parseWorkSchedule(schedule2027Str)
 
 	return h
 }
@@ -156,18 +147,6 @@ func parseHHMM(s string) (int, int, error) {
 	return t.Hour(), t.Minute(), nil
 }
 
-// getWorkWindow returns the working hours window for a given date in America/Winnipeg.
-// Starting January 1st, 2027, the hours Jenna is available for tours will be 9am-5pm Tuesday-Saturday.
-func (h *CalendarHandler) getWorkWindow(date time.Time) (workWindow, bool) {
-	effectiveDate2027 := time.Date(2027, time.January, 1, 0, 0, 0, 0, h.loc)
-	if !date.Before(effectiveDate2027) {
-		ww, ok := h.schedule2027[date.Weekday()]
-		return ww, ok
-	}
-	ww, ok := h.schedule[date.Weekday()]
-	return ww, ok
-}
-
 // GetSlots возвращает свободные слоты на указанный день.
 // GET /google/calendar/slots?date=2026-08-15
 func (h *CalendarHandler) GetSlots(c *gin.Context) {
@@ -184,7 +163,7 @@ func (h *CalendarHandler) GetSlots(c *gin.Context) {
 	}
 
 	// Проверяем есть ли расписание для этого дня недели
-	ww, ok := h.getWorkWindow(date)
+	ww, ok := h.schedule[date.Weekday()]
 	if !ok {
 		// Нерабочий день
 		c.JSON(http.StatusOK, gin.H{
