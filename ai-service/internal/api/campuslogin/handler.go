@@ -478,12 +478,14 @@ func (h *CampusLoginHandler) GetBookingAvailability(c *gin.Context) {
 
 	var defaultStaffID int
 	var defaultOrgID int
+	var defaultDuration int
 	var apiKey string
 
 	switch org {
 	case "canada":
 		defaultStaffID = constants.CampusLoginCanadaStaffID
 		defaultOrgID = constants.CampusLoginCanadaOrgID
+		defaultDuration = 60
 		apiKey = h.cfg.CampusLoginAPI
 	case "cinta":
 		fallthrough
@@ -491,6 +493,7 @@ func (h *CampusLoginHandler) GetBookingAvailability(c *gin.Context) {
 		org = "cinta"
 		defaultStaffID = constants.CampusLoginCintaStaffID
 		defaultOrgID = constants.CampusLoginCintaOrgID
+		defaultDuration = 90
 		apiKey = h.cfg.CampusLoginCintaAPI
 	}
 
@@ -514,10 +517,12 @@ func (h *CampusLoginHandler) GetBookingAvailability(c *gin.Context) {
 		}
 	}
 
-	duration := 60
-	if durParam := c.Query("duration"); durParam != "" {
-		if parsed, err := strconv.Atoi(durParam); err == nil && parsed > 0 {
-			duration = parsed
+	duration := defaultDuration
+	if org != "cinta" {
+		if durParam := c.Query("duration"); durParam != "" {
+			if parsed, err := strconv.Atoi(durParam); err == nil && parsed > 0 {
+				duration = parsed
+			}
 		}
 	}
 
@@ -675,7 +680,7 @@ func (h *CampusLoginHandler) HandleCreateBooking(c *gin.Context) {
 	}
 
 	var apiKey string
-	var orgID, defaultStaffID, schoolID, campusID, mailListID, stageID, subStageID, outcomeDataID, takenBy int
+	var orgID, defaultStaffID, defaultDuration, schoolID, campusID, mailListID, stageID, subStageID, outcomeDataID, takenBy int
 	var loc *time.Location
 
 	switch org {
@@ -683,6 +688,7 @@ func (h *CampusLoginHandler) HandleCreateBooking(c *gin.Context) {
 		apiKey = h.cfg.CampusLoginAPI
 		orgID = constants.CampusLoginCanadaOrgID
 		defaultStaffID = constants.CampusLoginCanadaStaffID
+		defaultDuration = 60
 		schoolID = constants.CampusLoginCanadaSchoolID
 		campusID = constants.CampusLoginCanadaCampusID
 		mailListID = constants.CampusLoginCanadaMailListID
@@ -701,6 +707,7 @@ func (h *CampusLoginHandler) HandleCreateBooking(c *gin.Context) {
 		apiKey = h.cfg.CampusLoginCintaAPI
 		orgID = constants.CampusLoginCintaOrgID
 		defaultStaffID = constants.CampusLoginCintaStaffID
+		defaultDuration = 90
 		schoolID = constants.CampusLoginCintaSchoolID
 		campusID = constants.CampusLoginCintaCampusIDSF
 		mailListID = constants.CampusLoginCintaMailListID
@@ -725,8 +732,8 @@ func (h *CampusLoginHandler) HandleCreateBooking(c *gin.Context) {
 		staffID = req.StaffID
 	}
 
-	duration := 60
-	if req.Duration > 0 {
+	duration := defaultDuration
+	if org != "cinta" && req.Duration > 0 {
 		duration = req.Duration
 	}
 

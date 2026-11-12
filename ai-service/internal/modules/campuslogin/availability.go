@@ -8,6 +8,8 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+
+	"diaxel/internal/constants"
 )
 
 // AvailabilitySlot представляет отдельный свободный временной слот
@@ -51,7 +53,9 @@ func (c *Client) GetAvailability(ctx context.Context, params GetAvailabilityPara
 	}
 
 	duration := params.Duration
-	if duration <= 0 {
+	if params.OrgID == constants.CampusLoginCintaOrgID || params.StaffID == constants.CampusLoginCintaStaffID {
+		duration = 90
+	} else if duration <= 0 {
 		duration = 60
 	}
 

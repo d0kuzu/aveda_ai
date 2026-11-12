@@ -150,6 +150,9 @@ func (c *Client) SendAppointment(ctx context.Context, orgID int, staffID int, ti
 		if err != nil {
 			loc = time.FixedZone("PDT", -7*3600)
 		}
+		if parsedStart, err := time.ParseInLocation("2006-01-02T15:04:05", startTime, loc); err == nil {
+			endTime = parsedStart.Add(90 * time.Minute).Format("2006-01-02T15:04:05")
+		}
 	} else {
 		schoolID = constants.CampusLoginCanadaSchoolID
 		campusID = constants.CampusLoginCanadaCampusID
