@@ -732,6 +732,11 @@ func (h *CampusLoginHandler) HandleCreateBooking(c *gin.Context) {
 		staffID = req.StaffID
 	}
 
+	bookedByStaffID := staffID
+	if org == "cinta" {
+		bookedByStaffID = constants.CampusLoginCintaTakenByAvaAI // 13028: Ava AI (maps to bookedBy in CampusLogin)
+	}
+
 	duration := defaultDuration
 	if org != "cinta" && req.Duration > 0 {
 		duration = req.Duration
@@ -788,7 +793,7 @@ func (h *CampusLoginHandler) HandleCreateBooking(c *gin.Context) {
 		Text:                 tourTitle,
 		Description:          description,
 		WebinarLink:          "",
-		StaffID:              staffID,
+		StaffID:              bookedByStaffID,
 		EmployeeID:           staffID,
 		EmployeeIDs:          "",
 		CreateDate:           currentTimeFormatted,

@@ -137,6 +137,8 @@ func (c *Client) SendAppointment(ctx context.Context, orgID int, staffID int, ti
 	var schoolID, campusID, mailListID, stageID, subStageID, outcomeDataID, takenBy int
 	var loc *time.Location
 
+	bookedByStaffID := staffID
+
 	if orgID == constants.CampusLoginCintaOrgID {
 		schoolID = constants.CampusLoginCintaSchoolID
 		campusID = constants.CampusLoginCintaCampusIDSF
@@ -145,6 +147,7 @@ func (c *Client) SendAppointment(ctx context.Context, orgID int, staffID int, ti
 		subStageID = 0
 		outcomeDataID = constants.CampusLoginCintaTypeCPS
 		takenBy = constants.CampusLoginCintaTakenByAvaAI
+		bookedByStaffID = constants.CampusLoginCintaTakenByAvaAI // 13028: Ava AI (maps to bookedBy in CampusLogin)
 		var err error
 		loc, err = time.LoadLocation("America/Los_Angeles")
 		if err != nil {
@@ -182,7 +185,7 @@ func (c *Client) SendAppointment(ctx context.Context, orgID int, staffID int, ti
 		Text:                 title,
 		Description:          description,
 		WebinarLink:          "",
-		StaffID:              staffID,
+		StaffID:              bookedByStaffID,
 		EmployeeID:           staffID,
 		EmployeeIDs:          "",
 		CreateDate:           currentTime,
