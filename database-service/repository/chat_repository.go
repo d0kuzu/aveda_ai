@@ -22,6 +22,7 @@ type ChatRepository interface {
 	UpdateChatIsEnd(ctx context.Context, id string, isEnd bool) (*models.Chat, error)
 	UpdateChatIsBooked(ctx context.Context, id string, isBooked bool) (*models.Chat, error)
 	UpdateChatIsReviewed(ctx context.Context, id string, isReviewed bool) (*models.Chat, error)
+	UpdateChatIsTutor(ctx context.Context, id string, isTutor bool) (*models.Chat, error)
 	GetUnreviewedActiveChats(ctx context.Context) ([]*models.Chat, error)
 	DeleteChat(ctx context.Context, id string) error
 	DeleteAllChats(ctx context.Context) error
@@ -223,10 +224,20 @@ func (r *chatRepository) GetLatestChatByCustomer(ctx context.Context, assistantI
 }
 
 func (r *chatRepository) UpdateMessageCount(ctx context.Context, chatID string) error {
-	// Count messages for this chat
+	var chat models.Chat
+	if err := r.db.WithContext(ctx).Select("id", "is_tutor").Where("id = ?", chatID).First(&chat).Error; err != nil {
+		return fmt.Errorf("failed to find chat for message count update: %w", err)
+	}
+
 	var messageCount int64
-	if err := r.db.WithContext(ctx).Model(&models.Message{}).Where("chat_id = ?", chatID).Count(&messageCount).Error; err != nil {
-		return fmt.Errorf("failed to count messages: %w", err)
+	if chat.IsTutor {
+		if err := r.db.WithContext(ctx).Model(&models.TutorMessage{}).Where("chat_id = ?", chatID).Count(&messageCount).Error; err != nil {
+			return fmt.Errorf("failed to count tutor messages: %w", err)
+		}
+	} else {
+		if err := r.db.WithContext(ctx).Model(&models.Message{}).Where("chat_id = ?", chatID).Count(&messageCount).Error; err != nil {
+			return fmt.Errorf("failed to count messages: %w", err)
+		}
 	}
 
 	// Update the message count in the chat
@@ -358,11 +369,37 @@ func (r *chatRepository) UpdateChatIsReviewed(ctx context.Context, id string, is
 	return &chat, nil
 }
 
+func (r *chatRepository) UpdateChatIsTutor(ctx context.Context, id string, isTutor bool) (*models.Chat, error) {
+	var chat models.Chat
+	if err := r.db.WithContext(ctx).Where("id = ?", id).First(&chat).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, fmt.Errorf("chat not found")
+		}
+		return nil, fmt.Errorf("failed to get chat: %w", err)
+	}
+
+	chat.IsTutor = isTutor
+	if isTutor {
+		chat.IsEnd = true
+		var tutorMsgCount int64
+		if err := r.db.WithContext(ctx).Model(&models.TutorMessage{}).Where("chat_id = ?", id).Count(&tutorMsgCount).Error; err == nil {
+			chat.MessageCount = int32(tutorMsgCount)
+		}
+	}
+	chat.UpdatedAt = time.Now()
+
+	if err := r.db.WithContext(ctx).Save(&chat).Error; err != nil {
+		return nil, fmt.Errorf("failed to update chat is_tutor: %w", err)
+	}
+
+	return &chat, nil
+}
+
 func (r *chatRepository) GetUnreviewedActiveChats(ctx context.Context) ([]*models.Chat, error) {
 	var chats []*models.Chat
 
 	if err := r.db.WithContext(ctx).
-		Where("is_end = ? AND is_reviewed = ?", false, false).
+		Where("is_end = ? AND is_reviewed = ? AND is_tutor = ?", false, false, false).
 		Order("updated_at ASC").
 		Find(&chats).Error; err != nil {
 		return nil, fmt.Errorf("failed to get unreviewed active chats: %w", err)
@@ -375,7 +412,7 @@ func (r *chatRepository) GetChatsForFollowup(ctx context.Context) ([]*models.Cha
 	var chats []*models.Chat
 
 	if err := r.db.WithContext(ctx).
-		Where("is_end = ?", false).
+		Where("is_end = ? AND is_tutor = ?", false, false).
 		Order("updated_at ASC").
 		Find(&chats).Error; err != nil {
 		return nil, fmt.Errorf("failed to get chats for followup: %w", err)

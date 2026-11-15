@@ -11,14 +11,15 @@ import (
 )
 
 type Client struct {
-	conn *websocket.Conn
-	chat string
-	Db   *db.Client
-	done chan struct{}
+	conn    *websocket.Conn
+	chat    string
+	isTutor bool
+	Db      *db.Client
+	done    chan struct{}
 }
 
-func NewWSClient(conn *websocket.Conn, chatID string, db *db.Client) *Client {
-	return &Client{conn: conn, chat: chatID, Db: db, done: make(chan struct{})}
+func NewWSClient(conn *websocket.Conn, chatID string, isTutor bool, db *db.Client) *Client {
+	return &Client{conn: conn, chat: chatID, isTutor: isTutor, Db: db, done: make(chan struct{})}
 }
 
 var (
@@ -74,7 +75,11 @@ func (c *Client) Listen() {
 		}
 
 		// Save the message to DB
-		_, err = c.Db.SaveMessage(c.chat, "assistant", string(msg), "twilio")
+		if c.isTutor {
+			_, err = c.Db.SaveTutorMessage(c.chat, "assistant", string(msg), "twilio")
+		} else {
+			_, err = c.Db.SaveMessage(c.chat, "assistant", string(msg), "twilio")
+		}
 		if err != nil {
 			log.Println("ws listen: failed to save message:", err)
 		}

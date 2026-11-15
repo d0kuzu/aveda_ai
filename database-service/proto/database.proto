@@ -66,6 +66,10 @@ service DatabaseService {
   rpc GetUnsyncedCampusloginAppointments(GetUnsyncedCampusloginAppointmentsRequest) returns (AppointmentsResponse);
   rpc UpdateAppointmentCampusloginStatus(UpdateAppointmentCampusloginStatusRequest) returns (AppointmentResponse);
   rpc GetAppointmentByID(GetAppointmentByIDRequest) returns (AppointmentResponse);
+  rpc UpdateChatIsTutor(UpdateChatIsTutorRequest) returns (ChatResponse);
+  rpc SaveTutorMessage(SaveMessageRequest) returns (MessageResponse);
+  rpc GetTutorChatMessages(GetChatMessagesRequest) returns (MessagesResponse);
+  rpc GetAllTutorChatMessages(GetAllChatMessagesRequest) returns (MessagesResponse);
 }
 
 message DeleteAllChatsAndMessagesRequest {}
@@ -147,6 +151,7 @@ message CreateChatRequest {
   string customer_id = 2;
   string platform = 3;
   string started_at = 4;
+  bool is_tutor = 5;
 }
 
 message ChatResponse {
@@ -162,6 +167,7 @@ message ChatResponse {
   bool is_reviewed = 12;
   bool is_booked = 13;
   string started_at = 14;
+  bool is_tutor = 15;
 }
 
 message SaveMessageRequest {
@@ -595,4 +601,9 @@ message AppointmentsResponse {
 message UpdateAppointmentCampusloginStatusRequest {
   string id = 1;
   bool campus_login = 2;
+}
+
+message UpdateChatIsTutorRequest {
+  string id = 1;
+  bool is_tutor = 2;
 }

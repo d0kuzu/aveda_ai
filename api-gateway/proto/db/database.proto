@@ -43,13 +43,33 @@ service DatabaseService {
   rpc GetChatsForFollowup(GetChatsForFollowupRequest) returns (ChatsResponse);
   rpc UpdateChatFollowupStage(UpdateChatFollowupStageRequest) returns (ChatResponse);
   rpc GetCampusloginByUserId(CampusloginRequest) returns (CampusloginResponse);
+  rpc GetCampusloginByPhone(CampusloginPhoneRequest) returns (CampusloginResponse);
   rpc UpsertCampuslogin(UpsertCampusloginRequest) returns (UpsertCampusloginResponse);
   rpc SetCampusloginFlags(SetCampusloginFlagsRequest) returns (SetCampusloginFlagsResponse);
   rpc DeleteAllChatsAndMessages(DeleteAllChatsAndMessagesRequest) returns (DeleteAllChatsAndMessagesResponse);
   rpc DeleteChatAndMessages(DeleteChatAndMessagesRequest) returns (DeleteChatAndMessagesResponse);
   rpc UpdateChatIsEnd(UpdateChatIsEndRequest) returns (ChatResponse);
+  rpc UpdateChatIsBooked(UpdateChatIsBookedRequest) returns (ChatResponse);
   rpc UpdateChatIsReviewed(UpdateChatIsReviewedRequest) returns (ChatResponse);
   rpc GetUnreviewedActiveChats(GetUnreviewedActiveChatsRequest) returns (ChatsResponse);
+  rpc GetPeriodMetrics(GetPeriodMetricsRequest) returns (GetPeriodMetricsResponse);
+  rpc GetPeriodChats(GetPeriodChatsRequest) returns (GetPeriodChatsResponse);
+  rpc GetWeeklyChatsStarted(GetWeeklyChatsStartedRequest) returns (GetWeeklyChatsStartedResponse);
+  rpc IsCustomerBlocked(IsCustomerBlockedRequest) returns (IsCustomerBlockedResponse);
+  rpc UpsertGoogleSyncToken(UpsertGoogleSyncTokenRequest) returns (GoogleSyncTokenResponse);
+  rpc GetGoogleSyncToken(GetGoogleSyncTokenRequest) returns (GoogleSyncTokenResponse);
+  rpc CreateAppointment(CreateAppointmentRequest) returns (AppointmentResponse);
+  rpc GetAppointmentByGoogleEventID(GetAppointmentByGoogleEventIDRequest) returns (AppointmentResponse);
+  rpc CountAppointmentsBySlot(CountAppointmentsBySlotRequest) returns (CountAppointmentsBySlotResponse);
+  rpc BlockCustomer(BlockCustomerRequest) returns (BlockCustomerResponse);
+  rpc GetAllBlockedCustomers(GetAllBlockedCustomersRequest) returns (GetAllBlockedCustomersResponse);
+  rpc GetUnsyncedCampusloginAppointments(GetUnsyncedCampusloginAppointmentsRequest) returns (AppointmentsResponse);
+  rpc UpdateAppointmentCampusloginStatus(UpdateAppointmentCampusloginStatusRequest) returns (AppointmentResponse);
+  rpc GetAppointmentByID(GetAppointmentByIDRequest) returns (AppointmentResponse);
+  rpc UpdateChatIsTutor(UpdateChatIsTutorRequest) returns (ChatResponse);
+  rpc SaveTutorMessage(SaveMessageRequest) returns (MessageResponse);
+  rpc GetTutorChatMessages(GetChatMessagesRequest) returns (MessagesResponse);
+  rpc GetAllTutorChatMessages(GetAllChatMessagesRequest) returns (MessagesResponse);
 }
 
 message DeleteAllChatsAndMessagesRequest {}
@@ -130,6 +150,8 @@ message CreateChatRequest {
   string assistant_id = 1;
   string customer_id = 2;
   string platform = 3;
+  string started_at = 4;
+  bool is_tutor = 5;
 }
 
 message ChatResponse {
@@ -143,6 +165,9 @@ message ChatResponse {
   bool is_end = 10;
   int32 followup_stage = 11;
   bool is_reviewed = 12;
+  bool is_booked = 13;
+  string started_at = 14;
+  bool is_tutor = 15;
 }
 
 message SaveMessageRequest {
@@ -150,6 +175,7 @@ message SaveMessageRequest {
   string role = 2;
   string content = 3;
   string platform = 4;
+  string time = 5;
 }
 
 message MessageResponse {
@@ -368,12 +394,18 @@ message CampusloginRequest {
   string user_id = 1;
 }
 
+message CampusloginPhoneRequest {
+  string phone = 1;
+}
+
 message UpsertCampusloginRequest {
   string user_id = 1;
   int32 contact_id = 2;
   int32 program_id = 3;
   bool is_grade11_or_lower = 4;
   bool is_international_student = 5;
+  string first_name = 6;
+  string email = 7;
 }
 
 message CampusloginResponse {
@@ -382,6 +414,8 @@ message CampusloginResponse {
   int32 program_id = 3;
   bool is_grade11_or_lower = 4;
   bool is_international_student = 5;
+  string first_name = 6;
+  string email = 7;
 }
 
 message SetCampusloginFlagsRequest {
@@ -416,6 +450,11 @@ message UpdateChatIsEndRequest {
   bool is_end = 2;
 }
 
+message UpdateChatIsBookedRequest {
+  string id = 1;
+  bool is_booked = 2;
+}
+
 message GetChatsForFollowupRequest {
   int64 inactive_duration_seconds = 1;
 }
@@ -427,3 +466,144 @@ message UpdateChatIsReviewedRequest {
 
 message GetUnreviewedActiveChatsRequest {}
 
+message GetPeriodMetricsRequest {
+  string assistant_id = 1;
+  string start_time = 2;
+  string end_time = 3;
+}
+
+message GetPeriodMetricsResponse {
+  int32 started_chats = 1;
+  int32 completed_chats = 2;
+  int32 booked_chats = 3;
+}
+
+message GetPeriodChatsRequest {
+  string assistant_id = 1;
+  string start_time = 2;
+  string end_time = 3;
+  string category = 4;
+  int32 limit = 5;
+  int32 offset = 6;
+}
+
+message GetPeriodChatsResponse {
+  repeated ChatResponse chats = 1;
+  int64 total_count = 2;
+}
+
+message DailyCount {
+  string date = 1;
+  int32 count = 2;
+}
+
+message GetWeeklyChatsStartedRequest {
+  string assistant_id = 1;
+  string start_time = 2;
+  string timezone = 3;
+}
+
+message GetWeeklyChatsStartedResponse {
+  repeated DailyCount days = 1;
+}
+
+message IsCustomerBlockedRequest {
+  string user_id = 1;
+}
+
+message IsCustomerBlockedResponse {
+  bool is_blocked = 1;
+}
+
+message UpsertGoogleSyncTokenRequest {
+  string calendar_id = 1;
+  string sync_token = 2;
+  string channel_id = 3;
+  string resource_id = 4;
+  string expires_at = 5;
+}
+
+message GetGoogleSyncTokenRequest {
+  string calendar_id = 1;
+}
+
+message GoogleSyncTokenResponse {
+  string calendar_id = 1;
+  string sync_token = 2;
+  string channel_id = 3;
+  string resource_id = 4;
+  string updated_at = 5;
+  string expires_at = 6;
+}
+
+message CreateAppointmentRequest {
+  string google_event_id = 1;
+  string title = 2;
+  string start_time = 3;
+  string end_time = 4;
+  string status = 5;
+  string description = 6;
+  string calendar_id = 7;
+  bool campus_login = 8;
+  string created_at = 9;
+}
+
+message AppointmentResponse {
+  string id = 1;
+  string google_event_id = 2;
+  string title = 3;
+  string start_time = 4;
+  string end_time = 5;
+  string status = 6;
+  string description = 7;
+  string calendar_id = 8;
+  bool campus_login = 9;
+  string created_at = 10;
+}
+
+message GetAppointmentByGoogleEventIDRequest {
+  string google_event_id = 1;
+}
+
+message BlockCustomerRequest {
+  string user_id = 1;
+}
+
+message BlockCustomerResponse {
+  bool success = 1;
+}
+
+message GetAllBlockedCustomersRequest {}
+
+message GetAllBlockedCustomersResponse {
+  repeated string user_ids = 1;
+}
+
+message CountAppointmentsBySlotRequest {
+  string calendar_id = 1;
+  string start_time = 2;
+}
+
+message CountAppointmentsBySlotResponse {
+  int32 count = 1;
+}
+
+message GetAppointmentByIDRequest {
+  string id = 1;
+}
+
+message GetUnsyncedCampusloginAppointmentsRequest {}
+
+message AppointmentsResponse {
+  repeated AppointmentResponse appointments = 1;
+}
+
+message UpdateAppointmentCampusloginStatusRequest {
+  string id = 1;
+  bool campus_login = 2;
+}
+
+message UpdateChatIsTutorRequest {
+  string id = 1;
+  bool is_tutor = 2;
+}

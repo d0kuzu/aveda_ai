@@ -1,13 +1,14 @@
 package ws
 
 import (
+	dbpb "diaxel/proto/db"
 	"encoding/json"
 	"log"
 	"strings"
 	"time"
 )
 
-func (c *Client) PollLocalDB(chatID string) {
+func (c *Client) PollLocalDB(chatID string, isTutor bool) {
 	var lastMessageCount int
 
 	for {
@@ -17,7 +18,13 @@ func (c *Client) PollLocalDB(chatID string) {
 		default:
 		}
 
-		messages, err := c.Db.GetChatMessages(chatID, 50, int32(lastMessageCount))
+		var messages []*dbpb.MessageResponse
+		var err error
+		if isTutor {
+			messages, err = c.Db.GetTutorChatMessages(chatID, 50, int32(lastMessageCount))
+		} else {
+			messages, err = c.Db.GetChatMessages(chatID, 50, int32(lastMessageCount))
+		}
 		if err != nil {
 			log.Println("DB fetch error:", err)
 			select {

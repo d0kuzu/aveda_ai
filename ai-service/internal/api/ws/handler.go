@@ -6,6 +6,7 @@ import (
 	"diaxel/internal/modules/ws"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
@@ -29,6 +30,14 @@ func (h *WSHandler) ChatPolling(c *gin.Context) {
 	if chatID == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "chat id required"})
 		return
+	}
+
+	isTutor := false
+	isTutorParam := c.DefaultQuery("isTutor", c.Query("is_tutor"))
+	if isTutorParam != "" {
+		if parsed, err := strconv.ParseBool(isTutorParam); err == nil {
+			isTutor = parsed
+		}
 	}
 
 	userID := c.GetHeader("X-User-Id")
@@ -71,11 +80,11 @@ func (h *WSHandler) ChatPolling(c *gin.Context) {
 		return
 	}
 
-	client := ws.NewWSClient(conn, chatID, h.db)
+	client := ws.NewWSClient(conn, chatID, isTutor, h.db)
 	ws.RegisterClient(client)
-	log.Println("new client connected to chat", chatID)
+	log.Printf("new client connected to chat %s (isTutor=%v)", chatID, isTutor)
 
-	go client.PollLocalDB(chatID)
+	go client.PollLocalDB(chatID, isTutor)
 
 	go client.Listen()
 }

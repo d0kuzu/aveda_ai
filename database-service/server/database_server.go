@@ -276,6 +276,13 @@ func (s *DatabaseServer) CreateChat(ctx context.Context, req *proto.CreateChatRe
 		return nil, status.Errorf(codes.Internal, "failed to create chat: %v", err)
 	}
 
+	if req.IsTutor {
+		chat, err = s.chatRepo.UpdateChatIsTutor(ctx, chat.ID, true)
+		if err != nil {
+			return nil, status.Errorf(codes.Internal, "failed to update chat tutor mode: %v", err)
+		}
+	}
+
 	return &proto.ChatResponse{
 		Id:          chat.ID,
 		AssistantId: chat.AssistantID,
@@ -289,6 +296,7 @@ func (s *DatabaseServer) CreateChat(ctx context.Context, req *proto.CreateChatRe
 		CreatedAt: chat.StartedAt.Format(time.RFC3339),
 		UpdatedAt: chat.StartedAt.Format(time.RFC3339),
 		IsEnd:     chat.IsEnd,
+		IsTutor:   chat.IsTutor,
 	}, nil
 }
 
@@ -307,9 +315,14 @@ func (s *DatabaseServer) GetChat(ctx context.Context, req *proto.GetChatRequest)
 			}
 			return ""
 		}(),
-		CreatedAt:    chat.CreatedAt.Format(time.RFC3339),
-		UpdatedAt:    chat.UpdatedAt.Format(time.RFC3339),
-		MessageCount: chat.MessageCount,
+		CreatedAt:     chat.CreatedAt.Format(time.RFC3339),
+		UpdatedAt:     chat.UpdatedAt.Format(time.RFC3339),
+		MessageCount:  chat.MessageCount,
+		IsEnd:         chat.IsEnd,
+		IsBooked:      chat.IsBooked,
+		IsReviewed:    chat.IsReviewed,
+		IsTutor:       chat.IsTutor,
+		FollowupStage: int32(chat.FollowupStage),
 	}, nil
 }
 
@@ -327,12 +340,17 @@ func (s *DatabaseServer) GetChatsByUser(ctx context.Context, req *proto.GetChats
 		}
 
 		protoChats = append(protoChats, &proto.ChatResponse{
-			Id:           chat.ID,
-			AssistantId:  chat.AssistantID,
-			CustomerId:   customerId,
-			CreatedAt:    chat.CreatedAt.Format(time.RFC3339),
-			UpdatedAt:    chat.UpdatedAt.Format(time.RFC3339),
-			MessageCount: chat.MessageCount,
+			Id:            chat.ID,
+			AssistantId:   chat.AssistantID,
+			CustomerId:    customerId,
+			CreatedAt:     chat.CreatedAt.Format(time.RFC3339),
+			UpdatedAt:     chat.UpdatedAt.Format(time.RFC3339),
+			MessageCount:  chat.MessageCount,
+			IsEnd:         chat.IsEnd,
+			IsBooked:      chat.IsBooked,
+			IsReviewed:    chat.IsReviewed,
+			IsTutor:       chat.IsTutor,
+			FollowupStage: int32(chat.FollowupStage),
 		})
 	}
 
@@ -362,6 +380,7 @@ func (s *DatabaseServer) UpdateChat(ctx context.Context, req *proto.UpdateChatRe
 		IsEnd:         chat.IsEnd,
 		IsReviewed:    chat.IsReviewed,
 		IsBooked:      chat.IsBooked,
+		IsTutor:       chat.IsTutor,
 		FollowupStage: int32(chat.FollowupStage),
 	}, nil
 }
@@ -510,9 +529,14 @@ func (s *DatabaseServer) GetChatPage(ctx context.Context, req *proto.GetChatPage
 				}
 				return ""
 			}(),
-			CreatedAt:    chat.CreatedAt.Format(time.RFC3339),
-			UpdatedAt:    chat.UpdatedAt.Format(time.RFC3339),
-			MessageCount: chat.MessageCount,
+			CreatedAt:     chat.CreatedAt.Format(time.RFC3339),
+			UpdatedAt:     chat.UpdatedAt.Format(time.RFC3339),
+			MessageCount:  chat.MessageCount,
+			IsEnd:         chat.IsEnd,
+			IsBooked:      chat.IsBooked,
+			IsReviewed:    chat.IsReviewed,
+			IsTutor:       chat.IsTutor,
+			FollowupStage: int32(chat.FollowupStage),
 		})
 	}
 
@@ -560,6 +584,7 @@ func (s *DatabaseServer) GetChatPageByUserID(ctx context.Context, req *proto.Get
 			IsEnd:         chat.IsEnd,
 			IsBooked:      chat.IsBooked,
 			IsReviewed:    chat.IsReviewed,
+			IsTutor:       chat.IsTutor,
 			FollowupStage: int32(chat.FollowupStage),
 		})
 	}
@@ -593,6 +618,7 @@ func (s *DatabaseServer) SearchChatsByCustomer(ctx context.Context, req *proto.S
 			IsEnd:         chat.IsEnd,
 			IsBooked:      chat.IsBooked,
 			IsReviewed:    chat.IsReviewed,
+			IsTutor:       chat.IsTutor,
 			FollowupStage: int32(chat.FollowupStage),
 		})
 	}
@@ -721,6 +747,7 @@ func (s *DatabaseServer) GetLatestChatByCustomer(ctx context.Context, req *proto
 		IsEnd:         chat.IsEnd,
 		IsReviewed:    chat.IsReviewed,
 		IsBooked:      chat.IsBooked,
+		IsTutor:       chat.IsTutor,
 		FollowupStage: int32(chat.FollowupStage),
 	}, nil
 }
@@ -834,6 +861,9 @@ func (s *DatabaseServer) DeleteAllChatsAndMessages(ctx context.Context, req *pro
 	if err := s.messageRepo.DeleteAllMessages(ctx); err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to delete all messages: %w", err)
 	}
+	if err := s.messageRepo.DeleteAllTutorMessages(ctx); err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to delete all tutor messages: %w", err)
+	}
 	if err := s.chatRepo.DeleteAllChats(ctx); err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to delete all chats: %w", err)
 	}
@@ -846,6 +876,9 @@ func (s *DatabaseServer) DeleteAllChatsAndMessages(ctx context.Context, req *pro
 func (s *DatabaseServer) DeleteChatAndMessages(ctx context.Context, req *proto.DeleteChatAndMessagesRequest) (*proto.DeleteChatAndMessagesResponse, error) {
 	if err := s.messageRepo.DeleteMessagesByChatID(ctx, req.ChatId); err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to delete messages for chat %s: %v", req.ChatId, err)
+	}
+	if err := s.messageRepo.DeleteTutorMessagesByChatID(ctx, req.ChatId); err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to delete tutor messages for chat %s: %v", req.ChatId, err)
 	}
 	if err := s.chatRepo.DeleteChat(ctx, req.ChatId); err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to delete chat %s: %v", req.ChatId, err)
@@ -877,6 +910,7 @@ func (s *DatabaseServer) UpdateChatIsEnd(ctx context.Context, req *proto.UpdateC
 		IsEnd:        chat.IsEnd,
 		IsReviewed:   chat.IsReviewed,
 		IsBooked:     chat.IsBooked,
+		IsTutor:      chat.IsTutor,
 	}, nil
 }
 
@@ -901,6 +935,7 @@ func (s *DatabaseServer) UpdateChatIsBooked(ctx context.Context, req *proto.Upda
 		IsEnd:        chat.IsEnd,
 		IsReviewed:   chat.IsReviewed,
 		IsBooked:     chat.IsBooked,
+		IsTutor:      chat.IsTutor,
 	}, nil
 }
 
@@ -1321,6 +1356,99 @@ func (s *DatabaseServer) GetAppointmentByID(ctx context.Context, req *proto.GetA
 		CalendarId:    appointment.CalendarID,
 		CampusLogin:   appointment.CampusLogin,
 		CreatedAt:     appointment.CreatedAt.Format(time.RFC3339),
+	}, nil
+}
+
+func (s *DatabaseServer) UpdateChatIsTutor(ctx context.Context, req *proto.UpdateChatIsTutorRequest) (*proto.ChatResponse, error) {
+	chat, err := s.chatRepo.UpdateChatIsTutor(ctx, req.Id, req.IsTutor)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to update chat is_tutor: %v", err)
+	}
+
+	return &proto.ChatResponse{
+		Id:          chat.ID,
+		AssistantId: chat.AssistantID,
+		CustomerId: func() string {
+			if chat.CustomerID != nil {
+				return *chat.CustomerID
+			}
+			return ""
+		}(),
+		CreatedAt:     chat.CreatedAt.Format(time.RFC3339),
+		UpdatedAt:     chat.UpdatedAt.Format(time.RFC3339),
+		MessageCount:  chat.MessageCount,
+		IsEnd:         chat.IsEnd,
+		IsReviewed:    chat.IsReviewed,
+		IsBooked:      chat.IsBooked,
+		IsTutor:       chat.IsTutor,
+		FollowupStage: int32(chat.FollowupStage),
+	}, nil
+}
+
+func (s *DatabaseServer) SaveTutorMessage(ctx context.Context, req *proto.SaveMessageRequest) (*proto.MessageResponse, error) {
+	message, err := s.messageRepo.SaveTutorMessage(ctx, req.GetChatId(), req.GetRole(), req.GetContent(), req.GetPlatform(), req.GetTime())
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to save tutor message: %v", err)
+	}
+
+	// Update message count and updated_at for the chat
+	if err := s.chatRepo.UpdateMessageCount(ctx, req.GetChatId()); err != nil {
+		log.Printf("Warning: failed to update message count after saving tutor message: %v", err)
+	}
+
+	return &proto.MessageResponse{
+		Id:        fmt.Sprintf("%d", message.ID),
+		ChatId:    message.ChatID,
+		Role:      message.Role,
+		Content:   message.Content,
+		Platform:  req.GetPlatform(),
+		CreatedAt: message.Time.Format(time.RFC3339),
+	}, nil
+}
+
+func (s *DatabaseServer) GetTutorChatMessages(ctx context.Context, req *proto.GetChatMessagesRequest) (*proto.MessagesResponse, error) {
+	messages, err := s.messageRepo.GetTutorMessagesByChatID(ctx, req.GetChatId(), req.GetLimit(), req.GetOffset())
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to get tutor messages: %v", err)
+	}
+
+	var protoMessages []*proto.MessageResponse
+	for _, msg := range messages {
+		protoMessages = append(protoMessages, &proto.MessageResponse{
+			Id:        fmt.Sprintf("%d", msg.ID),
+			ChatId:    msg.ChatID,
+			Role:      msg.Role,
+			Content:   msg.Content,
+			Platform:  "",
+			CreatedAt: msg.Time.Format(time.RFC3339),
+		})
+	}
+
+	return &proto.MessagesResponse{
+		Messages: protoMessages,
+	}, nil
+}
+
+func (s *DatabaseServer) GetAllTutorChatMessages(ctx context.Context, req *proto.GetAllChatMessagesRequest) (*proto.MessagesResponse, error) {
+	messages, err := s.messageRepo.GetAllTutorChatMessages(ctx, req.ChatId)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to get all tutor messages: %v", err)
+	}
+
+	var protoMessages []*proto.MessageResponse
+	for _, msg := range messages {
+		protoMessages = append(protoMessages, &proto.MessageResponse{
+			Id:        fmt.Sprintf("%d", msg.ID),
+			ChatId:    msg.ChatID,
+			Role:      msg.Role,
+			Content:   msg.Content,
+			Platform:  "",
+			CreatedAt: msg.Time.Format(time.RFC3339),
+		})
+	}
+
+	return &proto.MessagesResponse{
+		Messages: protoMessages,
 	}, nil
 }
 

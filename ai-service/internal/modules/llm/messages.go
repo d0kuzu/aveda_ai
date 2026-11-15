@@ -1,6 +1,7 @@
 package llm
 
 import (
+	dbpb "diaxel/proto/db"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -31,7 +32,12 @@ func (c *Client) GetMessages(assistantId, customerId string) ([]openai.ChatCompl
 
 	// If chat exists, fetch messages
 	if chatResp.Id != "" {
-		messagesResp, err := c.db.GetAllChatMessages(chatResp.Id)
+		var messagesResp []*dbpb.MessageResponse
+		if chatResp.IsTutor {
+			messagesResp, err = c.db.GetAllTutorChatMessages(chatResp.Id)
+		} else {
+			messagesResp, err = c.db.GetAllChatMessages(chatResp.Id)
+		}
 		if err != nil {
 			return nil, err
 		}
@@ -117,6 +123,7 @@ func (c *Client) SaveMessages(assistantId, customerId string, messages []openai.
 	}
 
 	chatID := chatResp.Id
+	isTutor := chatResp.IsTutor
 	messageCount := chatResp.MessageCount
 
 	if chatID == "" {
@@ -125,6 +132,7 @@ func (c *Client) SaveMessages(assistantId, customerId string, messages []openai.
 			return err
 		}
 		chatID = newChat.Id
+		isTutor = newChat.IsTutor
 		messageCount = 0
 	}
 
@@ -172,10 +180,15 @@ func (c *Client) SaveMessages(assistantId, customerId string, messages []openai.
 			}
 		}
 
-		_, err := c.db.SaveMessage(chatID, msg.Role, content, "openai")
-		if err != nil {
-			log.Printf("Failed to save message: %v", err)
-			return fmt.Errorf("failed to save message: %w", err)
+		var saveErr error
+		if isTutor {
+			_, saveErr = c.db.SaveTutorMessage(chatID, msg.Role, content, "openai")
+		} else {
+			_, saveErr = c.db.SaveMessage(chatID, msg.Role, content, "openai")
+		}
+		if saveErr != nil {
+			log.Printf("Failed to save message: %v", saveErr)
+			return fmt.Errorf("failed to save message: %w", saveErr)
 		}
 	}
 

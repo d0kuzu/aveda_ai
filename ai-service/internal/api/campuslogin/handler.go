@@ -431,6 +431,202 @@ func (h *CampusLoginHandler) HandleTriggerTwilioReinquiry(c *gin.Context) {
 	})
 }
 
+type TutorTriggerRequest struct {
+	Phone          string `json:"phone" form:"phone"`
+	AlternatePhone string `json:"alternatephone" form:"alternatephone"`
+	Telephone      string `json:"Telephone" form:"Telephone"`
+	Name           string `json:"name" form:"name"`
+	FirstName      string `json:"FirstName" form:"FirstName"`
+	LastName       string `json:"Lastname" form:"Lastname"`
+	Email          string `json:"email" form:"email"`
+	Notes          string `json:"notes" form:"notes"`
+}
+
+func (h *CampusLoginHandler) HandleTriggerTutor(c *gin.Context) {
+	assistantID := c.Param("assistant_id")
+	if assistantID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "assistant_id parameter is required"})
+		return
+	}
+
+	var req TutorTriggerRequest
+	if err := c.ShouldBind(&req); err != nil {
+		log.Printf("[CampusLogin Tutor Trigger] Binding error: %v", err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request data: " + err.Error()})
+		return
+	}
+
+	rawPhone := strings.TrimSpace(req.Phone)
+	if rawPhone == "" {
+		rawPhone = strings.TrimSpace(req.AlternatePhone)
+	}
+	if rawPhone == "" {
+		rawPhone = strings.TrimSpace(req.Telephone)
+	}
+	if rawPhone == "" {
+		log.Printf("[CampusLogin Tutor Trigger] Phone number is missing")
+		c.JSON(http.StatusBadRequest, gin.H{"error": "phone number is required"})
+		return
+	}
+
+	digitsOnly := phoneDigitsRegex.ReplaceAllString(rawPhone, "")
+	if len(digitsOnly) < 10 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "phone number must contain at least 10 digits"})
+		return
+	}
+	phoneSuffix := digitsOnly[len(digitsOnly)-10:]
+
+	var toPhone string
+	if len(digitsOnly) == 10 {
+		toPhone = "+1" + digitsOnly
+	} else if len(digitsOnly) == 11 && strings.HasPrefix(digitsOnly, "1") {
+		toPhone = "+" + digitsOnly
+	} else {
+		if !strings.HasPrefix(rawPhone, "+") {
+			toPhone = "+" + digitsOnly
+		} else {
+			toPhone = rawPhone
+		}
+	}
+
+	// Verify that the customer already exists in the campuslogins table
+	campusRecord, err := h.db.GetCampusloginByUserId(toPhone)
+	if err != nil || campusRecord == nil || campusRecord.UserId == "" {
+		campusRecord, err = h.db.GetCampusloginByPhone(phoneSuffix)
+	}
+	if err != nil || campusRecord == nil || campusRecord.UserId == "" {
+		log.Printf("[CampusLogin Tutor Trigger] Customer with phone %s (suffix %s) not found in campuslogins: %v", toPhone, phoneSuffix, err)
+		c.JSON(http.StatusNotFound, gin.H{
+			"status": "error",
+			"code":   "contact_not_found",
+			"error":  fmt.Sprintf("Contact with phone number %s was not found in CampusLogin.", toPhone),
+		})
+		return
+	}
+
+	// Use the canonical user_id from campuslogins
+	toPhone = campusRecord.UserId
+
+	isBlocked, err := h.db.IsCustomerBlocked(toPhone)
+	if err == nil && isBlocked {
+		log.Printf("[CampusLogin Tutor Trigger] Ignoring trigger for blocked customer %s", toPhone)
+		c.JSON(http.StatusOK, gin.H{"status": "ignored", "message": "customer is blocked"})
+		return
+	}
+
+	_, err = h.db.GetAssistant(assistantID)
+	if err != nil {
+		log.Printf("[CampusLogin Tutor Trigger] Error getting assistant %s: %v", assistantID, err)
+		c.JSON(http.StatusNotFound, gin.H{"error": "assistant not found"})
+		return
+	}
+
+	twilioConfig, err := h.db.GetTwilioConfig(assistantID)
+	if err != nil {
+		log.Printf("[CampusLogin Tutor Trigger] Error getting twilio config for assistant %s: %v", assistantID, err)
+		c.JSON(http.StatusNotFound, gin.H{"error": "twilio configuration not found for this assistant"})
+		return
+	}
+
+	existingChat, checkErr := h.db.GetLatestChatByCustomer(assistantID, toPhone)
+	if checkErr != nil {
+		log.Printf("[CampusLogin Tutor Trigger] Error checking existing chat for %s: %v", toPhone, checkErr)
+	}
+
+	chatExisted := false
+	if existingChat != nil && existingChat.Id != "" {
+		chatExisted = true
+		log.Printf("[CampusLogin Tutor Trigger] Existing chat found (ID: %s) for %s. Switching to tutor mode.", existingChat.Id, toPhone)
+		_, err := h.db.UpdateChatIsTutor(existingChat.Id, true)
+		if err != nil {
+			log.Printf("[CampusLogin Tutor Trigger] Failed to set tutor mode on chat %s: %v", existingChat.Id, err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to switch chat to tutor mode"})
+			return
+		}
+
+		// Add note in CampusLogin that the chat switched to tutor mode
+		if campusRecord.ContactId > 0 && h.cfg.CampusLoginAPI != "" {
+			clClient := campusloginModule.NewClient(h.cfg.CampusLoginAPI)
+			if noteErr := clClient.AddNewNote(c.Request.Context(), int(campusRecord.ContactId), "Chat switched to Tutor Mode."); noteErr != nil {
+				log.Printf("[CampusLogin Tutor Trigger] Failed to add note in CampusLogin for contact %d: %v", campusRecord.ContactId, noteErr)
+			}
+		}
+	} else {
+		log.Printf("[CampusLogin Tutor Trigger] No existing chat found for %s. Creating new chat in tutor mode.", toPhone)
+		_, err := h.db.CreateTutorChat(assistantID, toPhone, "openai")
+		if err != nil {
+			log.Printf("[CampusLogin Tutor Trigger] Failed to create tutor chat for %s: %v", toPhone, err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create tutor chat"})
+			return
+		}
+	}
+
+	firstName := strings.TrimSpace(req.Name)
+	if firstName == "" {
+		firstName = strings.TrimSpace(req.FirstName)
+	}
+	if firstName == "" {
+		firstName = campusRecord.FirstName
+	}
+
+	programIDStr := strconv.Itoa(int(campusRecord.ProgramId))
+	programName := programIDStr
+	if name, ok := constants.ProgramIDToName[programIDStr]; ok {
+		programName = name
+	}
+
+	isInternational := "no"
+	if campusRecord.IsInternationalStudent {
+		isInternational = "yes"
+	}
+
+	var systemPrompt string
+	if assistantID == constants.AvedaSintaAssistantID {
+		systemPrompt = fmt.Sprintf(
+			"This is a lead in Tutor Mode. Name: %s. Greet them by name and start the conversation.",
+			firstName,
+		)
+	} else {
+		systemPrompt = fmt.Sprintf(
+			"This is a lead in Tutor Mode. Name: %s, program: %s, International: %s. Greet them by name and mention the program they chose.",
+			firstName,
+			programName,
+			isInternational,
+		)
+	}
+
+	log.Printf("[CampusLogin Tutor Trigger] Generated System Prompt: %s", systemPrompt)
+
+	answer, err := h.LLM.Conversation(c, toPhone, assistantID, "", llm.WithSystemMessage(systemPrompt))
+	if err != nil {
+		log.Printf("[CampusLogin Tutor Trigger] LLM Conversation error for assistant %s: %v", assistantID, err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	err = h.twilio.SendMessage(c,
+		twilioConfig.AccountSid,
+		twilioConfig.AuthToken,
+		twilioConfig.TwilioNumber,
+		toPhone,
+		answer,
+	)
+	if err != nil {
+		log.Printf("[CampusLogin Tutor Trigger] Error sending Twilio message to %s: %v", toPhone, err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("failed to send message: %v", err)})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":       "ok",
+		"message":      "Tutor mode triggered successfully",
+		"tutor_mode":   true,
+		"chat_existed": chatExisted,
+		"to":           toPhone,
+		"answer":       answer,
+	})
+}
+
 func (h *CampusLoginHandler) GetPendingAppointments(c *gin.Context) {
 	resp, err := h.db.GetUnsyncedCampusloginAppointments()
 	if err != nil {

@@ -30,6 +30,7 @@ type ChatJSON struct {
 	FollowupStage int32  `json:"followup_stage"`
 	IsReviewed    bool   `json:"is_reviewed"`
 	IsBooked      bool   `json:"is_booked"`
+	IsTutor       bool   `json:"is_tutor"`
 }
 
 func chatToJSON(chat *dbpb.ChatResponse) ChatJSON {
@@ -45,6 +46,7 @@ func chatToJSON(chat *dbpb.ChatResponse) ChatJSON {
 		FollowupStage: chat.FollowupStage,
 		IsReviewed:    chat.IsReviewed,
 		IsBooked:      chat.IsBooked,
+		IsTutor:       chat.IsTutor,
 	}
 }
 
@@ -164,7 +166,21 @@ func (h *ChatHandler) GetChat(c *gin.Context) {
 		return
 	}
 
-	messages, err := h.db.GetAllChatMessages(chatID)
+	isTutor := false
+	isTutorParam := c.DefaultQuery("isTutor", c.Query("is_tutor"))
+	if isTutorParam != "" {
+		if parsed, err := strconv.ParseBool(isTutorParam); err == nil {
+			isTutor = parsed
+		}
+	}
+
+	var messages []*dbpb.MessageResponse
+	var err error
+	if isTutor {
+		messages, err = h.db.GetAllTutorChatMessages(chatID)
+	} else {
+		messages, err = h.db.GetAllChatMessages(chatID)
+	}
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch chat messages", "details": err.Error()})
 		return
@@ -172,6 +188,7 @@ func (h *ChatHandler) GetChat(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"answer": gin.H{
 		"chat_id":  chatID,
+		"is_tutor": isTutor,
 		"messages": messages,
 		"count":    len(messages),
 	}})

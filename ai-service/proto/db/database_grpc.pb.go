@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.6.2
 // - protoc             v4.25.2
-// source: proto/db/database.proto
+// source: proto/database.proto
 
 package proto
 
@@ -80,6 +80,10 @@ const (
 	DatabaseService_GetUnsyncedCampusloginAppointments_FullMethodName = "/database.DatabaseService/GetUnsyncedCampusloginAppointments"
 	DatabaseService_UpdateAppointmentCampusloginStatus_FullMethodName = "/database.DatabaseService/UpdateAppointmentCampusloginStatus"
 	DatabaseService_GetAppointmentByID_FullMethodName                 = "/database.DatabaseService/GetAppointmentByID"
+	DatabaseService_UpdateChatIsTutor_FullMethodName                  = "/database.DatabaseService/UpdateChatIsTutor"
+	DatabaseService_SaveTutorMessage_FullMethodName                   = "/database.DatabaseService/SaveTutorMessage"
+	DatabaseService_GetTutorChatMessages_FullMethodName               = "/database.DatabaseService/GetTutorChatMessages"
+	DatabaseService_GetAllTutorChatMessages_FullMethodName            = "/database.DatabaseService/GetAllTutorChatMessages"
 )
 
 // DatabaseServiceClient is the client API for DatabaseService service.
@@ -147,6 +151,10 @@ type DatabaseServiceClient interface {
 	GetUnsyncedCampusloginAppointments(ctx context.Context, in *GetUnsyncedCampusloginAppointmentsRequest, opts ...grpc.CallOption) (*AppointmentsResponse, error)
 	UpdateAppointmentCampusloginStatus(ctx context.Context, in *UpdateAppointmentCampusloginStatusRequest, opts ...grpc.CallOption) (*AppointmentResponse, error)
 	GetAppointmentByID(ctx context.Context, in *GetAppointmentByIDRequest, opts ...grpc.CallOption) (*AppointmentResponse, error)
+	UpdateChatIsTutor(ctx context.Context, in *UpdateChatIsTutorRequest, opts ...grpc.CallOption) (*ChatResponse, error)
+	SaveTutorMessage(ctx context.Context, in *SaveMessageRequest, opts ...grpc.CallOption) (*MessageResponse, error)
+	GetTutorChatMessages(ctx context.Context, in *GetChatMessagesRequest, opts ...grpc.CallOption) (*MessagesResponse, error)
+	GetAllTutorChatMessages(ctx context.Context, in *GetAllChatMessagesRequest, opts ...grpc.CallOption) (*MessagesResponse, error)
 }
 
 type databaseServiceClient struct {
@@ -767,6 +775,46 @@ func (c *databaseServiceClient) GetAppointmentByID(ctx context.Context, in *GetA
 	return out, nil
 }
 
+func (c *databaseServiceClient) UpdateChatIsTutor(ctx context.Context, in *UpdateChatIsTutorRequest, opts ...grpc.CallOption) (*ChatResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ChatResponse)
+	err := c.cc.Invoke(ctx, DatabaseService_UpdateChatIsTutor_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *databaseServiceClient) SaveTutorMessage(ctx context.Context, in *SaveMessageRequest, opts ...grpc.CallOption) (*MessageResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(MessageResponse)
+	err := c.cc.Invoke(ctx, DatabaseService_SaveTutorMessage_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *databaseServiceClient) GetTutorChatMessages(ctx context.Context, in *GetChatMessagesRequest, opts ...grpc.CallOption) (*MessagesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(MessagesResponse)
+	err := c.cc.Invoke(ctx, DatabaseService_GetTutorChatMessages_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *databaseServiceClient) GetAllTutorChatMessages(ctx context.Context, in *GetAllChatMessagesRequest, opts ...grpc.CallOption) (*MessagesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(MessagesResponse)
+	err := c.cc.Invoke(ctx, DatabaseService_GetAllTutorChatMessages_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // DatabaseServiceServer is the server API for DatabaseService service.
 // All implementations must embed UnimplementedDatabaseServiceServer
 // for forward compatibility.
@@ -832,6 +880,10 @@ type DatabaseServiceServer interface {
 	GetUnsyncedCampusloginAppointments(context.Context, *GetUnsyncedCampusloginAppointmentsRequest) (*AppointmentsResponse, error)
 	UpdateAppointmentCampusloginStatus(context.Context, *UpdateAppointmentCampusloginStatusRequest) (*AppointmentResponse, error)
 	GetAppointmentByID(context.Context, *GetAppointmentByIDRequest) (*AppointmentResponse, error)
+	UpdateChatIsTutor(context.Context, *UpdateChatIsTutorRequest) (*ChatResponse, error)
+	SaveTutorMessage(context.Context, *SaveMessageRequest) (*MessageResponse, error)
+	GetTutorChatMessages(context.Context, *GetChatMessagesRequest) (*MessagesResponse, error)
+	GetAllTutorChatMessages(context.Context, *GetAllChatMessagesRequest) (*MessagesResponse, error)
 	mustEmbedUnimplementedDatabaseServiceServer()
 }
 
@@ -1024,6 +1076,18 @@ func (UnimplementedDatabaseServiceServer) UpdateAppointmentCampusloginStatus(con
 }
 func (UnimplementedDatabaseServiceServer) GetAppointmentByID(context.Context, *GetAppointmentByIDRequest) (*AppointmentResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetAppointmentByID not implemented")
+}
+func (UnimplementedDatabaseServiceServer) UpdateChatIsTutor(context.Context, *UpdateChatIsTutorRequest) (*ChatResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateChatIsTutor not implemented")
+}
+func (UnimplementedDatabaseServiceServer) SaveTutorMessage(context.Context, *SaveMessageRequest) (*MessageResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SaveTutorMessage not implemented")
+}
+func (UnimplementedDatabaseServiceServer) GetTutorChatMessages(context.Context, *GetChatMessagesRequest) (*MessagesResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetTutorChatMessages not implemented")
+}
+func (UnimplementedDatabaseServiceServer) GetAllTutorChatMessages(context.Context, *GetAllChatMessagesRequest) (*MessagesResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetAllTutorChatMessages not implemented")
 }
 func (UnimplementedDatabaseServiceServer) mustEmbedUnimplementedDatabaseServiceServer() {}
 func (UnimplementedDatabaseServiceServer) testEmbeddedByValue()                         {}
@@ -2144,6 +2208,78 @@ func _DatabaseService_GetAppointmentByID_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _DatabaseService_UpdateChatIsTutor_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateChatIsTutorRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DatabaseServiceServer).UpdateChatIsTutor(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DatabaseService_UpdateChatIsTutor_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DatabaseServiceServer).UpdateChatIsTutor(ctx, req.(*UpdateChatIsTutorRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DatabaseService_SaveTutorMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SaveMessageRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DatabaseServiceServer).SaveTutorMessage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DatabaseService_SaveTutorMessage_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DatabaseServiceServer).SaveTutorMessage(ctx, req.(*SaveMessageRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DatabaseService_GetTutorChatMessages_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetChatMessagesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DatabaseServiceServer).GetTutorChatMessages(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DatabaseService_GetTutorChatMessages_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DatabaseServiceServer).GetTutorChatMessages(ctx, req.(*GetChatMessagesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DatabaseService_GetAllTutorChatMessages_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAllChatMessagesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DatabaseServiceServer).GetAllTutorChatMessages(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DatabaseService_GetAllTutorChatMessages_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DatabaseServiceServer).GetAllTutorChatMessages(ctx, req.(*GetAllChatMessagesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // DatabaseService_ServiceDesc is the grpc.ServiceDesc for DatabaseService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -2395,7 +2531,23 @@ var DatabaseService_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "GetAppointmentByID",
 			Handler:    _DatabaseService_GetAppointmentByID_Handler,
 		},
+		{
+			MethodName: "UpdateChatIsTutor",
+			Handler:    _DatabaseService_UpdateChatIsTutor_Handler,
+		},
+		{
+			MethodName: "SaveTutorMessage",
+			Handler:    _DatabaseService_SaveTutorMessage_Handler,
+		},
+		{
+			MethodName: "GetTutorChatMessages",
+			Handler:    _DatabaseService_GetTutorChatMessages_Handler,
+		},
+		{
+			MethodName: "GetAllTutorChatMessages",
+			Handler:    _DatabaseService_GetAllTutorChatMessages_Handler,
+		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "proto/db/database.proto",
+	Metadata: "proto/database.proto",
 }

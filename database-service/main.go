@@ -128,6 +128,7 @@ func runMigrations(db *gorm.DB) error {
 		&models.Assistant{},
 		&models.Chat{},
 		&models.Message{},
+		&models.TutorMessage{},
 		&models.TwilioConfig{},
 		&models.Campuslogin{},
 		&models.BlockedCustomer{},

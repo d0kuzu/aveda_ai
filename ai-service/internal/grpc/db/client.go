@@ -143,6 +143,20 @@ func (c *Client) CreateChat(assistantID, customerID, platform string) (*dbpb.Cha
 	return c.DB.CreateChat(ctx, req)
 }
 
+func (c *Client) CreateTutorChat(assistantID, customerID, platform string) (*dbpb.ChatResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	req := &dbpb.CreateChatRequest{
+		AssistantId: assistantID,
+		CustomerId:  customerID,
+		Platform:    platform,
+		IsTutor:     true,
+	}
+
+	return c.DB.CreateChat(ctx, req)
+}
+
 func (c *Client) CreateChatWithTime(assistantID, customerID, platform string, startedAt string) (*dbpb.ChatResponse, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -720,4 +734,72 @@ func (c *Client) GetAppointmentByID(id string) (*dbpb.AppointmentResponse, error
 		Id: id,
 	}
 	return c.DB.GetAppointmentByID(ctx, req)
+}
+
+func (c *Client) UpdateChatIsTutor(chatID string, isTutor bool) (*dbpb.ChatResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	req := &dbpb.UpdateChatIsTutorRequest{
+		Id:      chatID,
+		IsTutor: isTutor,
+	}
+
+	return c.DB.UpdateChatIsTutor(ctx, req)
+}
+
+func (c *Client) SaveTutorMessage(chatID, role, content, platform string) (*dbpb.MessageResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	req := &dbpb.SaveMessageRequest{
+		ChatId:   chatID,
+		Role:     role,
+		Content:  content,
+		Platform: platform,
+	}
+
+	return c.DB.SaveTutorMessage(ctx, req)
+}
+
+func (c *Client) GetTutorChatMessages(chatID string, limit, offset int32) ([]*dbpb.MessageResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	req := &dbpb.GetChatMessagesRequest{
+		ChatId: chatID,
+		Limit:  limit,
+		Offset: offset,
+	}
+
+	resp, err := c.DB.GetTutorChatMessages(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	if resp.Messages == nil {
+		return []*dbpb.MessageResponse{}, nil
+	}
+
+	return resp.Messages, nil
+}
+
+func (c *Client) GetAllTutorChatMessages(chatID string) ([]*dbpb.MessageResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	req := &dbpb.GetAllChatMessagesRequest{
+		ChatId: chatID,
+	}
+
+	resp, err := c.DB.GetAllTutorChatMessages(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	if resp.Messages == nil {
+		return []*dbpb.MessageResponse{}, nil
+	}
+
+	return resp.Messages, nil
 }
