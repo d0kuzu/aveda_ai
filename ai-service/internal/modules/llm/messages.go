@@ -83,23 +83,12 @@ func (c *Client) StartTutorMessages(chatResp *dbpb.ChatResponse) []openai.ChatCo
 	}
 
 	stateInfo := fmt.Sprintf(
-		"\n\n### Current Student Tutor State (from Database):\n- Selected Program: %s\n- Tutoring Active (is_tuting): %v\n- Questions Answered Today (tutor_count_per_day): %d / 5\n- Total Questions Completed (tutor_count): %d",
+		"\n\n### Current Student Tutor State (from Database):\n- Selected Program: %s\n- Tutoring Active (is_tuting): %v\n- Questions Answered Today (tutor_count_per_day): %d / 5\n- Total Questions Completed (tutor_count): %d\n\nCRITICAL REMINDER: You do NOT have the question bank in your memory. Every single time the student answers a question (with A/B/C/D, 1/2/3/4, option text, or skip), you MUST call the function `submit_tutor_answer` FIRST so the backend increments `tutor_count` and returns the official next question. NEVER reply with 'Correct!', 'Not quite!', or 'Next question:' without calling `submit_tutor_answer` in this turn!",
 		progName,
 		chatResp.IsTuting,
 		chatResp.TutorCountPerDay,
 		chatResp.TutorCount,
 	)
-
-	if chatResp.IsTuting && chatResp.TutingProgram != "" && chatResp.TutorCountPerDay < 5 {
-		if q, total, err := tutor.GetQuestion(chatResp.TutingProgram, int(chatResp.TutorCount)); err == nil && q != nil {
-			stateInfo += fmt.Sprintf(
-				"\n- Currently Active Question (%d of %d):\n%s",
-				int(chatResp.TutorCount)+1,
-				total,
-				tutor.FormatQuestion(q),
-			)
-		}
-	}
 
 	systemPrompt += stateInfo
 
