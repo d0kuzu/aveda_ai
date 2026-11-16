@@ -94,6 +94,16 @@ func (h *ChatHandler) getValidatedAssistantIDs(c *gin.Context, userID string) ([
 	return finalAssistantIDs, nil
 }
 
+func parseIsTutorQuery(c *gin.Context) bool {
+	isTutorParam := c.DefaultQuery("isTutor", c.Query("is_tutor"))
+	if isTutorParam != "" {
+		if parsed, err := strconv.ParseBool(isTutorParam); err == nil {
+			return parsed
+		}
+	}
+	return false
+}
+
 func (h *ChatHandler) GetAllChats(c *gin.Context) {
 	userID := c.GetHeader("X-User-Id")
 	if userID == "" {
@@ -107,6 +117,8 @@ func (h *ChatHandler) GetAllChats(c *gin.Context) {
 		page = 1
 	}
 
+	isTutor := parseIsTutorQuery(c)
+
 	assistantIDs, err := h.getValidatedAssistantIDs(c, userID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to validate assistants", "details": err.Error()})
@@ -119,11 +131,11 @@ func (h *ChatHandler) GetAllChats(c *gin.Context) {
 		return
 	}
 
-	log.Printf("[GetAllChats] Fetching chats for assistants: %v, page: %d", assistantIDs, page)
+	log.Printf("[GetAllChats] Fetching chats for assistants: %v, page: %d, isTutor: %v", assistantIDs, page, isTutor)
 
 	chatsPerPage := int32(10)
 
-	chats, err := h.db.GetChatPageByUserID(assistantIDs, int32(page), chatsPerPage)
+	chats, err := h.db.GetChatPageByUserID(assistantIDs, int32(page), chatsPerPage, isTutor)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch chats", "details": err.Error()})
 		return
@@ -146,6 +158,8 @@ func (h *ChatHandler) GetPagination(c *gin.Context) {
 		return
 	}
 
+	isTutor := parseIsTutorQuery(c)
+
 	assistantIDs, err := h.getValidatedAssistantIDs(c, userID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to validate assistants", "details": err.Error()})
@@ -158,7 +172,7 @@ func (h *ChatHandler) GetPagination(c *gin.Context) {
 	}
 
 	chatsPerPage := int32(10)
-	pagesCount, err := h.db.GetChatPagesCountByUserID(assistantIDs, chatsPerPage)
+	pagesCount, err := h.db.GetChatPagesCountByUserID(assistantIDs, chatsPerPage, isTutor)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch pagination", "details": err.Error()})
 		return
@@ -174,13 +188,7 @@ func (h *ChatHandler) GetChat(c *gin.Context) {
 		return
 	}
 
-	isTutor := false
-	isTutorParam := c.DefaultQuery("isTutor", c.Query("is_tutor"))
-	if isTutorParam != "" {
-		if parsed, err := strconv.ParseBool(isTutorParam); err == nil {
-			isTutor = parsed
-		}
-	}
+	isTutor := parseIsTutorQuery(c)
 
 	var messages []*dbpb.MessageResponse
 	var err error
@@ -216,6 +224,8 @@ func (h *ChatHandler) SearchChat(c *gin.Context) {
 		return
 	}
 
+	isTutor := parseIsTutorQuery(c)
+
 	assistantIDs, err := h.getValidatedAssistantIDs(c, userID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to validate assistants", "details": err.Error()})
@@ -227,14 +237,19 @@ func (h *ChatHandler) SearchChat(c *gin.Context) {
 		return
 	}
 
-	chats, totalCount, err := h.db.SearchChatsByCustomer(assistantIDs, searchTerm)
+	chats, totalCount, err := h.db.SearchChatsByCustomer(assistantIDs, searchTerm, isTutor)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to search chats", "details": err.Error()})
 		return
 	}
 
+	result := make([]ChatJSON, len(chats))
+	for i, chat := range chats {
+		result[i] = chatToJSON(chat)
+	}
+
 	c.JSON(http.StatusOK, gin.H{
-		"answer":      chats,
+		"answer":      result,
 		"total_count": totalCount,
 	})
 }

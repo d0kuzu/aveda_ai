@@ -554,7 +554,7 @@ func (s *DatabaseServer) GetChatPage(ctx context.Context, req *proto.GetChatPage
 }
 
 func (s *DatabaseServer) GetChatPagesCountByUserID(ctx context.Context, req *proto.GetChatPagesCountByUserIDRequest) (*proto.ChatPagesCountResponse, error) {
-	pagesCount, err := s.chatRepo.GetChatPagesCountByUserID(ctx, req.AssistantIds, req.ChatsPerPage)
+	pagesCount, err := s.chatRepo.GetChatPagesCountByUserID(ctx, req.AssistantIds, req.ChatsPerPage, req.IsTutor)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to get chat pages count by user: %v", err)
 	}
@@ -565,8 +565,8 @@ func (s *DatabaseServer) GetChatPagesCountByUserID(ctx context.Context, req *pro
 }
 
 func (s *DatabaseServer) GetChatPageByUserID(ctx context.Context, req *proto.GetChatPageByUserIDRequest) (*proto.ChatsResponse, error) {
-	log.Printf("[gRPC] GetChatPageByUserID: AssistantIds=%v, Page=%d, ChatsPerPage=%d", req.AssistantIds, req.Page, req.ChatsPerPage)
-	chats, err := s.chatRepo.GetChatPageByUserID(ctx, req.AssistantIds, req.Page, req.ChatsPerPage)
+	log.Printf("[gRPC] GetChatPageByUserID: AssistantIds=%v, Page=%d, ChatsPerPage=%d, IsTutor=%v", req.AssistantIds, req.Page, req.ChatsPerPage, req.IsTutor)
+	chats, err := s.chatRepo.GetChatPageByUserID(ctx, req.AssistantIds, req.Page, req.ChatsPerPage, req.IsTutor)
 	if err != nil {
 		log.Printf("[gRPC] GetChatPageByUserID Error: %v", err)
 		return nil, status.Errorf(codes.Internal, "failed to get chat page by user: %v", err)
@@ -582,18 +582,22 @@ func (s *DatabaseServer) GetChatPageByUserID(ctx context.Context, req *proto.Get
 		}
 
 		protoChats = append(protoChats, &proto.ChatResponse{
-			Id:            chat.ID,
-			AssistantId:   chat.AssistantID,
-			CustomerId:    customerId,
-			Platform:      "", // Platform not stored in chat model
-			CreatedAt:     chat.CreatedAt.Format(time.RFC3339),
-			UpdatedAt:     chat.UpdatedAt.Format(time.RFC3339),
-			MessageCount:  chat.MessageCount,
-			IsEnd:         chat.IsEnd,
-			IsBooked:      chat.IsBooked,
-			IsReviewed:    chat.IsReviewed,
-			IsTutor:       chat.IsTutor,
-			FollowupStage: int32(chat.FollowupStage),
+			Id:               chat.ID,
+			AssistantId:      chat.AssistantID,
+			CustomerId:       customerId,
+			Platform:         "", // Platform not stored in chat model
+			CreatedAt:        chat.CreatedAt.Format(time.RFC3339),
+			UpdatedAt:        chat.UpdatedAt.Format(time.RFC3339),
+			MessageCount:     chat.MessageCount,
+			IsEnd:            chat.IsEnd,
+			IsBooked:         chat.IsBooked,
+			IsReviewed:       chat.IsReviewed,
+			IsTutor:          chat.IsTutor,
+			IsTuting:         chat.IsTuting,
+			TutingProgram:    chat.TutingProgram,
+			TutorCountPerDay: chat.TutorCountPerDay,
+			TutorCount:       chat.TutorCount,
+			FollowupStage:    int32(chat.FollowupStage),
 		})
 	}
 
@@ -603,7 +607,7 @@ func (s *DatabaseServer) GetChatPageByUserID(ctx context.Context, req *proto.Get
 }
 
 func (s *DatabaseServer) SearchChatsByCustomer(ctx context.Context, req *proto.SearchChatsByCustomerRequest) (*proto.SearchChatsByCustomerResponse, error) {
-	chats, totalCount, err := s.chatRepo.SearchChatsByCustomer(ctx, req.AssistantIds, req.Search)
+	chats, totalCount, err := s.chatRepo.SearchChatsByCustomer(ctx, req.AssistantIds, req.Search, req.IsTutor)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to search chats: %v", err)
 	}
@@ -616,18 +620,22 @@ func (s *DatabaseServer) SearchChatsByCustomer(ctx context.Context, req *proto.S
 		}
 
 		protoChats = append(protoChats, &proto.ChatResponse{
-			Id:            chat.ID,
-			AssistantId:   chat.AssistantID,
-			CustomerId:    customerId,
-			Platform:      "", // Platform not stored in chat model
-			CreatedAt:     chat.CreatedAt.Format(time.RFC3339),
-			UpdatedAt:     chat.UpdatedAt.Format(time.RFC3339),
-			MessageCount:  chat.MessageCount,
-			IsEnd:         chat.IsEnd,
-			IsBooked:      chat.IsBooked,
-			IsReviewed:    chat.IsReviewed,
-			IsTutor:       chat.IsTutor,
-			FollowupStage: int32(chat.FollowupStage),
+			Id:               chat.ID,
+			AssistantId:      chat.AssistantID,
+			CustomerId:       customerId,
+			Platform:         "", // Platform not stored in chat model
+			CreatedAt:        chat.CreatedAt.Format(time.RFC3339),
+			UpdatedAt:        chat.UpdatedAt.Format(time.RFC3339),
+			MessageCount:     chat.MessageCount,
+			IsEnd:            chat.IsEnd,
+			IsBooked:         chat.IsBooked,
+			IsReviewed:       chat.IsReviewed,
+			IsTutor:          chat.IsTutor,
+			IsTuting:         chat.IsTuting,
+			TutingProgram:    chat.TutingProgram,
+			TutorCountPerDay: chat.TutorCountPerDay,
+			TutorCount:       chat.TutorCount,
+			FollowupStage:    int32(chat.FollowupStage),
 		})
 	}
 

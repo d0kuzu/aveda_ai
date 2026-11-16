@@ -30,9 +30,9 @@ type ChatRepository interface {
 	DeleteAllChats(ctx context.Context) error
 	GetChatPagesCount(ctx context.Context, assistantID string, chatsPerPage int32) (int32, error)
 	GetChatPage(ctx context.Context, assistantID string, page, chatsPerPage int32) ([]*models.Chat, error)
-	GetChatPagesCountByUserID(ctx context.Context, assistantIDs []string, chatsPerPage int32) (int32, error)
-	GetChatPageByUserID(ctx context.Context, assistantIDs []string, page, chatsPerPage int32) ([]*models.Chat, error)
-	SearchChatsByCustomer(ctx context.Context, assistantIDs []string, search string) ([]*models.Chat, int32, error)
+	GetChatPagesCountByUserID(ctx context.Context, assistantIDs []string, chatsPerPage int32, isTutor bool) (int32, error)
+	GetChatPageByUserID(ctx context.Context, assistantIDs []string, page, chatsPerPage int32, isTutor bool) ([]*models.Chat, error)
+	SearchChatsByCustomer(ctx context.Context, assistantIDs []string, search string, isTutor bool) ([]*models.Chat, int32, error)
 	GetLatestChatByCustomer(ctx context.Context, assistantID, customerID string) (*models.Chat, error)
 	UpdateMessageCount(ctx context.Context, chatID string) error
 	GetChatsForFollowup(ctx context.Context) ([]*models.Chat, error)
@@ -134,13 +134,16 @@ func (r *chatRepository) GetChatPage(ctx context.Context, assistantID string, pa
 	return chats, nil
 }
 
-func (r *chatRepository) GetChatPagesCountByUserID(ctx context.Context, assistantIDs []string, chatsPerPage int32) (int32, error) {
+func (r *chatRepository) GetChatPagesCountByUserID(ctx context.Context, assistantIDs []string, chatsPerPage int32, isTutor bool) (int32, error) {
 	if len(assistantIDs) == 0 {
 		return 0, nil
 	}
-	log.Printf("GetChatPagesCountByUserID: assistantIDs=%v, chatsPerPage=%d", assistantIDs, chatsPerPage)
+	log.Printf("GetChatPagesCountByUserID: assistantIDs=%v, chatsPerPage=%d, isTutor=%v", assistantIDs, chatsPerPage, isTutor)
 	var count int64
 	query := r.db.WithContext(ctx).Debug().Model(&models.Chat{}).Where("assistant_id IN ?", assistantIDs)
+	if isTutor {
+		query = query.Where("is_tutor = ?", true)
+	}
 
 	if err := query.Count(&count).Error; err != nil {
 		return 0, fmt.Errorf("failed to count chats by user id: %w", err)
@@ -154,7 +157,7 @@ func (r *chatRepository) GetChatPagesCountByUserID(ctx context.Context, assistan
 	return pagesCount, nil
 }
 
-func (r *chatRepository) GetChatPageByUserID(ctx context.Context, assistantIDs []string, page, chatsPerPage int32) ([]*models.Chat, error) {
+func (r *chatRepository) GetChatPageByUserID(ctx context.Context, assistantIDs []string, page, chatsPerPage int32, isTutor bool) ([]*models.Chat, error) {
 	if len(assistantIDs) == 0 {
 		return []*models.Chat{}, nil
 	}
@@ -167,10 +170,13 @@ func (r *chatRepository) GetChatPageByUserID(ctx context.Context, assistantIDs [
 
 	offset := (page - 1) * chatsPerPage
 
-	log.Printf("GetChatPageByUserID: assistantIDs=%v, page=%d, chatsPerPage=%d, offset=%d", assistantIDs, page, chatsPerPage, offset)
+	log.Printf("GetChatPageByUserID: assistantIDs=%v, page=%d, chatsPerPage=%d, offset=%d, isTutor=%v", assistantIDs, page, chatsPerPage, offset, isTutor)
 
 	var chats []*models.Chat
 	query := r.db.WithContext(ctx).Debug().Where("assistant_id IN ?", assistantIDs)
+	if isTutor {
+		query = query.Where("is_tutor = ?", true)
+	}
 
 	if err := query.Order("created_at DESC").Limit(int(chatsPerPage)).Offset(int(offset)).Find(&chats).Error; err != nil {
 		return nil, fmt.Errorf("failed to get chat page by user id: %w", err)
@@ -181,7 +187,7 @@ func (r *chatRepository) GetChatPageByUserID(ctx context.Context, assistantIDs [
 	return chats, nil
 }
 
-func (r *chatRepository) SearchChatsByCustomer(ctx context.Context, assistantIDs []string, search string) ([]*models.Chat, int32, error) {
+func (r *chatRepository) SearchChatsByCustomer(ctx context.Context, assistantIDs []string, search string, isTutor bool) ([]*models.Chat, int32, error) {
 	if len(assistantIDs) == 0 {
 		return []*models.Chat{}, 0, nil
 	}
@@ -189,6 +195,9 @@ func (r *chatRepository) SearchChatsByCustomer(ctx context.Context, assistantIDs
 	var count int64
 
 	query := r.db.WithContext(ctx).Model(&models.Chat{}).Where("assistant_id IN ?", assistantIDs)
+	if isTutor {
+		query = query.Where("is_tutor = ?", true)
+	}
 
 	// If search term is provided, search by customer_id
 	if search != "" {

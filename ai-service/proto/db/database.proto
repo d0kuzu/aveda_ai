@@ -290,17 +290,20 @@ message GetChatPageRequest {
 message GetChatPagesCountByUserIDRequest {
   repeated string assistant_ids = 1;
   int32 chats_per_page = 2;
+  bool is_tutor = 3;
 }
 
 message GetChatPageByUserIDRequest {
   repeated string assistant_ids = 1;
   int32 page = 2;
   int32 chats_per_page = 3;
+  bool is_tutor = 4;
 }
 
 message SearchChatsByCustomerRequest {
   repeated string assistant_ids = 1;
   string search = 2;
+  bool is_tutor = 3;
 }
 
 message SearchChatsByCustomerResponse {

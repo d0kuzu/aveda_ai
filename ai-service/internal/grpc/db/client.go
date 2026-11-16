@@ -288,13 +288,14 @@ func (c *Client) GetChatPage(assistantID string, page, chatsPerPage int32) ([]*d
 	return resp.Chats, nil
 }
 
-func (c *Client) GetChatPagesCountByUserID(assistantIDs []string, chatsPerPage int32) (int32, error) {
+func (c *Client) GetChatPagesCountByUserID(assistantIDs []string, chatsPerPage int32, isTutor bool) (int32, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	req := &dbpb.GetChatPagesCountByUserIDRequest{
 		AssistantIds: assistantIDs,
 		ChatsPerPage: chatsPerPage,
+		IsTutor:      isTutor,
 	}
 
 	resp, err := c.DB.GetChatPagesCountByUserID(ctx, req)
@@ -305,7 +306,7 @@ func (c *Client) GetChatPagesCountByUserID(assistantIDs []string, chatsPerPage i
 	return resp.PagesCount, nil
 }
 
-func (c *Client) GetChatPageByUserID(assistantIDs []string, page, chatsPerPage int32) ([]*dbpb.ChatResponse, error) {
+func (c *Client) GetChatPageByUserID(assistantIDs []string, page, chatsPerPage int32, isTutor bool) ([]*dbpb.ChatResponse, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -313,6 +314,7 @@ func (c *Client) GetChatPageByUserID(assistantIDs []string, page, chatsPerPage i
 		AssistantIds: assistantIDs,
 		Page:         page,
 		ChatsPerPage: chatsPerPage,
+		IsTutor:      isTutor,
 	}
 
 	resp, err := c.DB.GetChatPageByUserID(ctx, req)
@@ -344,13 +346,14 @@ func (c *Client) GetChatPagesCount(assistantID string, chatsPerPage int32) (int3
 	return resp.PagesCount, nil
 }
 
-func (c *Client) SearchChatsByCustomer(assistantIDs []string, search string) ([]*dbpb.ChatResponse, int32, error) {
+func (c *Client) SearchChatsByCustomer(assistantIDs []string, search string, isTutor bool) ([]*dbpb.ChatResponse, int32, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	req := &dbpb.SearchChatsByCustomerRequest{
 		AssistantIds: assistantIDs,
 		Search:       search,
+		IsTutor:      isTutor,
 	}
 
 	resp, err := c.DB.SearchChatsByCustomer(ctx, req)
