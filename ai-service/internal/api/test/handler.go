@@ -290,7 +290,6 @@ func (h *TestHandler) TestConversation(c *gin.Context) {
 
 	isTrigger := req.Trigger || c.Query("trigger") == "true"
 	if isTrigger {
-		isTutor := strings.EqualFold(req.Type, "tutor")
 		isCanada := strings.EqualFold(req.Type, "canada")
 		if isCanada {
 			if req.ProgramID == "" {
@@ -303,54 +302,16 @@ func (h *TestHandler) TestConversation(c *gin.Context) {
 			}
 		}
 
-		name := req.Name
-		if name == "" {
-			name = "Lead"
-		}
-
-		if isTutor {
-			if h.db != nil {
-				_ = h.db.UpsertCampuslogin(from, 5972449, 1, false, false, name, "test@example.com")
-				existingChat, checkErr := h.db.GetLatestChatByCustomer(assistantID, from)
-				if checkErr == nil && existingChat != nil && existingChat.Id != "" {
-					_, _ = h.db.UpdateChatIsTutor(existingChat.Id, true)
-				} else {
-					_, _ = h.db.CreateTutorChat(assistantID, from, "openai")
-				}
-			}
-
-			systemPrompt := fmt.Sprintf(
-				"New Tutor Mode session triggered for student '%s'. Greet them warmly by name, introduce yourself as the Aveda Exam Prep Tutor, and ask which of the 4 programs they would like to select for their exam practice: 1. Barber, 2. Cosmetology, 3. Esthetician, or 4. Nail Technician.",
-				name,
-			)
-
-			log.Printf("[Test Conversation] Triggering Tutor Mode for %s, prompt: %s", from, systemPrompt)
-
-			answer, err := h.llm.Conversation(c, from, assistantID, "", llm.WithSystemMessage(systemPrompt))
-			if err != nil {
-				log.Printf("[Test Conversation] LLM tutor conversation error for assistant %s: %v", assistantID, err)
-				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-				return
-			}
-
-			c.JSON(http.StatusOK, gin.H{
-				"status":        "ok",
-				"is_trigger":    true,
-				"is_tutor":      true,
-				"type":          req.Type,
-				"assistant_id":  assistantID,
-				"from":          from,
-				"system_prompt": systemPrompt,
-				"answer":        answer,
-			})
-			return
-		}
-
 		if h.db != nil {
 			existingChat, checkErr := h.db.GetLatestChatByCustomer(assistantID, from)
 			if checkErr == nil && existingChat != nil && existingChat.Id != "" {
 				_ = h.db.DeleteChatAndMessages(existingChat.Id)
 			}
+		}
+
+		name := req.Name
+		if name == "" {
+			name = "Lead"
 		}
 
 		var systemPrompt string
@@ -428,5 +389,170 @@ func (h *TestHandler) TestConversation(c *gin.Context) {
 		"from":         from,
 		"message":      req.Message,
 		"answer":       answer,
+	})
+}
+
+type TestTutorConversationRequest struct {
+	AssistantID string `json:"assistant_id" form:"assistant_id"`
+	From        string `json:"from" form:"from"`
+	Message     string `json:"message" form:"message"`
+	Trigger     bool   `json:"trigger" form:"trigger"`
+	Name        string `json:"name" form:"name"`
+}
+
+func (h *TestHandler) TestTutorConversation(c *gin.Context) {
+	if h.llm == nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "LLM client is not initialized"})
+		return
+	}
+
+	var req TestTutorConversationRequest
+	if err := c.ShouldBind(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request: " + err.Error()})
+		return
+	}
+
+	assistantID := c.Param("assistant_id")
+	if assistantID == "" {
+		assistantID = req.AssistantID
+	}
+	if assistantID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "assistant_id is required"})
+		return
+	}
+
+	from := strings.TrimSpace(req.From)
+	if from == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "from is required"})
+		return
+	}
+
+	var digitsOnly string
+	for _, r := range from {
+		if r >= '0' && r <= '9' {
+			digitsOnly += string(r)
+		}
+	}
+	if len(digitsOnly) < 10 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "from phone must contain at least 10 digits"})
+		return
+	}
+	phoneSuffix := digitsOnly[len(digitsOnly)-10:]
+
+	if len(digitsOnly) == 10 {
+		from = "+1" + digitsOnly
+	} else if len(digitsOnly) == 11 && strings.HasPrefix(digitsOnly, "1") {
+		from = "+" + digitsOnly
+	} else if !strings.HasPrefix(from, "+") {
+		from = "+" + digitsOnly
+	}
+
+	isTrigger := req.Trigger || c.Query("trigger") == "true"
+	if isTrigger {
+		name := strings.TrimSpace(req.Name)
+
+		if h.db != nil {
+			campusRecord, err := h.db.GetCampusloginByUserId(from)
+			if err != nil || campusRecord == nil || campusRecord.UserId == "" {
+				campusRecord, err = h.db.GetCampusloginByPhone(phoneSuffix)
+			}
+			if err != nil || campusRecord == nil || campusRecord.UserId == "" {
+				c.JSON(http.StatusNotFound, gin.H{
+					"status": "error",
+					"code":   "contact_not_found",
+					"error":  fmt.Sprintf("Contact with phone number %s was not found in campuslogins", from),
+				})
+				return
+			}
+
+			from = campusRecord.UserId
+			if name == "" {
+				name = campusRecord.FirstName
+			}
+
+			existingChat, checkErr := h.db.GetLatestChatByCustomer(assistantID, from)
+			if checkErr == nil && existingChat != nil && existingChat.Id != "" {
+				_, err = h.db.UpdateChatIsTutor(existingChat.Id, true)
+				if err != nil {
+					c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to switch chat to tutor mode: " + err.Error()})
+					return
+				}
+			} else {
+				_, err = h.db.CreateTutorChat(assistantID, from, "openai")
+				if err != nil {
+					c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create tutor chat: " + err.Error()})
+					return
+				}
+			}
+		}
+
+		if name == "" {
+			name = "Student"
+		}
+
+		systemPrompt := fmt.Sprintf(
+			"New Tutor Mode session triggered for student '%s'. Greet them warmly by name, introduce yourself as the Aveda Exam Prep Tutor, and ask which of the 4 programs they would like to select for their exam practice: 1. Barber, 2. Cosmetology, 3. Esthetician, or 4. Nail Technician.",
+			name,
+		)
+
+		log.Printf("[Test Tutor Conversation] Triggering Tutor Mode for %s, prompt: %s", from, systemPrompt)
+
+		answer, err := h.llm.Conversation(c, from, assistantID, "", llm.WithSystemMessage(systemPrompt))
+		if err != nil {
+			log.Printf("[Test Tutor Conversation] LLM conversation error for assistant %s: %v", assistantID, err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"status":        "ok",
+			"is_trigger":    true,
+			"is_tutor":      true,
+			"assistant_id":  assistantID,
+			"from":          from,
+			"system_prompt": systemPrompt,
+			"answer":        answer,
+		})
+		return
+	}
+
+	if req.Message == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "message is required"})
+		return
+	}
+
+	log.Printf("[Test Tutor Conversation] Processing user message from %s for assistant %s: %s", from, assistantID, req.Message)
+
+	answer, err := h.llm.Conversation(c, from, assistantID, req.Message)
+	if err != nil {
+		log.Printf("[Test Tutor Conversation] LLM conversation error for assistant %s: %v", assistantID, err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	var chatState gin.H
+	if h.db != nil {
+		if chat, err := h.db.GetLatestChatByCustomer(assistantID, from); err == nil && chat != nil {
+			chatState = gin.H{
+				"chat_id":             chat.Id,
+				"is_tutor":            chat.IsTutor,
+				"is_tuting":           chat.IsTuting,
+				"tuting_program":      chat.TutingProgram,
+				"tutor_count_per_day": chat.TutorCountPerDay,
+				"tutor_count":         chat.TutorCount,
+				"is_end":              chat.IsEnd,
+			}
+		}
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":       "ok",
+		"is_trigger":   false,
+		"is_tutor":     true,
+		"assistant_id": assistantID,
+		"from":         from,
+		"message":      req.Message,
+		"answer":       answer,
+		"tutor_state":  chatState,
 	})
 }

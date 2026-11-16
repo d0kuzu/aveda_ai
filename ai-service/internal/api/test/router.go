@@ -20,6 +20,8 @@ func TestRoutes(router *gin.Engine, app *appModule.App) {
 		//group.POST("/appointments/:id/retry", h.RetryAppointment)
 		group.Any("/conversation", h.TestConversation)
 		group.Any("/conversation/:assistant_id", h.TestConversation)
+		group.Any("/tutor-conversation", h.TestTutorConversation)
+		group.Any("/tutor-conversation/:assistant_id", h.TestTutorConversation)
 
 		// Эндпоинт для вывода всех данных запроса
 		group.Any("/echo", func(c *gin.Context) {
