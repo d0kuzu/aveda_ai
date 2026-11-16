@@ -290,6 +290,7 @@ func (h *TestHandler) TestConversation(c *gin.Context) {
 
 	isTrigger := req.Trigger || c.Query("trigger") == "true"
 	if isTrigger {
+		isTutor := strings.EqualFold(req.Type, "tutor")
 		isCanada := strings.EqualFold(req.Type, "canada")
 		if isCanada {
 			if req.ProgramID == "" {
@@ -302,16 +303,54 @@ func (h *TestHandler) TestConversation(c *gin.Context) {
 			}
 		}
 
+		name := req.Name
+		if name == "" {
+			name = "Lead"
+		}
+
+		if isTutor {
+			if h.db != nil {
+				_ = h.db.UpsertCampuslogin(from, 5972449, 1, false, false, name, "test@example.com")
+				existingChat, checkErr := h.db.GetLatestChatByCustomer(assistantID, from)
+				if checkErr == nil && existingChat != nil && existingChat.Id != "" {
+					_, _ = h.db.UpdateChatIsTutor(existingChat.Id, true)
+				} else {
+					_, _ = h.db.CreateTutorChat(assistantID, from, "openai")
+				}
+			}
+
+			systemPrompt := fmt.Sprintf(
+				"New Tutor Mode session triggered for student '%s'. Greet them warmly by name, introduce yourself as the Aveda Exam Prep Tutor, and ask which of the 4 programs they would like to select for their exam practice: 1. Barber, 2. Cosmetology, 3. Esthetician, or 4. Nail Technician.",
+				name,
+			)
+
+			log.Printf("[Test Conversation] Triggering Tutor Mode for %s, prompt: %s", from, systemPrompt)
+
+			answer, err := h.llm.Conversation(c, from, assistantID, "", llm.WithSystemMessage(systemPrompt))
+			if err != nil {
+				log.Printf("[Test Conversation] LLM tutor conversation error for assistant %s: %v", assistantID, err)
+				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+				return
+			}
+
+			c.JSON(http.StatusOK, gin.H{
+				"status":        "ok",
+				"is_trigger":    true,
+				"is_tutor":      true,
+				"type":          req.Type,
+				"assistant_id":  assistantID,
+				"from":          from,
+				"system_prompt": systemPrompt,
+				"answer":        answer,
+			})
+			return
+		}
+
 		if h.db != nil {
 			existingChat, checkErr := h.db.GetLatestChatByCustomer(assistantID, from)
 			if checkErr == nil && existingChat != nil && existingChat.Id != "" {
 				_ = h.db.DeleteChatAndMessages(existingChat.Id)
 			}
-		}
-
-		name := req.Name
-		if name == "" {
-			name = "Lead"
 		}
 
 		var systemPrompt string
