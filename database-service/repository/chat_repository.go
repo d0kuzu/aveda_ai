@@ -23,6 +23,8 @@ type ChatRepository interface {
 	UpdateChatIsBooked(ctx context.Context, id string, isBooked bool) (*models.Chat, error)
 	UpdateChatIsReviewed(ctx context.Context, id string, isReviewed bool) (*models.Chat, error)
 	UpdateChatIsTutor(ctx context.Context, id string, isTutor bool) (*models.Chat, error)
+	UpdateChatTutorState(ctx context.Context, id string, isTuting bool, tutingProgram string, tutorCountPerDay, tutorCount int32) (*models.Chat, error)
+	GetActiveTutorChats(ctx context.Context) ([]*models.Chat, error)
 	GetUnreviewedActiveChats(ctx context.Context) ([]*models.Chat, error)
 	DeleteChat(ctx context.Context, id string) error
 	DeleteAllChats(ctx context.Context) error
@@ -378,14 +380,19 @@ func (r *chatRepository) UpdateChatIsTutor(ctx context.Context, id string, isTut
 		return nil, fmt.Errorf("failed to get chat: %w", err)
 	}
 
-	chat.IsTutor = isTutor
 	if isTutor {
-		chat.IsEnd = true
-		var tutorMsgCount int64
-		if err := r.db.WithContext(ctx).Model(&models.TutorMessage{}).Where("chat_id = ?", id).Count(&tutorMsgCount).Error; err == nil {
-			chat.MessageCount = int32(tutorMsgCount)
+		// Clear any previous tutor messages when (re-)triggering tutor mode
+		if err := r.db.WithContext(ctx).Where("chat_id = ?", id).Delete(&models.TutorMessage{}).Error; err != nil {
+			return nil, fmt.Errorf("failed to clear previous tutor messages: %w", err)
 		}
+		chat.IsEnd = false
+		chat.IsTuting = false
+		chat.TutingProgram = ""
+		chat.TutorCountPerDay = 0
+		chat.TutorCount = 0
+		chat.MessageCount = 0
 	}
+	chat.IsTutor = isTutor
 	chat.UpdatedAt = time.Now()
 
 	if err := r.db.WithContext(ctx).Save(&chat).Error; err != nil {
@@ -393,6 +400,41 @@ func (r *chatRepository) UpdateChatIsTutor(ctx context.Context, id string, isTut
 	}
 
 	return &chat, nil
+}
+
+func (r *chatRepository) UpdateChatTutorState(ctx context.Context, id string, isTuting bool, tutingProgram string, tutorCountPerDay, tutorCount int32) (*models.Chat, error) {
+	var chat models.Chat
+	if err := r.db.WithContext(ctx).Where("id = ?", id).First(&chat).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, fmt.Errorf("chat not found")
+		}
+		return nil, fmt.Errorf("failed to get chat: %w", err)
+	}
+
+	chat.IsTuting = isTuting
+	chat.TutingProgram = tutingProgram
+	chat.TutorCountPerDay = tutorCountPerDay
+	chat.TutorCount = tutorCount
+	chat.UpdatedAt = time.Now()
+
+	if err := r.db.WithContext(ctx).Save(&chat).Error; err != nil {
+		return nil, fmt.Errorf("failed to update chat tutor state: %w", err)
+	}
+
+	return &chat, nil
+}
+
+func (r *chatRepository) GetActiveTutorChats(ctx context.Context) ([]*models.Chat, error) {
+	var chats []*models.Chat
+
+	if err := r.db.WithContext(ctx).
+		Where("is_tutor = ? AND is_end = ?", true, false).
+		Order("updated_at ASC").
+		Find(&chats).Error; err != nil {
+		return nil, fmt.Errorf("failed to get active tutor chats: %w", err)
+	}
+
+	return chats, nil
 }
 
 func (r *chatRepository) GetUnreviewedActiveChats(ctx context.Context) ([]*models.Chat, error) {

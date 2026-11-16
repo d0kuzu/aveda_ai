@@ -220,3 +220,86 @@ var AvedaSintaTools = []openai.Tool{
 		},
 	},
 }
+
+var TutorTools = []openai.Tool{
+	{
+		Type: openai.ToolTypeFunction,
+		Function: &openai.FunctionDefinition{
+			Name:        "select_tutor_program",
+			Description: "Call this function when the student selects one of the 4 available study programs (Barber, Cosmetology, Esthetician, or Nail Technician). Saves the selected program in the database.",
+			Parameters: map[string]interface{}{
+				"type": "object",
+				"properties": map[string]interface{}{
+					"program": map[string]interface{}{
+						"type":        "string",
+						"enum":        []string{"barber", "cosmetology", "esthetician", "nail-technician"},
+						"description": "The chosen program identifier: 'barber', 'cosmetology', 'esthetician', or 'nail-technician'.",
+					},
+				},
+				"required": []string{"program"},
+			},
+		},
+	},
+	{
+		Type: openai.ToolTypeFunction,
+		Function: &openai.FunctionDefinition{
+			Name:        "start_tutoring",
+			Description: "Call this function when the student confirms they are ready to start practicing exam questions (after a program has been selected). Sets is_tuting=true and returns the first question.",
+			Parameters: map[string]interface{}{
+				"type":       "object",
+				"properties": map[string]interface{}{},
+			},
+		},
+	},
+	{
+		Type: openai.ToolTypeFunction,
+		Function: &openai.FunctionDefinition{
+			Name:        "get_current_tutor_question",
+			Description: "Fetch the current active question for the student's selected program without incrementing the question counter.",
+			Parameters: map[string]interface{}{
+				"type":       "object",
+				"properties": map[string]interface{}{},
+			},
+		},
+	},
+	{
+		Type: openai.ToolTypeFunction,
+		Function: &openai.FunctionDefinition{
+			Name:        "submit_tutor_answer",
+			Description: "Call this function when the student answers the current question (via A/B/C/D, 1/2/3/4 where 1=A, 2=B, 3=C, 4=D, or option text) OR when the student says they don't know / want to skip the question. Increments both tutor_count_per_day and tutor_count by 1, checks correctness, and returns the explanation context plus the next question (or daily_limit_reached / program_completed).",
+			Parameters: map[string]interface{}{
+				"type": "object",
+				"properties": map[string]interface{}{
+					"selected_option": map[string]interface{}{
+						"type":        "string",
+						"enum":        []string{"A", "B", "C", "D", "SKIP"},
+						"description": "The option chosen by the student ('A', 'B', 'C', 'D'), or 'SKIP' if the student does not know the answer or wants to skip.",
+					},
+				},
+				"required": []string{"selected_option"},
+			},
+		},
+	},
+	{
+		Type: openai.ToolTypeFunction,
+		Function: &openai.FunctionDefinition{
+			Name:        "continue_tutor_today",
+			Description: "Call this function ONLY when the student has completed 5 questions today and explicitly confirms they want to do 5 more questions TODAY. Resets tutor_count_per_day to 0 and returns the next question.",
+			Parameters: map[string]interface{}{
+				"type":       "object",
+				"properties": map[string]interface{}{},
+			},
+		},
+	},
+	{
+		Type: openai.ToolTypeFunction,
+		Function: &openai.FunctionDefinition{
+			Name:        "finish_tutor_for_today",
+			Description: "Call this function ONLY when the student has completed 5 questions today and explicitly confirms they want to stop for today and continue tomorrow.",
+			Parameters: map[string]interface{}{
+				"type":       "object",
+				"properties": map[string]interface{}{},
+			},
+		},
+	},
+}

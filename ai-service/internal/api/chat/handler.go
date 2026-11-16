@@ -19,34 +19,42 @@ type ChatHandler struct {
 }
 
 type ChatJSON struct {
-	ID            string `json:"id"`
-	AssistantID   string `json:"assistant_id"`
-	CustomerID    string `json:"customer_id"`
-	Platform      string `json:"platform"`
-	CreatedAt     string `json:"created_at"`
-	UpdatedAt     string `json:"updated_at"`
-	MessageCount  int32  `json:"message_count"`
-	IsEnd         bool   `json:"is_end"`
-	FollowupStage int32  `json:"followup_stage"`
-	IsReviewed    bool   `json:"is_reviewed"`
-	IsBooked      bool   `json:"is_booked"`
-	IsTutor       bool   `json:"is_tutor"`
+	ID               string `json:"id"`
+	AssistantID      string `json:"assistant_id"`
+	CustomerID       string `json:"customer_id"`
+	Platform         string `json:"platform"`
+	CreatedAt        string `json:"created_at"`
+	UpdatedAt        string `json:"updated_at"`
+	MessageCount     int32  `json:"message_count"`
+	IsEnd            bool   `json:"is_end"`
+	FollowupStage    int32  `json:"followup_stage"`
+	IsReviewed       bool   `json:"is_reviewed"`
+	IsBooked         bool   `json:"is_booked"`
+	IsTutor          bool   `json:"is_tutor"`
+	IsTuting         bool   `json:"is_tuting"`
+	TutingProgram    string `json:"tuting_program"`
+	TutorCountPerDay int32  `json:"tutor_count_per_day"`
+	TutorCount       int32  `json:"tutor_count"`
 }
 
 func chatToJSON(chat *dbpb.ChatResponse) ChatJSON {
 	return ChatJSON{
-		ID:            chat.Id,
-		AssistantID:   chat.AssistantId,
-		CustomerID:    chat.CustomerId,
-		Platform:      chat.Platform,
-		CreatedAt:     chat.CreatedAt,
-		UpdatedAt:     chat.UpdatedAt,
-		MessageCount:  chat.MessageCount,
-		IsEnd:         chat.IsEnd,
-		FollowupStage: chat.FollowupStage,
-		IsReviewed:    chat.IsReviewed,
-		IsBooked:      chat.IsBooked,
-		IsTutor:       chat.IsTutor,
+		ID:               chat.Id,
+		AssistantID:      chat.AssistantId,
+		CustomerID:       chat.CustomerId,
+		Platform:         chat.Platform,
+		CreatedAt:        chat.CreatedAt,
+		UpdatedAt:        chat.UpdatedAt,
+		MessageCount:     chat.MessageCount,
+		IsEnd:            chat.IsEnd,
+		FollowupStage:    chat.FollowupStage,
+		IsReviewed:       chat.IsReviewed,
+		IsBooked:         chat.IsBooked,
+		IsTutor:          chat.IsTutor,
+		IsTuting:         chat.IsTuting,
+		TutingProgram:    chat.TutingProgram,
+		TutorCountPerDay: chat.TutorCountPerDay,
+		TutorCount:       chat.TutorCount,
 	}
 }
 

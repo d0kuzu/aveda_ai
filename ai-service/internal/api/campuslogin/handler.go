@@ -569,31 +569,10 @@ func (h *CampusLoginHandler) HandleTriggerTutor(c *gin.Context) {
 		firstName = campusRecord.FirstName
 	}
 
-	programIDStr := strconv.Itoa(int(campusRecord.ProgramId))
-	programName := programIDStr
-	if name, ok := constants.ProgramIDToName[programIDStr]; ok {
-		programName = name
-	}
-
-	isInternational := "no"
-	if campusRecord.IsInternationalStudent {
-		isInternational = "yes"
-	}
-
-	var systemPrompt string
-	if assistantID == constants.AvedaSintaAssistantID {
-		systemPrompt = fmt.Sprintf(
-			"This is a lead in Tutor Mode. Name: %s. Greet them by name and start the conversation.",
-			firstName,
-		)
-	} else {
-		systemPrompt = fmt.Sprintf(
-			"This is a lead in Tutor Mode. Name: %s, program: %s, International: %s. Greet them by name and mention the program they chose.",
-			firstName,
-			programName,
-			isInternational,
-		)
-	}
+	systemPrompt := fmt.Sprintf(
+		"New Tutor Mode session triggered for student '%s'. Greet them warmly by name, introduce yourself as the Aveda Exam Prep Tutor, and ask which of the 4 programs they would like to select for their exam practice: 1. Barber, 2. Cosmetology, 3. Esthetician, or 4. Nail Technician.",
+		firstName,
+	)
 
 	log.Printf("[CampusLogin Tutor Trigger] Generated System Prompt: %s", systemPrompt)
 

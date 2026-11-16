@@ -67,6 +67,9 @@ service DatabaseService {
   rpc UpdateAppointmentCampusloginStatus(UpdateAppointmentCampusloginStatusRequest) returns (AppointmentResponse);
   rpc GetAppointmentByID(GetAppointmentByIDRequest) returns (AppointmentResponse);
   rpc UpdateChatIsTutor(UpdateChatIsTutorRequest) returns (ChatResponse);
+  rpc UpdateChatTutorState(UpdateChatTutorStateRequest) returns (ChatResponse);
+  rpc GetActiveTutorChats(GetActiveTutorChatsRequest) returns (ChatsResponse);
+  rpc DeleteTutorMessagesByChat(DeleteTutorMessagesByChatRequest) returns (DeleteMessageResponse);
   rpc SaveTutorMessage(SaveMessageRequest) returns (MessageResponse);
   rpc GetTutorChatMessages(GetChatMessagesRequest) returns (MessagesResponse);
   rpc GetAllTutorChatMessages(GetAllChatMessagesRequest) returns (MessagesResponse);
@@ -168,6 +171,10 @@ message ChatResponse {
   bool is_booked = 13;
   string started_at = 14;
   bool is_tutor = 15;
+  bool is_tuting = 16;
+  string tuting_program = 17;
+  int32 tutor_count_per_day = 18;
+  int32 tutor_count = 19;
 }
 
 message SaveMessageRequest {
@@ -607,3 +614,17 @@ message UpdateChatIsTutorRequest {
   string id = 1;
   bool is_tutor = 2;
 }
+
+message UpdateChatTutorStateRequest {
+  string id = 1;
+  bool is_tuting = 2;
+  string tuting_program = 3;
+  int32 tutor_count_per_day = 4;
+  int32 tutor_count = 5;
+}
+
+message DeleteTutorMessagesByChatRequest {
+  string chat_id = 1;
+}
+
+message GetActiveTutorChatsRequest {}

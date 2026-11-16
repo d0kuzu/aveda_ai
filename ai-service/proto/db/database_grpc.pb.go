@@ -81,6 +81,9 @@ const (
 	DatabaseService_UpdateAppointmentCampusloginStatus_FullMethodName = "/database.DatabaseService/UpdateAppointmentCampusloginStatus"
 	DatabaseService_GetAppointmentByID_FullMethodName                 = "/database.DatabaseService/GetAppointmentByID"
 	DatabaseService_UpdateChatIsTutor_FullMethodName                  = "/database.DatabaseService/UpdateChatIsTutor"
+	DatabaseService_UpdateChatTutorState_FullMethodName               = "/database.DatabaseService/UpdateChatTutorState"
+	DatabaseService_GetActiveTutorChats_FullMethodName                = "/database.DatabaseService/GetActiveTutorChats"
+	DatabaseService_DeleteTutorMessagesByChat_FullMethodName          = "/database.DatabaseService/DeleteTutorMessagesByChat"
 	DatabaseService_SaveTutorMessage_FullMethodName                   = "/database.DatabaseService/SaveTutorMessage"
 	DatabaseService_GetTutorChatMessages_FullMethodName               = "/database.DatabaseService/GetTutorChatMessages"
 	DatabaseService_GetAllTutorChatMessages_FullMethodName            = "/database.DatabaseService/GetAllTutorChatMessages"
@@ -152,6 +155,9 @@ type DatabaseServiceClient interface {
 	UpdateAppointmentCampusloginStatus(ctx context.Context, in *UpdateAppointmentCampusloginStatusRequest, opts ...grpc.CallOption) (*AppointmentResponse, error)
 	GetAppointmentByID(ctx context.Context, in *GetAppointmentByIDRequest, opts ...grpc.CallOption) (*AppointmentResponse, error)
 	UpdateChatIsTutor(ctx context.Context, in *UpdateChatIsTutorRequest, opts ...grpc.CallOption) (*ChatResponse, error)
+	UpdateChatTutorState(ctx context.Context, in *UpdateChatTutorStateRequest, opts ...grpc.CallOption) (*ChatResponse, error)
+	GetActiveTutorChats(ctx context.Context, in *GetActiveTutorChatsRequest, opts ...grpc.CallOption) (*ChatsResponse, error)
+	DeleteTutorMessagesByChat(ctx context.Context, in *DeleteTutorMessagesByChatRequest, opts ...grpc.CallOption) (*DeleteMessageResponse, error)
 	SaveTutorMessage(ctx context.Context, in *SaveMessageRequest, opts ...grpc.CallOption) (*MessageResponse, error)
 	GetTutorChatMessages(ctx context.Context, in *GetChatMessagesRequest, opts ...grpc.CallOption) (*MessagesResponse, error)
 	GetAllTutorChatMessages(ctx context.Context, in *GetAllChatMessagesRequest, opts ...grpc.CallOption) (*MessagesResponse, error)
@@ -785,6 +791,36 @@ func (c *databaseServiceClient) UpdateChatIsTutor(ctx context.Context, in *Updat
 	return out, nil
 }
 
+func (c *databaseServiceClient) UpdateChatTutorState(ctx context.Context, in *UpdateChatTutorStateRequest, opts ...grpc.CallOption) (*ChatResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ChatResponse)
+	err := c.cc.Invoke(ctx, DatabaseService_UpdateChatTutorState_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *databaseServiceClient) GetActiveTutorChats(ctx context.Context, in *GetActiveTutorChatsRequest, opts ...grpc.CallOption) (*ChatsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ChatsResponse)
+	err := c.cc.Invoke(ctx, DatabaseService_GetActiveTutorChats_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *databaseServiceClient) DeleteTutorMessagesByChat(ctx context.Context, in *DeleteTutorMessagesByChatRequest, opts ...grpc.CallOption) (*DeleteMessageResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteMessageResponse)
+	err := c.cc.Invoke(ctx, DatabaseService_DeleteTutorMessagesByChat_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *databaseServiceClient) SaveTutorMessage(ctx context.Context, in *SaveMessageRequest, opts ...grpc.CallOption) (*MessageResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(MessageResponse)
@@ -881,6 +917,9 @@ type DatabaseServiceServer interface {
 	UpdateAppointmentCampusloginStatus(context.Context, *UpdateAppointmentCampusloginStatusRequest) (*AppointmentResponse, error)
 	GetAppointmentByID(context.Context, *GetAppointmentByIDRequest) (*AppointmentResponse, error)
 	UpdateChatIsTutor(context.Context, *UpdateChatIsTutorRequest) (*ChatResponse, error)
+	UpdateChatTutorState(context.Context, *UpdateChatTutorStateRequest) (*ChatResponse, error)
+	GetActiveTutorChats(context.Context, *GetActiveTutorChatsRequest) (*ChatsResponse, error)
+	DeleteTutorMessagesByChat(context.Context, *DeleteTutorMessagesByChatRequest) (*DeleteMessageResponse, error)
 	SaveTutorMessage(context.Context, *SaveMessageRequest) (*MessageResponse, error)
 	GetTutorChatMessages(context.Context, *GetChatMessagesRequest) (*MessagesResponse, error)
 	GetAllTutorChatMessages(context.Context, *GetAllChatMessagesRequest) (*MessagesResponse, error)
@@ -1079,6 +1118,15 @@ func (UnimplementedDatabaseServiceServer) GetAppointmentByID(context.Context, *G
 }
 func (UnimplementedDatabaseServiceServer) UpdateChatIsTutor(context.Context, *UpdateChatIsTutorRequest) (*ChatResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateChatIsTutor not implemented")
+}
+func (UnimplementedDatabaseServiceServer) UpdateChatTutorState(context.Context, *UpdateChatTutorStateRequest) (*ChatResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateChatTutorState not implemented")
+}
+func (UnimplementedDatabaseServiceServer) GetActiveTutorChats(context.Context, *GetActiveTutorChatsRequest) (*ChatsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetActiveTutorChats not implemented")
+}
+func (UnimplementedDatabaseServiceServer) DeleteTutorMessagesByChat(context.Context, *DeleteTutorMessagesByChatRequest) (*DeleteMessageResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method DeleteTutorMessagesByChat not implemented")
 }
 func (UnimplementedDatabaseServiceServer) SaveTutorMessage(context.Context, *SaveMessageRequest) (*MessageResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method SaveTutorMessage not implemented")
@@ -2226,6 +2274,60 @@ func _DatabaseService_UpdateChatIsTutor_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _DatabaseService_UpdateChatTutorState_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateChatTutorStateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DatabaseServiceServer).UpdateChatTutorState(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DatabaseService_UpdateChatTutorState_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DatabaseServiceServer).UpdateChatTutorState(ctx, req.(*UpdateChatTutorStateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DatabaseService_GetActiveTutorChats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetActiveTutorChatsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DatabaseServiceServer).GetActiveTutorChats(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DatabaseService_GetActiveTutorChats_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DatabaseServiceServer).GetActiveTutorChats(ctx, req.(*GetActiveTutorChatsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DatabaseService_DeleteTutorMessagesByChat_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteTutorMessagesByChatRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DatabaseServiceServer).DeleteTutorMessagesByChat(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DatabaseService_DeleteTutorMessagesByChat_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DatabaseServiceServer).DeleteTutorMessagesByChat(ctx, req.(*DeleteTutorMessagesByChatRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _DatabaseService_SaveTutorMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SaveMessageRequest)
 	if err := dec(in); err != nil {
@@ -2534,6 +2636,18 @@ var DatabaseService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateChatIsTutor",
 			Handler:    _DatabaseService_UpdateChatIsTutor_Handler,
+		},
+		{
+			MethodName: "UpdateChatTutorState",
+			Handler:    _DatabaseService_UpdateChatTutorState_Handler,
+		},
+		{
+			MethodName: "GetActiveTutorChats",
+			Handler:    _DatabaseService_GetActiveTutorChats_Handler,
+		},
+		{
+			MethodName: "DeleteTutorMessagesByChat",
+			Handler:    _DatabaseService_DeleteTutorMessagesByChat_Handler,
 		},
 		{
 			MethodName: "SaveTutorMessage",

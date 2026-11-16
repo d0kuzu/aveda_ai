@@ -1,6 +1,8 @@
 package llm
 
 import (
+	"diaxel/internal/constants"
+	"diaxel/internal/modules/tutor"
 	dbpb "diaxel/proto/db"
 	"encoding/json"
 	"fmt"
@@ -58,13 +60,55 @@ func (c *Client) GetMessages(assistantId, customerId string) ([]openai.ChatCompl
 	}
 
 	// Append system prompt at the end
-	startMessages, err := c.StartMessages(assistantId, customerId)
-	if err != nil {
-		return nil, err
+	var startMessages []openai.ChatCompletionMessage
+	if chatResp != nil && chatResp.IsTutor {
+		startMessages = c.StartTutorMessages(chatResp)
+	} else {
+		startMessages, err = c.StartMessages(assistantId, customerId)
+		if err != nil {
+			return nil, err
+		}
 	}
 	messages = append(messages, startMessages...)
 
 	return messages, nil
+}
+
+func (c *Client) StartTutorMessages(chatResp *dbpb.ChatResponse) []openai.ChatCompletionMessage {
+	systemPrompt := constants.TutorSystemPrompt
+
+	progName := "None (not selected yet)"
+	if chatResp.TutingProgram != "" {
+		progName = tutor.ProgramDisplayName(chatResp.TutingProgram)
+	}
+
+	stateInfo := fmt.Sprintf(
+		"\n\n### Current Student Tutor State (from Database):\n- Selected Program: %s\n- Tutoring Active (is_tuting): %v\n- Questions Answered Today (tutor_count_per_day): %d / 5\n- Total Questions Completed (tutor_count): %d",
+		progName,
+		chatResp.IsTuting,
+		chatResp.TutorCountPerDay,
+		chatResp.TutorCount,
+	)
+
+	if chatResp.IsTuting && chatResp.TutingProgram != "" && chatResp.TutorCountPerDay < 5 {
+		if q, total, err := tutor.GetQuestion(chatResp.TutingProgram, int(chatResp.TutorCount)); err == nil && q != nil {
+			stateInfo += fmt.Sprintf(
+				"\n- Currently Active Question (%d of %d):\n%s",
+				int(chatResp.TutorCount)+1,
+				total,
+				tutor.FormatQuestion(q),
+			)
+		}
+	}
+
+	systemPrompt += stateInfo
+
+	return []openai.ChatCompletionMessage{
+		{
+			Role:    openai.ChatMessageRoleSystem,
+			Content: systemPrompt,
+		},
+	}
 }
 
 func (c *Client) StartMessages(assistantId, customerId string) ([]openai.ChatCompletionMessage, error) {
@@ -139,8 +183,13 @@ func (c *Client) SaveMessages(assistantId, customerId string, messages []openai.
 	// Определяем, сколько сообщений уже было (системные + те, что в базе)
 	// Нам нужно знать, сколько системных сообщений добавляет StartMessages.
 	// Обычно это 1 сообщение.
-	systemMessages, _ := c.StartMessages(assistantId, "")
-	systemCount := len(systemMessages)
+	var systemCount int
+	if isTutor {
+		systemCount = 1
+	} else {
+		systemMessages, _ := c.StartMessages(assistantId, "")
+		systemCount = len(systemMessages)
+	}
 
 	totalExistingCount := systemCount + int(messageCount)
 

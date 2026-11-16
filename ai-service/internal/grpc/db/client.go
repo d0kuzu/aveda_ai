@@ -803,3 +803,47 @@ func (c *Client) GetAllTutorChatMessages(chatID string) ([]*dbpb.MessageResponse
 
 	return resp.Messages, nil
 }
+
+func (c *Client) UpdateChatTutorState(chatID string, isTuting bool, tutingProgram string, tutorCountPerDay, tutorCount int32) (*dbpb.ChatResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	req := &dbpb.UpdateChatTutorStateRequest{
+		Id:               chatID,
+		IsTuting:         isTuting,
+		TutingProgram:    tutingProgram,
+		TutorCountPerDay: tutorCountPerDay,
+		TutorCount:       tutorCount,
+	}
+
+	return c.DB.UpdateChatTutorState(ctx, req)
+}
+
+func (c *Client) GetActiveTutorChats() ([]*dbpb.ChatResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	req := &dbpb.GetActiveTutorChatsRequest{}
+	resp, err := c.DB.GetActiveTutorChats(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	if resp.Chats == nil {
+		return []*dbpb.ChatResponse{}, nil
+	}
+
+	return resp.Chats, nil
+}
+
+func (c *Client) DeleteTutorMessagesByChat(chatID string) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	req := &dbpb.DeleteTutorMessagesByChatRequest{
+		ChatId: chatID,
+	}
+
+	_, err := c.DB.DeleteTutorMessagesByChat(ctx, req)
+	return err
+}

@@ -5,6 +5,7 @@ WORKDIR /app
 RUN apk --no-cache add ca-certificates tzdata
 
 COPY ai-service .
+COPY json ./json
 
 RUN chmod +x ai-service
 

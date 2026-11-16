@@ -17,6 +17,7 @@ import (
 	"diaxel/internal/modules/summary"
 	"diaxel/internal/modules/telegram"
 	"diaxel/internal/modules/tgnotifier"
+	"diaxel/internal/modules/tutor"
 	"diaxel/internal/modules/twilio"
 	"diaxel/internal/modules/calcom"
 )
@@ -54,6 +55,9 @@ func main() {
 
 	abandonedSummarizer := summary.NewAbandonedSummarizer(grpcClient, campusloginClient, llmClient)
 	go abandonedSummarizer.Start(context.Background())
+
+	tutorWorker := tutor.NewWorker(grpcClient, twilioClient)
+	go tutorWorker.Start(context.Background())
 
 	// webhookURL := settings.WebhookBaseURL + "/google/webhook"
 	// webhookWorker := googlecalendar.NewWebhookWorker(gcClient, grpcClient, "primary", webhookURL)

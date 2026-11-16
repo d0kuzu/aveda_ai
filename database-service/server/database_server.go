@@ -315,14 +315,18 @@ func (s *DatabaseServer) GetChat(ctx context.Context, req *proto.GetChatRequest)
 			}
 			return ""
 		}(),
-		CreatedAt:     chat.CreatedAt.Format(time.RFC3339),
-		UpdatedAt:     chat.UpdatedAt.Format(time.RFC3339),
-		MessageCount:  chat.MessageCount,
-		IsEnd:         chat.IsEnd,
-		IsBooked:      chat.IsBooked,
-		IsReviewed:    chat.IsReviewed,
-		IsTutor:       chat.IsTutor,
-		FollowupStage: int32(chat.FollowupStage),
+		CreatedAt:        chat.CreatedAt.Format(time.RFC3339),
+		UpdatedAt:        chat.UpdatedAt.Format(time.RFC3339),
+		MessageCount:     chat.MessageCount,
+		IsEnd:            chat.IsEnd,
+		IsBooked:         chat.IsBooked,
+		IsReviewed:       chat.IsReviewed,
+		IsTutor:          chat.IsTutor,
+		IsTuting:         chat.IsTuting,
+		TutingProgram:    chat.TutingProgram,
+		TutorCountPerDay: chat.TutorCountPerDay,
+		TutorCount:       chat.TutorCount,
+		FollowupStage:    int32(chat.FollowupStage),
 	}, nil
 }
 
@@ -374,14 +378,18 @@ func (s *DatabaseServer) UpdateChat(ctx context.Context, req *proto.UpdateChatRe
 			}
 			return ""
 		}(),
-		CreatedAt:     chat.CreatedAt.Format(time.RFC3339),
-		UpdatedAt:     chat.UpdatedAt.Format(time.RFC3339),
-		MessageCount:  chat.MessageCount,
-		IsEnd:         chat.IsEnd,
-		IsReviewed:    chat.IsReviewed,
-		IsBooked:      chat.IsBooked,
-		IsTutor:       chat.IsTutor,
-		FollowupStage: int32(chat.FollowupStage),
+		CreatedAt:        chat.CreatedAt.Format(time.RFC3339),
+		UpdatedAt:        chat.UpdatedAt.Format(time.RFC3339),
+		MessageCount:     chat.MessageCount,
+		IsEnd:            chat.IsEnd,
+		IsReviewed:       chat.IsReviewed,
+		IsBooked:         chat.IsBooked,
+		IsTutor:          chat.IsTutor,
+		IsTuting:         chat.IsTuting,
+		TutingProgram:    chat.TutingProgram,
+		TutorCountPerDay: chat.TutorCountPerDay,
+		TutorCount:       chat.TutorCount,
+		FollowupStage:    int32(chat.FollowupStage),
 	}, nil
 }
 
@@ -741,14 +749,18 @@ func (s *DatabaseServer) GetLatestChatByCustomer(ctx context.Context, req *proto
 			}
 			return ""
 		}(),
-		CreatedAt:     chat.CreatedAt.Format(time.RFC3339),
-		UpdatedAt:     chat.UpdatedAt.Format(time.RFC3339),
-		MessageCount:  chat.MessageCount,
-		IsEnd:         chat.IsEnd,
-		IsReviewed:    chat.IsReviewed,
-		IsBooked:      chat.IsBooked,
-		IsTutor:       chat.IsTutor,
-		FollowupStage: int32(chat.FollowupStage),
+		CreatedAt:        chat.CreatedAt.Format(time.RFC3339),
+		UpdatedAt:        chat.UpdatedAt.Format(time.RFC3339),
+		MessageCount:     chat.MessageCount,
+		IsEnd:            chat.IsEnd,
+		IsReviewed:       chat.IsReviewed,
+		IsBooked:         chat.IsBooked,
+		IsTutor:          chat.IsTutor,
+		IsTuting:         chat.IsTuting,
+		TutingProgram:    chat.TutingProgram,
+		TutorCountPerDay: chat.TutorCountPerDay,
+		TutorCount:       chat.TutorCount,
+		FollowupStage:    int32(chat.FollowupStage),
 	}, nil
 }
 
@@ -1374,14 +1386,18 @@ func (s *DatabaseServer) UpdateChatIsTutor(ctx context.Context, req *proto.Updat
 			}
 			return ""
 		}(),
-		CreatedAt:     chat.CreatedAt.Format(time.RFC3339),
-		UpdatedAt:     chat.UpdatedAt.Format(time.RFC3339),
-		MessageCount:  chat.MessageCount,
-		IsEnd:         chat.IsEnd,
-		IsReviewed:    chat.IsReviewed,
-		IsBooked:      chat.IsBooked,
-		IsTutor:       chat.IsTutor,
-		FollowupStage: int32(chat.FollowupStage),
+		CreatedAt:        chat.CreatedAt.Format(time.RFC3339),
+		UpdatedAt:        chat.UpdatedAt.Format(time.RFC3339),
+		MessageCount:     chat.MessageCount,
+		IsEnd:            chat.IsEnd,
+		IsReviewed:       chat.IsReviewed,
+		IsBooked:         chat.IsBooked,
+		IsTutor:          chat.IsTutor,
+		IsTuting:         chat.IsTuting,
+		TutingProgram:    chat.TutingProgram,
+		TutorCountPerDay: chat.TutorCountPerDay,
+		TutorCount:       chat.TutorCount,
+		FollowupStage:    int32(chat.FollowupStage),
 	}, nil
 }
 
@@ -1450,5 +1466,79 @@ func (s *DatabaseServer) GetAllTutorChatMessages(ctx context.Context, req *proto
 	return &proto.MessagesResponse{
 		Messages: protoMessages,
 	}, nil
+}
+
+func (s *DatabaseServer) UpdateChatTutorState(ctx context.Context, req *proto.UpdateChatTutorStateRequest) (*proto.ChatResponse, error) {
+	chat, err := s.chatRepo.UpdateChatTutorState(ctx, req.Id, req.IsTuting, req.TutingProgram, req.TutorCountPerDay, req.TutorCount)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to update chat tutor state: %v", err)
+	}
+
+	return &proto.ChatResponse{
+		Id:          chat.ID,
+		AssistantId: chat.AssistantID,
+		CustomerId: func() string {
+			if chat.CustomerID != nil {
+				return *chat.CustomerID
+			}
+			return ""
+		}(),
+		CreatedAt:        chat.CreatedAt.Format(time.RFC3339),
+		UpdatedAt:        chat.UpdatedAt.Format(time.RFC3339),
+		MessageCount:     chat.MessageCount,
+		IsEnd:            chat.IsEnd,
+		IsReviewed:       chat.IsReviewed,
+		IsBooked:         chat.IsBooked,
+		IsTutor:          chat.IsTutor,
+		IsTuting:         chat.IsTuting,
+		TutingProgram:    chat.TutingProgram,
+		TutorCountPerDay: chat.TutorCountPerDay,
+		TutorCount:       chat.TutorCount,
+		FollowupStage:    int32(chat.FollowupStage),
+	}, nil
+}
+
+func (s *DatabaseServer) GetActiveTutorChats(ctx context.Context, req *proto.GetActiveTutorChatsRequest) (*proto.ChatsResponse, error) {
+	chats, err := s.chatRepo.GetActiveTutorChats(ctx)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to get active tutor chats: %v", err)
+	}
+
+	var protoChats []*proto.ChatResponse
+	for _, chat := range chats {
+		customerId := ""
+		if chat.CustomerID != nil {
+			customerId = *chat.CustomerID
+		}
+
+		protoChats = append(protoChats, &proto.ChatResponse{
+			Id:               chat.ID,
+			AssistantId:      chat.AssistantID,
+			CustomerId:       customerId,
+			CreatedAt:        chat.CreatedAt.Format(time.RFC3339),
+			UpdatedAt:        chat.UpdatedAt.Format(time.RFC3339),
+			MessageCount:     chat.MessageCount,
+			IsEnd:            chat.IsEnd,
+			IsReviewed:       chat.IsReviewed,
+			IsBooked:         chat.IsBooked,
+			IsTutor:          chat.IsTutor,
+			IsTuting:         chat.IsTuting,
+			TutingProgram:    chat.TutingProgram,
+			TutorCountPerDay: chat.TutorCountPerDay,
+			TutorCount:       chat.TutorCount,
+			FollowupStage:    int32(chat.FollowupStage),
+		})
+	}
+
+	return &proto.ChatsResponse{
+		Chats: protoChats,
+	}, nil
+}
+
+func (s *DatabaseServer) DeleteTutorMessagesByChat(ctx context.Context, req *proto.DeleteTutorMessagesByChatRequest) (*proto.DeleteMessageResponse, error) {
+	if err := s.messageRepo.DeleteTutorMessagesByChatID(ctx, req.ChatId); err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to delete tutor messages: %v", err)
+	}
+	return &proto.DeleteMessageResponse{Success: true}, nil
 }
 

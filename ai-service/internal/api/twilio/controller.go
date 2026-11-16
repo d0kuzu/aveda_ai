@@ -93,7 +93,7 @@ func (h *TwilioWebhookHandler) HandleWebhook(c *gin.Context) {
 		return
 	}
 
-	if chat != nil && chat.IsEnd && !chat.IsTutor {
+	if chat != nil && chat.IsEnd {
 		log.Printf("[Twilio Webhook] Ignoring message from %s: chat is ended.", from)
 		c.Header("Content-Type", "text/xml")
 		c.String(http.StatusOK, `<?xml version="1.0" encoding="UTF-8"?><Response></Response>`)

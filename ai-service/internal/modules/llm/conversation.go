@@ -211,6 +211,18 @@ func (c *Client) executeFunction(ctx context.Context, functionName, argsJSON, us
 		return c.handleCloseConversation(ctx, userId, assistantId)
 	case "bookcampussansfrancisco", "bookcampussansjose":
 		return c.handleBookCampusSinta(ctx, functionName, userId, assistantId)
+	case "select_tutor_program":
+		return c.handleSelectTutorProgram(ctx, argsJSON, userId, assistantId)
+	case "start_tutoring":
+		return c.handleStartTutoring(ctx, userId, assistantId)
+	case "get_current_tutor_question":
+		return c.handleGetCurrentTutorQuestion(ctx, userId, assistantId)
+	case "submit_tutor_answer":
+		return c.handleSubmitTutorAnswer(ctx, argsJSON, userId, assistantId)
+	case "continue_tutor_today":
+		return c.handleContinueTutorToday(ctx, userId, assistantId)
+	case "finish_tutor_for_today":
+		return c.handleFinishTutorForToday(ctx, userId, assistantId)
 	default:
 		return "", fmt.Errorf("unknown function: %s", functionName)
 	}
