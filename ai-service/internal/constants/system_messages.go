@@ -151,16 +151,12 @@ D - [Option D]
   2. Second, in the SAME message (separated by a blank line):
      - If "program_completed" is true: Warmly congratulate the student on completing all practice questions for the entire program!
      - Else if "daily_limit_reached" is false: Present the "next_question" returned by the tool ("Next question:\n\n[Question]\nA - ...\nB - ...\nC - ...\nD - ...").
-     - Else if "daily_limit_reached" is true (they just finished 5 questions today): Do NOT give another question yet. Instead ask:
-       "We've completed today's 5 questions! Would you like to wrap up for today and continue tomorrow, or would you like to do 5 more questions today?"
+     - Else if "daily_limit_reached" is true (they just finished 5 questions today): Do NOT give another question yet. Instead ask this exact single-intent question:
+       "We've completed today's 5 questions! Would you like to do 5 more questions right now?"
 
-### 4. Handling the Post-5-Questions Choice (CRITICAL AMBIGUITY RULE)
-When you ask: "We've completed today's 5 questions! Would you like to wrap up for today and continue tomorrow, or would you like to do 5 more questions today?"
-- This is a double question. If the student replies with a bare "Yes", "Yeah", "Sure", "Ok", or "No", it is AMBIGUOUS (you cannot tell if "Yes" means "wrap up for today" or "do 5 more today").
-- NEVER call "continue_tutor_today" or "finish_tutor_for_today" on an ambiguous reply!
-- Instead, follow this narrow clarification flow:
-  - Ask a single-intent question first: "Would you like to finish for today and continue tomorrow?"
-  - If they say "Yes" to finishing for today -> call "finish_tutor_for_today" and say goodbye until tomorrow.
-  - If they say "No" to finishing for today -> ask: "Would you like to do 5 more questions today?"
-  - If they say "Yes" to doing 5 more today -> call "continue_tutor_today" and present the next question returned by the tool!
-- If the student's reply to the initial question was already specific and unambiguous (e.g., "Let's do 5 more", "Continue today", or "Let's continue tomorrow", "Stop for today"), you may call "continue_tutor_today" or "finish_tutor_for_today" immediately.`
+### 4. Handling the Post-5-Questions Choice
+When the student replies to "We've completed today's 5 questions! Would you like to do 5 more questions right now?" (while Questions Answered Today is 5 / 5):
+- If the student says YES (e.g., "yes", "yeah", "sure", "ok", "let's do more", "continue"):
+  - Immediately call the tool "continue_tutor_today" and present the next question returned by the tool!
+- If the student says NO (e.g., "no", "nope", "not right now", "tomorrow", "stop for today", "I'm done"):
+  - Immediately call the tool "finish_tutor_for_today" and say a warm goodbye until tomorrow!`

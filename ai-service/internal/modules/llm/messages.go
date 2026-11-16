@@ -82,12 +82,20 @@ func (c *Client) StartTutorMessages(chatResp *dbpb.ChatResponse) []openai.ChatCo
 		progName = tutor.ProgramDisplayName(chatResp.TutingProgram)
 	}
 
+	var actionReminder string
+	if chatResp.IsTuting && chatResp.TutorCountPerDay >= 5 {
+		actionReminder = "CRITICAL REMINDER: The student has completed 5 / 5 questions today and was asked 'Would you like to do 5 more questions right now?'. If the student's reply is affirmative (yes, yeah, sure, ok, continue), you MUST call `continue_tutor_today` immediately! If the student's reply is negative (no, nope, tomorrow, stop), you MUST call `finish_tutor_for_today` immediately!"
+	} else {
+		actionReminder = "CRITICAL REMINDER: You do NOT have the question bank in your memory. Every single time the student answers a question (with A/B/C/D, 1/2/3/4, option text, or skip), you MUST call the function `submit_tutor_answer` FIRST so the backend increments `tutor_count` and returns the official next question. NEVER reply with 'Correct!', 'Not quite!', or 'Next question:' without calling `submit_tutor_answer` in this turn!"
+	}
+
 	stateInfo := fmt.Sprintf(
-		"\n\n### Current Student Tutor State (from Database):\n- Selected Program: %s\n- Tutoring Active (is_tuting): %v\n- Questions Answered Today (tutor_count_per_day): %d / 5\n- Total Questions Completed (tutor_count): %d\n\nCRITICAL REMINDER: You do NOT have the question bank in your memory. Every single time the student answers a question (with A/B/C/D, 1/2/3/4, option text, or skip), you MUST call the function `submit_tutor_answer` FIRST so the backend increments `tutor_count` and returns the official next question. NEVER reply with 'Correct!', 'Not quite!', or 'Next question:' without calling `submit_tutor_answer` in this turn!",
+		"\n\n### Current Student Tutor State (from Database):\n- Selected Program: %s\n- Tutoring Active (is_tuting): %v\n- Questions Answered Today (tutor_count_per_day): %d / 5\n- Total Questions Completed (tutor_count): %d\n\n%s",
 		progName,
 		chatResp.IsTuting,
 		chatResp.TutorCountPerDay,
 		chatResp.TutorCount,
+		actionReminder,
 	)
 
 	systemPrompt += stateInfo

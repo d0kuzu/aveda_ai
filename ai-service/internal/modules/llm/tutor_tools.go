@@ -197,7 +197,7 @@ func (c *Client) handleSubmitTutorAnswer(ctx context.Context, argsJSON, userId, 
 			"daily_limit_reached":      true,
 			"program_completed":        false,
 			"instruction": fmt.Sprintf(
-				"First, provide feedback/explanation on question %d (Correct Answer: %s - %s). Then in the same message (after a blank line), tell the student we have completed today's 5 questions and ask if they want to wrap up for today and continue tomorrow, or do 5 more questions today.",
+				"First, provide feedback/explanation on question %d (Correct Answer: %s - %s). Then in the same message (after a blank line), tell the student we have completed today's 5 questions and ask: 'Would you like to do 5 more questions right now?'",
 				currentIndex+1, q.CorrectAnswer, q.CorrectAnswerText,
 			),
 		}
