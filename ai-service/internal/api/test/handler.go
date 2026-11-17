@@ -412,13 +412,7 @@ func (h *TestHandler) TestTutorConversation(c *gin.Context) {
 		return
 	}
 
-	assistantID := c.Param("assistant_id")
-	if assistantID == "" {
-		assistantID = req.AssistantID
-	}
-	if assistantID == "" {
-		assistantID = constants.AvedaSintaAssistantID
-	}
+	assistantID := constants.AvedaTutorAssistantID
 
 	from := strings.TrimSpace(req.From)
 	if from == "" {

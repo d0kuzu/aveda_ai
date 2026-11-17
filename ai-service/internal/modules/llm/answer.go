@@ -18,7 +18,7 @@ func (c *Client) GetAnswer(ctx context.Context, assistantId string, messages []o
 	}
 
 	var tools []openai.Tool
-	if isTutorMode {
+	if isTutorMode || assistantId == constants.AvedaTutorAssistantID {
 		tools = constants.TutorTools
 	} else {
 		switch assistantId {

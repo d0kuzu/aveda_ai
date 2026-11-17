@@ -2,6 +2,7 @@ package twilio
 
 import (
 	"diaxel/internal/config"
+	"diaxel/internal/constants"
 	"diaxel/internal/grpc/db"
 	"diaxel/internal/modules/llm"
 	twilio2 "diaxel/internal/modules/twilio"
@@ -44,18 +45,20 @@ func NewTwilioWebhookHandler(cfg *config.Settings, llmClient *llm.Client, twilio
 }
 
 func (h *TwilioWebhookHandler) HandleWebhook(c *gin.Context) {
-	// Parse form early to forward the exact payload
-	if err := c.Request.ParseForm(); err == nil {
-		formData := c.Request.PostForm.Encode()
-		go forwardWebhookToCampusLogin(formData)
-	} else {
-		log.Printf("[Twilio Webhook] Warning: Failed to parse form for forwarding: %v", err)
-	}
-
 	assistantID := c.Param("assistant_id")
 	if assistantID == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "assistant_id is required"})
 		return
+	}
+
+	// Parse form early to forward the exact payload (skip CampusLogin forwarding for Tutor assistant)
+	if assistantID != constants.AvedaTutorAssistantID {
+		if err := c.Request.ParseForm(); err == nil {
+			formData := c.Request.PostForm.Encode()
+			go forwardWebhookToCampusLogin(formData)
+		} else {
+			log.Printf("[Twilio Webhook] Warning: Failed to parse form for forwarding: %v", err)
+		}
 	}
 
 	_, err := h.db.GetAssistant(assistantID)

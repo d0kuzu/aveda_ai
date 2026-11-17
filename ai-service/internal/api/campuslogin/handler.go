@@ -443,10 +443,7 @@ type TutorTriggerRequest struct {
 }
 
 func (h *CampusLoginHandler) HandleTriggerTutor(c *gin.Context) {
-	assistantID := c.Param("assistant_id")
-	if assistantID == "" {
-		assistantID = constants.AvedaSintaAssistantID
-	}
+	assistantID := constants.AvedaTutorAssistantID
 
 	var req TutorTriggerRequest
 	if err := c.ShouldBind(&req); err != nil {
