@@ -417,8 +417,7 @@ func (h *TestHandler) TestTutorConversation(c *gin.Context) {
 		assistantID = req.AssistantID
 	}
 	if assistantID == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "assistant_id is required"})
-		return
+		assistantID = constants.AvedaSintaAssistantID
 	}
 
 	from := strings.TrimSpace(req.From)
@@ -437,7 +436,6 @@ func (h *TestHandler) TestTutorConversation(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "from phone must contain at least 10 digits"})
 		return
 	}
-	phoneSuffix := digitsOnly[len(digitsOnly)-10:]
 
 	if len(digitsOnly) == 10 {
 		from = "+1" + digitsOnly
@@ -452,33 +450,15 @@ func (h *TestHandler) TestTutorConversation(c *gin.Context) {
 		name := strings.TrimSpace(req.Name)
 
 		if h.db != nil {
-			campusRecord, err := h.db.GetCampusloginByUserId(from)
-			if err != nil || campusRecord == nil || campusRecord.UserId == "" {
-				campusRecord, err = h.db.GetCampusloginByPhone(phoneSuffix)
-			}
-			if err != nil || campusRecord == nil || campusRecord.UserId == "" {
-				c.JSON(http.StatusNotFound, gin.H{
-					"status": "error",
-					"code":   "contact_not_found",
-					"error":  fmt.Sprintf("Contact with phone number %s was not found in campuslogins", from),
-				})
-				return
-			}
-
-			from = campusRecord.UserId
-			if name == "" {
-				name = campusRecord.FirstName
-			}
-
 			existingChat, checkErr := h.db.GetLatestChatByCustomer(assistantID, from)
 			if checkErr == nil && existingChat != nil && existingChat.Id != "" {
-				_, err = h.db.UpdateChatIsTutor(existingChat.Id, true)
+				_, err := h.db.UpdateChatIsTutor(existingChat.Id, true)
 				if err != nil {
 					c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to switch chat to tutor mode: " + err.Error()})
 					return
 				}
 			} else {
-				_, err = h.db.CreateTutorChat(assistantID, from, "openai")
+				_, err := h.db.CreateTutorChat(assistantID, from, "openai")
 				if err != nil {
 					c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create tutor chat: " + err.Error()})
 					return

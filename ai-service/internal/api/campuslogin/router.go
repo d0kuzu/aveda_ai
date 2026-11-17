@@ -13,7 +13,9 @@ func CampusLoginRoutes(router *gin.Engine, app *appModule.App) {
 	{
 		group.POST("/triger-twilio/:assistant_id", h.HandleTriggerTwilio)
 		group.POST("/triger-twilio/reinquiry/:assistant_id", h.HandleTriggerTwilioReinquiry)
+		group.POST("/trigger-tutor", h.HandleTriggerTutor)
 		group.POST("/trigger-tutor/:assistant_id", h.HandleTriggerTutor)
+		group.POST("/triger-tutor", h.HandleTriggerTutor)
 		group.POST("/triger-tutor/:assistant_id", h.HandleTriggerTutor)
 		group.POST("/triger-twilio/tutor/:assistant_id", h.HandleTriggerTutor)
 		group.GET("/appointments/pending", h.GetPendingAppointments)
