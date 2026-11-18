@@ -539,7 +539,7 @@ func (h *CampusLoginHandler) HandleTriggerTutor(c *gin.Context) {
 	}
 
 	systemPrompt := fmt.Sprintf(
-		"New Tutor Mode session triggered for student '%s'. Greet them warmly by name, introduce yourself as the State Board Exam Prep Tutor, and ask which of the 4 programs they would like to select for their exam practice: 1. Barber, 2. Cosmetology, 3. Esthetician, or 4. Nail Technician.",
+		"New Tutor Mode session triggered for student '%s'. Send a very short, friendly, upbeat SMS greeting by name (do NOT say you are an AI or AI tutor — just say you're here to help them prep for their State Board exam!), and ask which program they want to practice: 1. Barber, 2. Cosmetology, 3. Esthetician, or 4. Nail Technician.",
 		firstName,
 	)
 
