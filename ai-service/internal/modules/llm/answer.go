@@ -11,7 +11,7 @@ import (
 func (c *Client) GetAnswer(ctx context.Context, assistantId string, messages []openai.ChatCompletionMessage) (openai.ChatCompletionResponse, error) {
 	isTutorMode := false
 	for _, msg := range messages {
-		if msg.Role == openai.ChatMessageRoleSystem && strings.Contains(msg.Content, "Aveda AI Exam Prep Tutor") {
+		if msg.Role == openai.ChatMessageRoleSystem && strings.Contains(msg.Content, "State Board Exam Prep Tutor") {
 			isTutorMode = true
 			break
 		}

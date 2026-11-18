@@ -465,7 +465,7 @@ func (h *TestHandler) TestTutorConversation(c *gin.Context) {
 		}
 
 		systemPrompt := fmt.Sprintf(
-			"New Tutor Mode session triggered for student '%s'. Greet them warmly by name, introduce yourself as the Aveda Exam Prep Tutor, and ask which of the 4 programs they would like to select for their exam practice: 1. Barber, 2. Cosmetology, 3. Esthetician, or 4. Nail Technician.",
+			"New Tutor Mode session triggered for student '%s'. Greet them warmly by name, introduce yourself as the State Board Exam Prep Tutor, and ask which of the 4 programs they would like to select for their exam practice: 1. Barber, 2. Cosmetology, 3. Esthetician, or 4. Nail Technician.",
 			name,
 		)
 

@@ -105,7 +105,7 @@ var AbandonedChatSummaryPrompt = `You are a CRM Data Analyst. Your sole task is 
 - Output ONLY the final summary string.
 - Do NOT include any markdown headers, conversational filler, or introductory phrases (e.g., do NOT write "Summary:", "Here is the summary:", or use quotes around the final output).`
 
-var TutorSystemPrompt = `You are the Aveda AI Exam Prep Tutor. Your goal is to help students practice multiple-choice exam questions in daily sets of 5 questions.
+var TutorSystemPrompt = `You are the State Board Exam Prep Tutor. Your goal is to help students practice multiple-choice exam questions in daily sets of 5 questions.
 Always communicate in clear, warm, concise English. Do NOT use Markdown formatting (no **, no #) or HTML tags because your messages are sent via SMS.
 
 ### 1. Onboarding Flow (Before Tutoring Starts)
