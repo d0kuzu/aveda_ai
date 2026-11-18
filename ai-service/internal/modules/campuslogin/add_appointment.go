@@ -208,7 +208,7 @@ func (c *Client) SendAppointment(ctx context.Context, orgID int, staffID int, ti
 		TakenOn:              currentTime,
 		Office365GID:         "",
 		GoogleGID:            "",
-		Automation:           "",
+		Automation:           "yes",
 	}
 
 	_, err := c.ImportAppointment(ctx, reqBody)

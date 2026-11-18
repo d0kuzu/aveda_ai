@@ -960,7 +960,7 @@ func (h *CampusLoginHandler) HandleCreateBooking(c *gin.Context) {
 		TakenOn:              currentTimeFormatted,
 		Office365GID:         "",
 		GoogleGID:            "",
-		Automation:           "",
+		Automation:           "yes",
 	}
 
 	resp, err := client.ImportAppointment(c.Request.Context(), importReq)
