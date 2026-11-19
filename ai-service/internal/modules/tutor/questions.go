@@ -44,6 +44,11 @@ var programFiles = map[string]string{
 	"nail-technician": "nail-technician.json",
 }
 
+var canadaProgramFiles = map[string]string{
+	"esthetician":     "esthetician.json",
+	"nail-technician": "nail-technician.json",
+}
+
 func IsCanadaAssistant(assistantID string) bool {
 	return strings.EqualFold(strings.TrimSpace(assistantID), constants.AvedaCanadaAssistantID)
 }
@@ -121,9 +126,9 @@ func ProgramDisplayNameForAssistant(assistantID, program string) string {
 	return ProgramDisplayName(program)
 }
 
-func loadExamPool(searchDirs []string, poolLabel string) map[string]*ExamData {
+func loadExamPool(searchDirs []string, filesMap map[string]string, poolLabel string) map[string]*ExamData {
 	pool := make(map[string]*ExamData)
-	for progKey, fileName := range programFiles {
+	for progKey, fileName := range filesMap {
 		var content []byte
 		var err error
 		for _, dir := range searchDirs {
@@ -153,8 +158,8 @@ func loadAllExams() {
 	defaultDirs := []string{"json", "ai-service/json", "../json", "../ai-service/json"}
 	canadaDirs := []string{"json/canada", "ai-service/json/canada", "../json/canada", "../ai-service/json/canada"}
 
-	examsMap = loadExamPool(defaultDirs, "default")
-	canadaExamsMap = loadExamPool(canadaDirs, "canada")
+	examsMap = loadExamPool(defaultDirs, programFiles, "default")
+	canadaExamsMap = loadExamPool(canadaDirs, canadaProgramFiles, "canada")
 }
 
 func GetExamData(program string) (*ExamData, error) {

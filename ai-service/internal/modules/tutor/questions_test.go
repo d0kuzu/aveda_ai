@@ -53,8 +53,8 @@ func TestLoadAllExams(t *testing.T) {
 			t.Errorf("Canada NormalizeProgramForAssistant(%q) = (%q, %v), want (%q, true)", input, got, ok, expectedNorm)
 		}
 		q, total, err := GetQuestionForAssistant(constants.AvedaCanadaAssistantID, input, 0)
-		if err != nil || q == nil || total == 0 {
-			t.Errorf("Canada GetQuestionForAssistant(%q) failed: q=%v, total=%d, err=%v", input, q, total, err)
+		if err != nil || q == nil || total != 200 {
+			t.Errorf("Canada GetQuestionForAssistant(%q) failed: q=%v, total=%d (want 200), err=%v", input, q, total, err)
 		}
 	}
 
