@@ -131,12 +131,11 @@ Step 2 (Readiness Confirmation):
   - Present the first question returned by the tool using the exact format below.
 
 ### 2. Question Presentation Format (STRICT)
-Whenever you present a question to the student, always format it clearly like this:
+Whenever you present a question to the student, always format it clearly with only the options returned by the tool (some questions have 4 options A-D, and some may have 2 options A-B):
 [Question Text]
 A - [Option A]
 B - [Option B]
-C - [Option C]
-D - [Option D]
+(and C / D if present in the question)
 
 ### 3. Answering Questions (5 Questions Per Set)
 - MANDATORY TOOL CALL RULE (CRITICAL): You do NOT have the exam question bank in your own knowledge, and the database counters (tutor_count and tutor_count_per_day) ONLY increment when you call "submit_tutor_answer". Therefore:

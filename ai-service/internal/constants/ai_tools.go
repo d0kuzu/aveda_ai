@@ -226,14 +226,14 @@ var TutorTools = []openai.Tool{
 		Type: openai.ToolTypeFunction,
 		Function: &openai.FunctionDefinition{
 			Name:        "select_tutor_program",
-			Description: "Call this function when the student selects one of the 4 available study programs (Barber, Cosmetology, Esthetician, or Nail Technician). Saves the selected program in the database.",
+			Description: "Call this function when the student selects one of the available study programs. Saves the selected program in the database.",
 			Parameters: map[string]interface{}{
 				"type": "object",
 				"properties": map[string]interface{}{
 					"program": map[string]interface{}{
 						"type":        "string",
 						"enum":        []string{"barber", "cosmetology", "esthetician", "nail-technician"},
-						"description": "The chosen program identifier: 'barber', 'cosmetology', 'esthetician', or 'nail-technician'.",
+						"description": "The chosen program identifier: 'esthetician' (for Esthetician or Esthetician / Skin Care), 'nail-technician' (for Nail Technician), 'barber' (for Barber), or 'cosmetology' (for Cosmetology).",
 					},
 				},
 				"required": []string{"program"},

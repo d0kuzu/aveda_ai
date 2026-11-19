@@ -552,10 +552,18 @@ func (h *CampusLoginHandler) HandleTriggerTutor(c *gin.Context) {
 		firstName = "Student"
 	}
 
-	systemPrompt := fmt.Sprintf(
-		"New Tutor Mode session triggered for student '%s'. Send a very short, friendly, upbeat SMS greeting by name (do NOT say you are an AI or AI tutor — just say you're here to help them prep for their State Board exam!), and ask which program they want to practice, listing the 4 options each on its own new line:\n1. Barber\n2. Cosmetology\n3. Esthetician\n4. Nail Technician",
-		firstName,
-	)
+	var systemPrompt string
+	if isCanada {
+		systemPrompt = fmt.Sprintf(
+			"New Tutor Mode session triggered for student '%s'. Send a very short, friendly, upbeat SMS greeting by name (do NOT say you are an AI or AI tutor — just say you're here to help them prep for their exam!), and ask which program they want to practice, listing the 2 options each on its own new line:\n1. Esthetician / Skin Care\n2. Nail Technician",
+			firstName,
+		)
+	} else {
+		systemPrompt = fmt.Sprintf(
+			"New Tutor Mode session triggered for student '%s'. Send a very short, friendly, upbeat SMS greeting by name (do NOT say you are an AI or AI tutor — just say you're here to help them prep for their State Board exam!), and ask which program they want to practice, listing the 4 options each on its own new line:\n1. Barber\n2. Cosmetology\n3. Esthetician\n4. Nail Technician",
+			firstName,
+		)
+	}
 
 	log.Printf("[Tutor Trigger] Generated System Prompt: %s", systemPrompt)
 

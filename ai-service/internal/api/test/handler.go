@@ -478,10 +478,18 @@ func (h *TestHandler) TestTutorConversation(c *gin.Context) {
 			name = "Student"
 		}
 
-		systemPrompt := fmt.Sprintf(
-			"New Tutor Mode session triggered for student '%s'. Send a very short, friendly, upbeat SMS greeting by name (do NOT say you are an AI or AI tutor — just say you're here to help them prep for their State Board exam!), and ask which program they want to practice, listing the 4 options each on its own new line:\n1. Barber\n2. Cosmetology\n3. Esthetician\n4. Nail Technician",
-			name,
-		)
+		var systemPrompt string
+		if isCanada {
+			systemPrompt = fmt.Sprintf(
+				"New Tutor Mode session triggered for student '%s'. Send a very short, friendly, upbeat SMS greeting by name (do NOT say you are an AI or AI tutor — just say you're here to help them prep for their exam!), and ask which program they want to practice, listing the 2 options each on its own new line:\n1. Esthetician / Skin Care\n2. Nail Technician",
+				name,
+			)
+		} else {
+			systemPrompt = fmt.Sprintf(
+				"New Tutor Mode session triggered for student '%s'. Send a very short, friendly, upbeat SMS greeting by name (do NOT say you are an AI or AI tutor — just say you're here to help them prep for their State Board exam!), and ask which program they want to practice, listing the 4 options each on its own new line:\n1. Barber\n2. Cosmetology\n3. Esthetician\n4. Nail Technician",
+				name,
+			)
+		}
 
 		log.Printf("[Test Tutor Conversation] Triggering Tutor Mode for %s, prompt: %s", from, systemPrompt)
 

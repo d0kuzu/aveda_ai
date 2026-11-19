@@ -77,9 +77,29 @@ func (c *Client) GetMessages(assistantId, customerId string) ([]openai.ChatCompl
 func (c *Client) StartTutorMessages(chatResp *dbpb.ChatResponse) []openai.ChatCompletionMessage {
 	systemPrompt := constants.TutorSystemPrompt
 
+	if tutor.IsCanadaAssistant(chatResp.AssistantId) {
+		oldStep1 := `Step 1 (Program Selection):
+- The student must first choose ONE of the 4 available programs (ALWAYS format the list with each program on its own new line):
+  1. Barber
+  2. Cosmetology
+  3. Esthetician
+  4. Nail Technician
+- If they have not chosen a program yet (or ask what programs exist), list these 4 programs on separate lines as shown above and ask which one they want to study.
+- When the student chooses one of the 4 programs (by name or number 1-4), MUST call the tool "select_tutor_program".`
+
+		canadaStep1 := `Step 1 (Program Selection):
+- The student must first choose ONE of the 2 available programs (ALWAYS format the list with each program on its own new line):
+  1. Esthetician / Skin Care
+  2. Nail Technician
+- If they have not chosen a program yet (or ask what programs exist), list these 2 programs on separate lines as shown above and ask which one they want to study.
+- When the student chooses one of the 2 programs (by name or number: 1 = Esthetician / Skin Care -> pass program="esthetician", 2 = Nail Technician -> pass program="nail-technician"), MUST call the tool "select_tutor_program".`
+
+		systemPrompt = strings.Replace(systemPrompt, oldStep1, canadaStep1, 1)
+	}
+
 	progName := "None (not selected yet)"
 	if chatResp.TutingProgram != "" {
-		progName = tutor.ProgramDisplayName(chatResp.TutingProgram)
+		progName = tutor.ProgramDisplayNameForAssistant(chatResp.AssistantId, chatResp.TutingProgram)
 	}
 
 	var actionReminder string
