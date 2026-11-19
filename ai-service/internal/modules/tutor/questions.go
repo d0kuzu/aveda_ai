@@ -50,7 +50,9 @@ var canadaProgramFiles = map[string]string{
 }
 
 func IsCanadaAssistant(assistantID string) bool {
-	return strings.EqualFold(strings.TrimSpace(assistantID), constants.AvedaCanadaAssistantID)
+	trimmed := strings.TrimSpace(assistantID)
+	return strings.EqualFold(trimmed, constants.AvedaCanadaTutorAssistantID) ||
+		strings.EqualFold(trimmed, constants.AvedaCanadaAssistantID)
 }
 
 func NormalizeProgram(input string) (string, bool) {

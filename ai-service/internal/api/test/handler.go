@@ -420,12 +420,14 @@ func (h *TestHandler) TestTutorConversation(c *gin.Context) {
 		strings.EqualFold(strings.TrimSpace(req.Type), "canada") ||
 		strings.EqualFold(strings.TrimSpace(c.Query("country")), "canada") ||
 		strings.EqualFold(strings.TrimSpace(c.Query("is_canada")), "true") ||
+		strings.EqualFold(strings.TrimSpace(req.AssistantID), constants.AvedaCanadaTutorAssistantID) ||
+		strings.EqualFold(strings.TrimSpace(c.Param("assistant_id")), constants.AvedaCanadaTutorAssistantID) ||
 		strings.EqualFold(strings.TrimSpace(req.AssistantID), constants.AvedaCanadaAssistantID) ||
 		strings.EqualFold(strings.TrimSpace(c.Param("assistant_id")), constants.AvedaCanadaAssistantID)
 
 	assistantID := constants.AvedaTutorAssistantID
 	if isCanada {
-		assistantID = constants.AvedaCanadaAssistantID
+		assistantID = constants.AvedaCanadaTutorAssistantID
 	}
 
 	from := strings.TrimSpace(req.From)

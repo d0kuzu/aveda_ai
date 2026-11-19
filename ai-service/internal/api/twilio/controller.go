@@ -8,6 +8,7 @@ import (
 	twilio2 "diaxel/internal/modules/twilio"
 	"net/http"
 	"strings"
+	"time"
 
 	"log"
 
@@ -93,8 +94,38 @@ func (h *TwilioWebhookHandler) HandleWebhook(c *gin.Context) {
 		return
 	}
 
+	// Both US Tutor (AvedaTutorAssistantID) and Canada Tutor (AvedaCanadaTutorAssistantID)
+	// share the same Twilio number (+14084024061), which sends incoming webhooks to a single assistant URL.
+	// Resolve which tutor assistant holds the active / most recently updated chat for this phone number.
+	if assistantID == constants.AvedaTutorAssistantID || assistantID == constants.AvedaCanadaTutorAssistantID {
+		otherTutorID := constants.AvedaCanadaTutorAssistantID
+		if assistantID == constants.AvedaCanadaTutorAssistantID {
+			otherTutorID = constants.AvedaTutorAssistantID
+		}
+		if otherChat, otherErr := h.db.GetLatestChatByCustomer(otherTutorID, from); otherErr == nil && otherChat != nil && otherChat.Id != "" {
+			switchToOther := false
+			if chat == nil || chat.Id == "" {
+				switchToOther = true
+			} else {
+				t1, err1 := time.Parse(time.RFC3339, chat.UpdatedAt)
+				t2, err2 := time.Parse(time.RFC3339, otherChat.UpdatedAt)
+				if err1 == nil && err2 == nil && t2.After(t1) {
+					switchToOther = true
+				}
+			}
+			if switchToOther {
+				log.Printf("[Twilio Webhook] Routing incoming tutor SMS from %s to active tutor assistant %s (chat %s)", from, otherTutorID, otherChat.Id)
+				assistantID = otherTutorID
+				chat = otherChat
+				if otherCfg, cfgErr := h.db.GetTwilioConfig(otherTutorID); cfgErr == nil && otherCfg != nil {
+					twilioConfig = otherCfg
+				}
+			}
+		}
+	}
+
 	// Skip forwarding to CampusLogin for Tutor mode chats
-	if formData != "" && assistantID != constants.AvedaTutorAssistantID && (chat == nil || !chat.IsTutor) {
+	if formData != "" && assistantID != constants.AvedaTutorAssistantID && assistantID != constants.AvedaCanadaTutorAssistantID && (chat == nil || !chat.IsTutor) {
 		go forwardWebhookToCampusLogin(formData)
 	}
 

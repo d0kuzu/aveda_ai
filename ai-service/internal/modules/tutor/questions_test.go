@@ -48,11 +48,11 @@ func TestLoadAllExams(t *testing.T) {
 		"nail-technician":         "nail-technician",
 	}
 	for input, expectedNorm := range canadaCases {
-		got, ok := NormalizeProgramForAssistant(constants.AvedaCanadaAssistantID, input)
+		got, ok := NormalizeProgramForAssistant(constants.AvedaCanadaTutorAssistantID, input)
 		if !ok || got != expectedNorm {
 			t.Errorf("Canada NormalizeProgramForAssistant(%q) = (%q, %v), want (%q, true)", input, got, ok, expectedNorm)
 		}
-		q, total, err := GetQuestionForAssistant(constants.AvedaCanadaAssistantID, input, 0)
+		q, total, err := GetQuestionForAssistant(constants.AvedaCanadaTutorAssistantID, input, 0)
 		if err != nil || q == nil || total != 200 {
 			t.Errorf("Canada GetQuestionForAssistant(%q) failed: q=%v, total=%d (want 200), err=%v", input, q, total, err)
 		}
@@ -60,7 +60,7 @@ func TestLoadAllExams(t *testing.T) {
 
 	// Ensure Barber and Cosmetology are not valid for Canada
 	for _, invalidCanadaProg := range []string{"barber", "cosmetology", "3", "4"} {
-		if _, ok := NormalizeProgramForAssistant(constants.AvedaCanadaAssistantID, invalidCanadaProg); ok {
+		if _, ok := NormalizeProgramForAssistant(constants.AvedaCanadaTutorAssistantID, invalidCanadaProg); ok {
 			t.Errorf("Canada NormalizeProgramForAssistant(%q) should be false", invalidCanadaProg)
 		}
 	}
