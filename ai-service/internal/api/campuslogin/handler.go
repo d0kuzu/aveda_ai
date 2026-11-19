@@ -440,16 +440,30 @@ type TutorTriggerRequest struct {
 	LastName       string `json:"Lastname" form:"Lastname"`
 	Email          string `json:"email" form:"email"`
 	Notes          string `json:"notes" form:"notes"`
+	IsCanada       bool   `json:"is_canada" form:"is_canada"`
+	Country        string `json:"country" form:"country"`
+	Org            string `json:"org" form:"org"`
 }
 
 func (h *CampusLoginHandler) HandleTriggerTutor(c *gin.Context) {
-	assistantID := constants.AvedaTutorAssistantID
-
 	var req TutorTriggerRequest
 	if err := c.ShouldBind(&req); err != nil {
 		log.Printf("[Tutor Trigger] Binding error: %v", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request data: " + err.Error()})
 		return
+	}
+
+	isCanada := req.IsCanada ||
+		strings.EqualFold(strings.TrimSpace(req.Country), "canada") ||
+		strings.EqualFold(strings.TrimSpace(req.Org), "canada") ||
+		strings.EqualFold(strings.TrimSpace(c.Query("country")), "canada") ||
+		strings.EqualFold(strings.TrimSpace(c.Query("org")), "canada") ||
+		strings.EqualFold(strings.TrimSpace(c.Query("is_canada")), "true") ||
+		strings.EqualFold(strings.TrimSpace(c.Param("assistant_id")), constants.AvedaCanadaAssistantID)
+
+	assistantID := constants.AvedaTutorAssistantID
+	if isCanada {
+		assistantID = constants.AvedaCanadaAssistantID
 	}
 
 	rawPhone := strings.TrimSpace(req.Phone)
@@ -569,6 +583,8 @@ func (h *CampusLoginHandler) HandleTriggerTutor(c *gin.Context) {
 		"status":       "ok",
 		"message":      "Tutor mode triggered successfully",
 		"tutor_mode":   true,
+		"is_canada":    isCanada,
+		"assistant_id": assistantID,
 		"chat_existed": chatExisted,
 		"to":           toPhone,
 		"answer":       answer,

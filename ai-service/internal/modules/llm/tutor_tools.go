@@ -21,7 +21,7 @@ func (c *Client) handleSelectTutorProgram(ctx context.Context, argsJSON, userId,
 		return "Error: Invalid program. Available programs are: 1. Barber, 2. Cosmetology, 3. Esthetician, 4. Nail Technician. Please ask the student to choose one of these four.", nil
 	}
 
-	examData, err := tutor.GetExamData(normProgram)
+	examData, err := tutor.GetExamDataForAssistant(assistantId, normProgram)
 	if err != nil {
 		return "", err
 	}
@@ -54,7 +54,7 @@ func (c *Client) handleStartTutoring(ctx context.Context, userId, assistantId st
 		return "Error: No program has been selected yet. Please ask the student which of the 4 programs (Barber, Cosmetology, Esthetician, or Nail Technician) they want to study first.", nil
 	}
 
-	q, total, err := tutor.GetQuestion(chat.TutingProgram, int(chat.TutorCount))
+	q, total, err := tutor.GetQuestionForAssistant(assistantId, chat.TutingProgram, int(chat.TutorCount))
 	if err != nil {
 		return "", err
 	}
@@ -85,7 +85,7 @@ func (c *Client) handleGetCurrentTutorQuestion(ctx context.Context, userId, assi
 		return "Error: No program selected yet. Ask the student to choose Barber, Cosmetology, Esthetician, or Nail Technician.", nil
 	}
 
-	q, total, err := tutor.GetQuestion(chat.TutingProgram, int(chat.TutorCount))
+	q, total, err := tutor.GetQuestionForAssistant(assistantId, chat.TutingProgram, int(chat.TutorCount))
 	if err != nil {
 		return "", err
 	}
@@ -119,7 +119,7 @@ func (c *Client) handleSubmitTutorAnswer(ctx context.Context, argsJSON, userId, 
 	}
 
 	currentIndex := int(chat.TutorCount)
-	q, total, err := tutor.GetQuestion(chat.TutingProgram, currentIndex)
+	q, total, err := tutor.GetQuestionForAssistant(assistantId, chat.TutingProgram, currentIndex)
 	if err != nil {
 		return "", err
 	}
@@ -206,7 +206,7 @@ func (c *Client) handleSubmitTutorAnswer(ctx context.Context, argsJSON, userId, 
 	}
 
 	// Otherwise, fetch the next question in today's batch
-	nextQ, _, err := tutor.GetQuestion(chat.TutingProgram, int(newTutorCount))
+	nextQ, _, err := tutor.GetQuestionForAssistant(assistantId, chat.TutingProgram, int(newTutorCount))
 	if err != nil || nextQ == nil {
 		return "", fmt.Errorf("failed to fetch next question: %w", err)
 	}
@@ -244,7 +244,7 @@ func (c *Client) handleContinueTutorToday(ctx context.Context, userId, assistant
 		return "Error: No program selected.", nil
 	}
 
-	q, total, err := tutor.GetQuestion(chat.TutingProgram, int(chat.TutorCount))
+	q, total, err := tutor.GetQuestionForAssistant(assistantId, chat.TutingProgram, int(chat.TutorCount))
 	if err != nil {
 		return "", err
 	}

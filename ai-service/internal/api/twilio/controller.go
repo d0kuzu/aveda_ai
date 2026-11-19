@@ -51,14 +51,11 @@ func (h *TwilioWebhookHandler) HandleWebhook(c *gin.Context) {
 		return
 	}
 
-	// Parse form early to forward the exact payload (skip CampusLogin forwarding for Tutor assistant)
-	if assistantID != constants.AvedaTutorAssistantID {
-		if err := c.Request.ParseForm(); err == nil {
-			formData := c.Request.PostForm.Encode()
-			go forwardWebhookToCampusLogin(formData)
-		} else {
-			log.Printf("[Twilio Webhook] Warning: Failed to parse form for forwarding: %v", err)
-		}
+	var formData string
+	if err := c.Request.ParseForm(); err == nil {
+		formData = c.Request.PostForm.Encode()
+	} else {
+		log.Printf("[Twilio Webhook] Warning: Failed to parse form: %v", err)
 	}
 
 	_, err := h.db.GetAssistant(assistantID)
@@ -94,6 +91,11 @@ func (h *TwilioWebhookHandler) HandleWebhook(c *gin.Context) {
 		c.Header("Content-Type", "text/xml")
 		c.String(http.StatusOK, `<?xml version="1.0" encoding="UTF-8"?><Response></Response>`)
 		return
+	}
+
+	// Skip forwarding to CampusLogin for Tutor mode chats
+	if formData != "" && assistantID != constants.AvedaTutorAssistantID && (chat == nil || !chat.IsTutor) {
+		go forwardWebhookToCampusLogin(formData)
 	}
 
 	if chat != nil && chat.IsEnd {

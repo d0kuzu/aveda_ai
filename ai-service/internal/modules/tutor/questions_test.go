@@ -1,6 +1,7 @@
 package tutor
 
 import (
+	"diaxel/internal/constants"
 	"os"
 	"strings"
 	"testing"
@@ -19,20 +20,27 @@ func TestLoadAllExams(t *testing.T) {
 		"nail-technician": 233,
 	}
 
-	for prog, expectedCount := range programs {
-		q, total, err := GetQuestion(prog, 0)
-		if err != nil {
-			t.Fatalf("GetQuestion(%s, 0) failed: %v", prog, err)
-		}
-		if total != expectedCount {
-			t.Errorf("program %s: expected %d questions, got %d", prog, expectedCount, total)
-		}
-		if q == nil {
-			t.Fatalf("program %s: first question is nil", prog)
-		}
-		formatted := FormatQuestion(q)
-		if !strings.Contains(formatted, "A - ") || !strings.Contains(formatted, "D - ") {
-			t.Errorf("program %s: unexpected formatted question:\n%s", prog, formatted)
+	assistantIDs := []string{
+		constants.AvedaTutorAssistantID,
+		constants.AvedaCanadaAssistantID,
+	}
+
+	for _, assistantID := range assistantIDs {
+		for prog, expectedCount := range programs {
+			q, total, err := GetQuestionForAssistant(assistantID, prog, 0)
+			if err != nil {
+				t.Fatalf("GetQuestionForAssistant(%s, %s, 0) failed: %v", assistantID, prog, err)
+			}
+			if total != expectedCount {
+				t.Errorf("assistant %s program %s: expected %d questions, got %d", assistantID, prog, expectedCount, total)
+			}
+			if q == nil {
+				t.Fatalf("assistant %s program %s: first question is nil", assistantID, prog)
+			}
+			formatted := FormatQuestion(q)
+			if !strings.Contains(formatted, "A - ") || !strings.Contains(formatted, "D - ") {
+				t.Errorf("assistant %s program %s: unexpected formatted question:\n%s", assistantID, prog, formatted)
+			}
 		}
 	}
 }

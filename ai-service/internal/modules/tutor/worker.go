@@ -98,7 +98,7 @@ func (w *Worker) processTutorChats(ctx context.Context) {
 			}
 		} else if chat.TutorCountPerDay >= 5 {
 			// Case 2: Student completed yesterday's 5 questions -> start a new daily set
-			q, total, qErr := GetQuestion(chat.TutingProgram, int(chat.TutorCount))
+			q, total, qErr := GetQuestionForAssistant(chat.AssistantId, chat.TutingProgram, int(chat.TutorCount))
 			if qErr != nil {
 				log.Printf("[Tutor Worker] Error getting question for chat %s (program=%s, idx=%d): %v", chat.Id, chat.TutingProgram, chat.TutorCount, qErr)
 				continue
@@ -123,7 +123,7 @@ func (w *Worker) processTutorChats(ctx context.Context) {
 			)
 		} else {
 			// Case 3: Previous question was left unanswered -> re-send the same question and reset daily counter
-			q, total, qErr := GetQuestion(chat.TutingProgram, int(chat.TutorCount))
+			q, total, qErr := GetQuestionForAssistant(chat.AssistantId, chat.TutingProgram, int(chat.TutorCount))
 			if qErr != nil {
 				log.Printf("[Tutor Worker] Error getting hanging question for chat %s (program=%s, idx=%d): %v", chat.Id, chat.TutingProgram, chat.TutorCount, qErr)
 				continue

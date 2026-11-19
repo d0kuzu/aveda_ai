@@ -398,6 +398,9 @@ type TestTutorConversationRequest struct {
 	Message     string `json:"message" form:"message"`
 	Trigger     bool   `json:"trigger" form:"trigger"`
 	Name        string `json:"name" form:"name"`
+	IsCanada    bool   `json:"is_canada" form:"is_canada"`
+	Country     string `json:"country" form:"country"`
+	Type        string `json:"type" form:"type"`
 }
 
 func (h *TestHandler) TestTutorConversation(c *gin.Context) {
@@ -412,7 +415,18 @@ func (h *TestHandler) TestTutorConversation(c *gin.Context) {
 		return
 	}
 
+	isCanada := req.IsCanada ||
+		strings.EqualFold(strings.TrimSpace(req.Country), "canada") ||
+		strings.EqualFold(strings.TrimSpace(req.Type), "canada") ||
+		strings.EqualFold(strings.TrimSpace(c.Query("country")), "canada") ||
+		strings.EqualFold(strings.TrimSpace(c.Query("is_canada")), "true") ||
+		strings.EqualFold(strings.TrimSpace(req.AssistantID), constants.AvedaCanadaAssistantID) ||
+		strings.EqualFold(strings.TrimSpace(c.Param("assistant_id")), constants.AvedaCanadaAssistantID)
+
 	assistantID := constants.AvedaTutorAssistantID
+	if isCanada {
+		assistantID = constants.AvedaCanadaAssistantID
+	}
 
 	from := strings.TrimSpace(req.From)
 	if from == "" {

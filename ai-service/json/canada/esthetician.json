@@ -1,0 +1,6144 @@
+{
+  "exam": "Esthetician",
+  "question_count": 236,
+  "questions": [
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "D",
+      "correct_answer_text": "Stratum corneum",
+      "id": "esthetician-1",
+      "options": [
+        {
+          "label": "A",
+          "text": "Stratum granulosum"
+        },
+        {
+          "label": "B",
+          "text": "Stratum basale"
+        },
+        {
+          "label": "C",
+          "text": "Stratum spinosum"
+        },
+        {
+          "label": "D",
+          "text": "Stratum corneum"
+        }
+      ],
+      "question": "Which layer is the outermost stratum of the epidermis, composed of flattened, dead, keratin-filled cells that are continually shed?",
+      "source_question_id": 1
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "D",
+      "correct_answer_text": "Stratum basale",
+      "id": "esthetician-2",
+      "options": [
+        {
+          "label": "A",
+          "text": "Stratum spinosum"
+        },
+        {
+          "label": "B",
+          "text": "Stratum lucidum"
+        },
+        {
+          "label": "C",
+          "text": "Stratum granulosum"
+        },
+        {
+          "label": "D",
+          "text": "Stratum basale"
+        }
+      ],
+      "question": "In what layer of the epidermis does cell division (mitosis) primarily occur to generate new keratinocytes?",
+      "source_question_id": 2
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "D",
+      "correct_answer_text": "About 28 days",
+      "id": "esthetician-3",
+      "options": [
+        {
+          "label": "A",
+          "text": "About 14 days"
+        },
+        {
+          "label": "B",
+          "text": "About 100 days"
+        },
+        {
+          "label": "C",
+          "text": "About 120 days"
+        },
+        {
+          "label": "D",
+          "text": "About 28 days"
+        }
+      ],
+      "question": "An esthetician explains that the skin renews itself as new cells push older ones toward the surface. In healthy adult skin, about how long does this epidermal turnover cycle typically take?",
+      "source_question_id": 3
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "C",
+      "correct_answer_text": "The epidermis is the outer layer, and the dermis is the inner one",
+      "id": "esthetician-4",
+      "options": [
+        {
+          "label": "A",
+          "text": "The dermis is the topmost layer, and the epidermis is the deepest one"
+        },
+        {
+          "label": "B",
+          "text": "The epidermis is the thick layer, and the dermis is the thin one"
+        },
+        {
+          "label": "C",
+          "text": "The epidermis is the outer layer, and the dermis is the inner one"
+        },
+        {
+          "label": "D",
+          "text": "The epidermis is the elastin layer, and the dermis is the keratin one"
+        }
+      ],
+      "question": "The two main layers of the skin are the epidermis and the dermis. Which statement correctly describes their relationship?",
+      "source_question_id": 4
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "D",
+      "correct_answer_text": "Melanocytes",
+      "id": "esthetician-5",
+      "options": [
+        {
+          "label": "A",
+          "text": "Keratinocytes"
+        },
+        {
+          "label": "B",
+          "text": "Langerhans cells"
+        },
+        {
+          "label": "C",
+          "text": "Basal cells"
+        },
+        {
+          "label": "D",
+          "text": "Melanocytes"
+        }
+      ],
+      "question": "Which cells in the epidermis are responsible for producing the pigment that gives skin its color?",
+      "source_question_id": 5
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "A",
+      "correct_answer_text": "Type I",
+      "id": "esthetician-6",
+      "options": [
+        {
+          "label": "A",
+          "text": "Type I"
+        },
+        {
+          "label": "B",
+          "text": "Type IV"
+        },
+        {
+          "label": "C",
+          "text": "Type II"
+        },
+        {
+          "label": "D",
+          "text": "Type V"
+        }
+      ],
+      "question": "A client with very fair skin always burns and never tans after sun exposure. Where on the Fitzpatrick scale does this client most likely fall?",
+      "source_question_id": 6
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "B",
+      "correct_answer_text": "To predict sun response and the risk of procedure complications",
+      "id": "esthetician-7",
+      "options": [
+        {
+          "label": "A",
+          "text": "To grade acne severity and the number of inflammatory lesions"
+        },
+        {
+          "label": "B",
+          "text": "To predict sun response and the risk of procedure complications"
+        },
+        {
+          "label": "C",
+          "text": "To measure sebum production and the level of surface hydration"
+        },
+        {
+          "label": "D",
+          "text": "To rate wrinkle severity and the degree of lifetime photodamage"
+        }
+      ],
+      "question": "What is the primary purpose of classifying a client using the Fitzpatrick skin type scale before a treatment?",
+      "source_question_id": 7
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "D",
+      "correct_answer_text": "Sebaceous glands",
+      "id": "esthetician-8",
+      "options": [
+        {
+          "label": "A",
+          "text": "Apocrine glands"
+        },
+        {
+          "label": "B",
+          "text": "Sudoriferous glands"
+        },
+        {
+          "label": "C",
+          "text": "Eccrine glands"
+        },
+        {
+          "label": "D",
+          "text": "Sebaceous glands"
+        }
+      ],
+      "question": "Which glands are oil-producing glands connected to hair follicles that secrete sebum to lubricate the skin?",
+      "source_question_id": 8
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "C",
+      "correct_answer_text": "Sweat glands that aid temperature control",
+      "id": "esthetician-9",
+      "options": [
+        {
+          "label": "A",
+          "text": "Sebaceous glands that lubricate hair follicles"
+        },
+        {
+          "label": "B",
+          "text": "Endocrine glands that produce thyroid hormones"
+        },
+        {
+          "label": "C",
+          "text": "Sweat glands that aid temperature control"
+        },
+        {
+          "label": "D",
+          "text": "Lymph glands that filter harmful microbes"
+        }
+      ],
+      "question": "Sudoriferous glands are best described as which type of skin appendage?",
+      "source_question_id": 9
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "C",
+      "correct_answer_text": "They accumulate keratin and harden as they die",
+      "id": "esthetician-10",
+      "options": [
+        {
+          "label": "A",
+          "text": "They absorb melanin and darken as they rise"
+        },
+        {
+          "label": "B",
+          "text": "They produce collagen and thicken as they grow"
+        },
+        {
+          "label": "C",
+          "text": "They accumulate keratin and harden as they die"
+        },
+        {
+          "label": "D",
+          "text": "They loosen and flake away as they surface"
+        }
+      ],
+      "question": "Keratinization is the process by which epidermal cells undergo which change as they move toward the surface?",
+      "source_question_id": 10
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "D",
+      "correct_answer_text": "To limit bacterial growth and protect the barrier",
+      "id": "esthetician-11",
+      "options": [
+        {
+          "label": "A",
+          "text": "To dissolve dead cells and smooth the complexion"
+        },
+        {
+          "label": "B",
+          "text": "To absorb ultraviolet light and shield the dermis"
+        },
+        {
+          "label": "C",
+          "text": "To quench free radicals and preserve the collagen"
+        },
+        {
+          "label": "D",
+          "text": "To limit bacterial growth and protect the barrier"
+        }
+      ],
+      "question": "The skin's acid mantle is a protective film on the surface. What is its primary function?",
+      "source_question_id": 11
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "C",
+      "correct_answer_text": "About 4.5 to 5.5",
+      "id": "esthetician-12",
+      "options": [
+        {
+          "label": "A",
+          "text": "About 6.0 to 7.0"
+        },
+        {
+          "label": "B",
+          "text": "About 2.5 to 3.5"
+        },
+        {
+          "label": "C",
+          "text": "About 4.5 to 5.5"
+        },
+        {
+          "label": "D",
+          "text": "About 8.0 to 9.0"
+        }
+      ],
+      "question": "Healthy skin surface pH is slightly acidic. Which range best represents normal skin pH?",
+      "source_question_id": 12
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "A",
+      "correct_answer_text": "Parasites",
+      "id": "esthetician-13",
+      "options": [
+        {
+          "label": "A",
+          "text": "Parasites"
+        },
+        {
+          "label": "B",
+          "text": "Toxins"
+        },
+        {
+          "label": "C",
+          "text": "Endospores"
+        },
+        {
+          "label": "D",
+          "text": "Molds"
+        }
+      ],
+      "question": "The four general types of microorganisms an esthetician must guard against are bacteria, viruses, fungi, and which of the following?",
+      "source_question_id": 13
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "C",
+      "correct_answer_text": "A virus needs a living host cell to reproduce",
+      "id": "esthetician-14",
+      "options": [
+        {
+          "label": "A",
+          "text": "A virus forms a tough resting spore to survive"
+        },
+        {
+          "label": "B",
+          "text": "A virus is a microbe that splits like bacteria"
+        },
+        {
+          "label": "C",
+          "text": "A virus needs a living host cell to reproduce"
+        },
+        {
+          "label": "D",
+          "text": "A virus is a microbe that antibiotics can kill"
+        }
+      ],
+      "question": "Which characteristic distinguishes a virus from a bacterium?",
+      "source_question_id": 14
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "A",
+      "correct_answer_text": "Sanitation, disinfection, sterilization",
+      "id": "esthetician-15",
+      "options": [
+        {
+          "label": "A",
+          "text": "Sanitation, disinfection, sterilization"
+        },
+        {
+          "label": "B",
+          "text": "Sterilization, disinfection, sanitation"
+        },
+        {
+          "label": "C",
+          "text": "Sanitation, sterilization, disinfection"
+        },
+        {
+          "label": "D",
+          "text": "Disinfection, sterilization, sanitation"
+        }
+      ],
+      "question": "Place the levels of decontamination in order from the lowest to the highest level of control of microorganisms.",
+      "source_question_id": 15
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "A",
+      "correct_answer_text": "Sterilization",
+      "id": "esthetician-16",
+      "options": [
+        {
+          "label": "A",
+          "text": "Sterilization"
+        },
+        {
+          "label": "B",
+          "text": "Disinfection"
+        },
+        {
+          "label": "C",
+          "text": "Pasteurization"
+        },
+        {
+          "label": "D",
+          "text": "Antisepsis"
+        }
+      ],
+      "question": "Which level of decontamination destroys all microbial life, including bacterial spores?",
+      "source_question_id": 16
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "C",
+      "correct_answer_text": "It must be EPA-registered and labeled hospital-grade",
+      "id": "esthetician-17",
+      "options": [
+        {
+          "label": "A",
+          "text": "It must be FDA-approved and labeled for topical use"
+        },
+        {
+          "label": "B",
+          "text": "It must be EPA-registered and sold as a household cleaner"
+        },
+        {
+          "label": "C",
+          "text": "It must be EPA-registered and labeled hospital-grade"
+        },
+        {
+          "label": "D",
+          "text": "It must be FDA-approved and sold for instrument use"
+        }
+      ],
+      "question": "For an implement to be properly disinfected in a salon, what must be true of the disinfectant solution used?",
+      "source_question_id": 17
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "B",
+      "correct_answer_text": "Clean visible debris from the implement",
+      "id": "esthetician-18",
+      "options": [
+        {
+          "label": "A",
+          "text": "Wipe excess moisture from the implement"
+        },
+        {
+          "label": "B",
+          "text": "Clean visible debris from the implement"
+        },
+        {
+          "label": "C",
+          "text": "Place the implement in an autoclave"
+        },
+        {
+          "label": "D",
+          "text": "Place the implement in ethyl alcohol"
+        }
+      ],
+      "question": "Before placing a metal implement into disinfectant solution, what step must always be performed first?",
+      "source_question_id": 18
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "A",
+      "correct_answer_text": "Autoclave",
+      "id": "esthetician-19",
+      "options": [
+        {
+          "label": "A",
+          "text": "Autoclave"
+        },
+        {
+          "label": "B",
+          "text": "Steamer"
+        },
+        {
+          "label": "C",
+          "text": "Ultrasonic cleaner"
+        },
+        {
+          "label": "D",
+          "text": "Hot air sterilizer"
+        }
+      ],
+      "question": "Which method uses pressurized steam and high heat to achieve true sterilization of tools?",
+      "source_question_id": 19
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "B",
+      "correct_answer_text": "Stop the service, put on gloves, and follow the exposure protocol",
+      "id": "esthetician-20",
+      "options": [
+        {
+          "label": "A",
+          "text": "Cleanse the small nick, put on gloves, and continue the service"
+        },
+        {
+          "label": "B",
+          "text": "Stop the service, put on gloves, and follow the exposure protocol"
+        },
+        {
+          "label": "C",
+          "text": "Finish the service, put on gloves, and dress the injury afterward"
+        },
+        {
+          "label": "D",
+          "text": "Use the styptic pencil, put on gloves, and continue the service"
+        }
+      ],
+      "question": "A client is accidentally nicked during a service and a small amount of blood appears. Following bloodborne pathogen procedures, what should the esthetician do first?",
+      "source_question_id": 20
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "C",
+      "correct_answer_text": "All blood and body fluids should be treated as potentially infectious",
+      "id": "esthetician-21",
+      "options": [
+        {
+          "label": "A",
+          "text": "Only the visibly ill should be treated as potential disease carriers"
+        },
+        {
+          "label": "B",
+          "text": "Only clients with diagnosed disease should be treated as infectious"
+        },
+        {
+          "label": "C",
+          "text": "All blood and body fluids should be treated as potentially infectious"
+        },
+        {
+          "label": "D",
+          "text": "All clients without a fever or rash should be treated as pathogen-free"
+        }
+      ],
+      "question": "Universal (standard) precautions are based on which guiding assumption?",
+      "source_question_id": 21
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "B",
+      "correct_answer_text": "Thorough hand washing",
+      "id": "esthetician-22",
+      "options": [
+        {
+          "label": "A",
+          "text": "Wearing disposable gloves"
+        },
+        {
+          "label": "B",
+          "text": "Thorough hand washing"
+        },
+        {
+          "label": "C",
+          "text": "Disinfecting work surfaces"
+        },
+        {
+          "label": "D",
+          "text": "Changing towels frequently"
+        }
+      ],
+      "question": "Which of the following is the single most effective everyday measure for preventing the spread of infection in the treatment room?",
+      "source_question_id": 22
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "A",
+      "correct_answer_text": "Frontalis",
+      "id": "esthetician-23",
+      "options": [
+        {
+          "label": "A",
+          "text": "Frontalis"
+        },
+        {
+          "label": "B",
+          "text": "Corrugator"
+        },
+        {
+          "label": "C",
+          "text": "Procerus"
+        },
+        {
+          "label": "D",
+          "text": "Occipitalis"
+        }
+      ],
+      "question": "Which facial muscle is responsible for raising the eyebrows and creating horizontal wrinkles across the forehead?",
+      "source_question_id": 23
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "D",
+      "correct_answer_text": "Orbicularis oculi",
+      "id": "esthetician-24",
+      "options": [
+        {
+          "label": "A",
+          "text": "Orbicularis oris"
+        },
+        {
+          "label": "B",
+          "text": "Corrugator muscle"
+        },
+        {
+          "label": "C",
+          "text": "Procerus muscle"
+        },
+        {
+          "label": "D",
+          "text": "Orbicularis oculi"
+        }
+      ],
+      "question": "During a facial massage an esthetician works the ring of muscle that closes the eyelids. Which muscle is this?",
+      "source_question_id": 24
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "B",
+      "correct_answer_text": "Trigeminal nerve (cranial nerve V)",
+      "id": "esthetician-25",
+      "options": [
+        {
+          "label": "A",
+          "text": "Facial nerve (cranial nerve VII)"
+        },
+        {
+          "label": "B",
+          "text": "Trigeminal nerve (cranial nerve V)"
+        },
+        {
+          "label": "C",
+          "text": "Accessory nerve (cranial nerve XI)"
+        },
+        {
+          "label": "D",
+          "text": "Olfactory nerve (cranial nerve I)"
+        }
+      ],
+      "question": "Which cranial nerve is the chief sensory nerve of the face and the main motor nerve for chewing?",
+      "source_question_id": 25
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "D",
+      "correct_answer_text": "Movement of the muscles of expression",
+      "id": "esthetician-26",
+      "options": [
+        {
+          "label": "A",
+          "text": "Sensation of the skin of the forehead"
+        },
+        {
+          "label": "B",
+          "text": "Movement of the muscles of mastication"
+        },
+        {
+          "label": "C",
+          "text": "Sensation of the skin of the shoulders"
+        },
+        {
+          "label": "D",
+          "text": "Movement of the muscles of expression"
+        }
+      ],
+      "question": "The facial nerve (seventh cranial nerve) primarily controls which function relevant to esthetics?",
+      "source_question_id": 26
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "A",
+      "correct_answer_text": "To massage motor points safely and effectively",
+      "id": "esthetician-27",
+      "options": [
+        {
+          "label": "A",
+          "text": "To massage motor points safely and effectively"
+        },
+        {
+          "label": "B",
+          "text": "To diagnose and relieve facial nerve disorders"
+        },
+        {
+          "label": "C",
+          "text": "To determine where lymph nodes filter fluid"
+        },
+        {
+          "label": "D",
+          "text": "To predict where expression lines will form"
+        }
+      ],
+      "question": "Knowing the location of the nerves of the face and neck is most important to an esthetician for which reason?",
+      "source_question_id": 27
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "B",
+      "correct_answer_text": "External maxillary artery",
+      "id": "esthetician-28",
+      "options": [
+        {
+          "label": "A",
+          "text": "Posterior auricular artery"
+        },
+        {
+          "label": "B",
+          "text": "External maxillary artery"
+        },
+        {
+          "label": "C",
+          "text": "Transverse cervical artery"
+        },
+        {
+          "label": "D",
+          "text": "Superior thyroid artery"
+        }
+      ],
+      "question": "Which artery is a major supplier of blood to the face and is commonly referenced in facial anatomy?",
+      "source_question_id": 28
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "D",
+      "correct_answer_text": "It boosts blood flow, so tissues get more oxygen and nutrients",
+      "id": "esthetician-29",
+      "options": [
+        {
+          "label": "A",
+          "text": "It opens up pores, so tissues absorb more oxygen and moisture"
+        },
+        {
+          "label": "B",
+          "text": "It moves lymph faster, so cells receive more fluid and protein"
+        },
+        {
+          "label": "C",
+          "text": "It pushes serum deeper, so cells absorb more vitamins and oils"
+        },
+        {
+          "label": "D",
+          "text": "It boosts blood flow, so tissues get more oxygen and nutrients"
+        }
+      ],
+      "question": "Why does facial massage help nourish the skin from a circulatory standpoint?",
+      "source_question_id": 29
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "A",
+      "correct_answer_text": "Close to the surface of the skin",
+      "id": "esthetician-30",
+      "options": [
+        {
+          "label": "A",
+          "text": "Close to the surface of the skin"
+        },
+        {
+          "label": "B",
+          "text": "Close to the bones of the cheeks"
+        },
+        {
+          "label": "C",
+          "text": "Deep under the veins of the neck"
+        },
+        {
+          "label": "D",
+          "text": "Deep under the fat of the cheeks"
+        }
+      ],
+      "question": "Manual lymphatic drainage massage is performed with light pressure because the lymphatic vessels it targets are located where?",
+      "source_question_id": 30
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "D",
+      "correct_answer_text": "Reducing puffiness and clearing waste fluids",
+      "id": "esthetician-31",
+      "options": [
+        {
+          "label": "A",
+          "text": "Supplying oxygen and nourishing dermal cells"
+        },
+        {
+          "label": "B",
+          "text": "Building collagen and firming the jawline"
+        },
+        {
+          "label": "C",
+          "text": "Shrinking pores and tightening the surface"
+        },
+        {
+          "label": "D",
+          "text": "Reducing puffiness and clearing waste fluids"
+        }
+      ],
+      "question": "What is the primary benefit of stimulating lymphatic flow during a facial?",
+      "source_question_id": 31
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "C",
+      "correct_answer_text": "Cell",
+      "id": "esthetician-32",
+      "options": [
+        {
+          "label": "A",
+          "text": "Tissue"
+        },
+        {
+          "label": "B",
+          "text": "Nucleus"
+        },
+        {
+          "label": "C",
+          "text": "Cell"
+        },
+        {
+          "label": "D",
+          "text": "Protein"
+        }
+      ],
+      "question": "The basic structural and functional unit of all living tissue, including skin, is the:",
+      "source_question_id": 32
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "B",
+      "correct_answer_text": "Nucleus",
+      "id": "esthetician-33",
+      "options": [
+        {
+          "label": "A",
+          "text": "Cytoplasm"
+        },
+        {
+          "label": "B",
+          "text": "Nucleus"
+        },
+        {
+          "label": "C",
+          "text": "Ribosome"
+        },
+        {
+          "label": "D",
+          "text": "Centriole"
+        }
+      ],
+      "question": "Which part of a cell directs cell activities and contains the genetic material?",
+      "source_question_id": 33
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "B",
+      "correct_answer_text": "Collagen",
+      "id": "esthetician-34",
+      "options": [
+        {
+          "label": "A",
+          "text": "Elastin"
+        },
+        {
+          "label": "B",
+          "text": "Collagen"
+        },
+        {
+          "label": "C",
+          "text": "Keratin"
+        },
+        {
+          "label": "D",
+          "text": "Fibroblasts"
+        }
+      ],
+      "question": "Two important fibers in the dermis give skin its strength and ability to bounce back. Which protein provides firmness and structural support?",
+      "source_question_id": 34
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "A",
+      "correct_answer_text": "Elastin",
+      "id": "esthetician-35",
+      "options": [
+        {
+          "label": "A",
+          "text": "Elastin"
+        },
+        {
+          "label": "B",
+          "text": "Collagen"
+        },
+        {
+          "label": "C",
+          "text": "Fibrin"
+        },
+        {
+          "label": "D",
+          "text": "Elastase"
+        }
+      ],
+      "question": "A client asks why skin loses its 'snap-back' over time. Which dermal fiber is most directly responsible for the skin's elasticity?",
+      "source_question_id": 35
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "B",
+      "correct_answer_text": "They neutralize free radicals that harm cells",
+      "id": "esthetician-36",
+      "options": [
+        {
+          "label": "A",
+          "text": "They absorb ultraviolet rays that cause burns"
+        },
+        {
+          "label": "B",
+          "text": "They neutralize free radicals that harm cells"
+        },
+        {
+          "label": "C",
+          "text": "They lift dead-skin buildup that dulls the surface"
+        },
+        {
+          "label": "D",
+          "text": "They attract water that plumps up the surface"
+        }
+      ],
+      "question": "Why are antioxidants valuable ingredients in skincare formulations?",
+      "source_question_id": 36
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "C",
+      "correct_answer_text": "Unstable molecules that can oxidize and harm cells",
+      "id": "esthetician-37",
+      "options": [
+        {
+          "label": "A",
+          "text": "Stable molecules that can nourish and protect cells"
+        },
+        {
+          "label": "B",
+          "text": "Airborne pollutants that settle on the skin surface"
+        },
+        {
+          "label": "C",
+          "text": "Unstable molecules that can oxidize and harm cells"
+        },
+        {
+          "label": "D",
+          "text": "Loose keratinocytes that flake off the skin surface"
+        }
+      ],
+      "question": "Free radicals are best described as:",
+      "source_question_id": 37
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "C",
+      "correct_answer_text": "Exfoliate by loosening the bonds of surface cells",
+      "id": "esthetician-38",
+      "options": [
+        {
+          "label": "A",
+          "text": "Unclog pores by dissolving the oil within follicles"
+        },
+        {
+          "label": "B",
+          "text": "Block sunburn by absorbing the rays of sunlight"
+        },
+        {
+          "label": "C",
+          "text": "Exfoliate by loosening the bonds of surface cells"
+        },
+        {
+          "label": "D",
+          "text": "Soothe by calming the redness within irritated skin"
+        }
+      ],
+      "question": "Alpha hydroxy acids (AHAs) such as glycolic and lactic acid are primarily used in skincare to:",
+      "source_question_id": 38
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "A",
+      "correct_answer_text": "It is oil-soluble and can penetrate oily skin pores",
+      "id": "esthetician-39",
+      "options": [
+        {
+          "label": "A",
+          "text": "It is oil-soluble and can penetrate oily skin pores"
+        },
+        {
+          "label": "B",
+          "text": "It is water-soluble and can loosen dead surface cells"
+        },
+        {
+          "label": "C",
+          "text": "It is protein-based and can digest dead outer keratin"
+        },
+        {
+          "label": "D",
+          "text": "It is vitamin-based and can speed skin cell turnover"
+        }
+      ],
+      "question": "Which is a defining property of a beta hydroxy acid such as salicylic acid compared with alpha hydroxy acids?",
+      "source_question_id": 39
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "B",
+      "correct_answer_text": "Salicylic acid",
+      "id": "esthetician-40",
+      "options": [
+        {
+          "label": "A",
+          "text": "Glycolic acid"
+        },
+        {
+          "label": "B",
+          "text": "Salicylic acid"
+        },
+        {
+          "label": "C",
+          "text": "Lactobionic acid"
+        },
+        {
+          "label": "D",
+          "text": "Tartaric acid"
+        }
+      ],
+      "question": "A client with oily, acne-prone skin and clogged pores would most benefit from which exfoliating acid because of its ability to dissolve in oil?",
+      "source_question_id": 40
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "B",
+      "correct_answer_text": "Attracting and binding water in the skin",
+      "id": "esthetician-41",
+      "options": [
+        {
+          "label": "A",
+          "text": "Coating and sealing moisture in the skin"
+        },
+        {
+          "label": "B",
+          "text": "Attracting and binding water in the skin"
+        },
+        {
+          "label": "C",
+          "text": "Filling and smoothing small cracks in the skin"
+        },
+        {
+          "label": "D",
+          "text": "Restoring and renewing lost lipids in the skin"
+        }
+      ],
+      "question": "Match the moisturizer ingredient category to its action: a humectant works primarily by:",
+      "source_question_id": 41
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "C",
+      "correct_answer_text": "Occlusives",
+      "id": "esthetician-42",
+      "options": [
+        {
+          "label": "A",
+          "text": "Humectants"
+        },
+        {
+          "label": "B",
+          "text": "Emollients"
+        },
+        {
+          "label": "C",
+          "text": "Occlusives"
+        },
+        {
+          "label": "D",
+          "text": "Exfoliants"
+        }
+      ],
+      "question": "Which ingredient category works by forming a film on the surface to prevent transepidermal water loss?",
+      "source_question_id": 42
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "C",
+      "correct_answer_text": "Acidic",
+      "id": "esthetician-43",
+      "options": [
+        {
+          "label": "A",
+          "text": "Alkaline"
+        },
+        {
+          "label": "B",
+          "text": "Neutral"
+        },
+        {
+          "label": "C",
+          "text": "Acidic"
+        },
+        {
+          "label": "D",
+          "text": "Buffered"
+        }
+      ],
+      "question": "On the pH scale, a substance with a value below 7 is classified as:",
+      "source_question_id": 43
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "D",
+      "correct_answer_text": "Alkaline, which can weaken the acid mantle",
+      "id": "esthetician-44",
+      "options": [
+        {
+          "label": "A",
+          "text": "Neutral, which can leave the skin unchanged"
+        },
+        {
+          "label": "B",
+          "text": "Acidic, which can gently exfoliate the skin"
+        },
+        {
+          "label": "C",
+          "text": "Alkaline, which can help repair the barrier"
+        },
+        {
+          "label": "D",
+          "text": "Alkaline, which can weaken the acid mantle"
+        }
+      ],
+      "question": "A product label lists a pH of 9. How would this product be classified, and what is the likely effect on skin?",
+      "source_question_id": 44
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "D",
+      "correct_answer_text": "A mix of immiscible liquids that are held together",
+      "id": "esthetician-45",
+      "options": [
+        {
+          "label": "A",
+          "text": "A transparent mix of solids that dissolve in liquid"
+        },
+        {
+          "label": "B",
+          "text": "A cloudy mix of fine particles that settle out"
+        },
+        {
+          "label": "C",
+          "text": "A mix of fine dry powders that absorb surface oil"
+        },
+        {
+          "label": "D",
+          "text": "A mix of immiscible liquids that are held together"
+        }
+      ],
+      "question": "Cosmetic chemistry classifies many lotions and creams as emulsions. An emulsion is best defined as:",
+      "source_question_id": 45
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "D",
+      "correct_answer_text": "To keep the oil and water from separating",
+      "id": "esthetician-46",
+      "options": [
+        {
+          "label": "A",
+          "text": "To keep the bacteria and fungi from growing"
+        },
+        {
+          "label": "B",
+          "text": "To keep the iron and copper from reacting"
+        },
+        {
+          "label": "C",
+          "text": "To keep the actives and fats from oxidizing"
+        },
+        {
+          "label": "D",
+          "text": "To keep the oil and water from separating"
+        }
+      ],
+      "question": "In cosmetic formulation, what is the role of an emulsifier?",
+      "source_question_id": 46
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "B",
+      "correct_answer_text": "A plugged pore filled with sebum and dead cells",
+      "id": "esthetician-47",
+      "options": [
+        {
+          "label": "A",
+          "text": "A small blister filled with clear watery fluid"
+        },
+        {
+          "label": "B",
+          "text": "A plugged pore filled with sebum and dead cells"
+        },
+        {
+          "label": "C",
+          "text": "A raised lesion filled with pus and white cells"
+        },
+        {
+          "label": "D",
+          "text": "A small white cyst filled with hardened keratin"
+        }
+      ],
+      "question": "A comedone is best described as:",
+      "source_question_id": 47
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "A",
+      "correct_answer_text": "Sebum and debris oxidizing in the exposed pore",
+      "id": "esthetician-48",
+      "options": [
+        {
+          "label": "A",
+          "text": "Sebum and debris oxidizing in the exposed pore"
+        },
+        {
+          "label": "B",
+          "text": "Dirt and makeup collecting in the exposed pore"
+        },
+        {
+          "label": "C",
+          "text": "Bacteria and yeast growing in the exposed pore"
+        },
+        {
+          "label": "D",
+          "text": "Blood and serum clotting in the exposed pore"
+        }
+      ],
+      "question": "What causes a blackhead (open comedone) to appear dark, distinguishing it from a whitehead?",
+      "source_question_id": 48
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "D",
+      "correct_answer_text": "Grade 4 (cystic)",
+      "id": "esthetician-49",
+      "options": [
+        {
+          "label": "A",
+          "text": "Grade 1 (minor)"
+        },
+        {
+          "label": "B",
+          "text": "Grade 3 (inflamed)"
+        },
+        {
+          "label": "C",
+          "text": "Grade 2 (moderate)"
+        },
+        {
+          "label": "D",
+          "text": "Grade 4 (cystic)"
+        }
+      ],
+      "question": "Acne is commonly graded by severity. A grade characterized by numerous papules, pustules, and the presence of nodules and cysts would be classified as:",
+      "source_question_id": 49
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "D",
+      "correct_answer_text": "Grade 1 (minor)",
+      "id": "esthetician-50",
+      "options": [
+        {
+          "label": "A",
+          "text": "Grade 3 (inflamed)"
+        },
+        {
+          "label": "B",
+          "text": "Grade 4 (cystic)"
+        },
+        {
+          "label": "C",
+          "text": "Grade 2 (moderate)"
+        },
+        {
+          "label": "D",
+          "text": "Grade 1 (minor)"
+        }
+      ],
+      "question": "An esthetician notes a client has only scattered open and closed comedones with little inflammation. This presentation best fits which acne grade?",
+      "source_question_id": 50
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "A",
+      "correct_answer_text": "Rosacea",
+      "id": "esthetician-51",
+      "options": [
+        {
+          "label": "A",
+          "text": "Rosacea"
+        },
+        {
+          "label": "B",
+          "text": "Urticaria"
+        },
+        {
+          "label": "C",
+          "text": "Psoriasis"
+        },
+        {
+          "label": "D",
+          "text": "Lupus"
+        }
+      ],
+      "question": "A client presents with persistent facial redness, visible capillaries, and flushing concentrated on the cheeks and nose. Which chronic skin condition does this most likely indicate?",
+      "source_question_id": 51
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "B",
+      "correct_answer_text": "Because stimulation can provoke flushing and inflammation",
+      "id": "esthetician-52",
+      "options": [
+        {
+          "label": "A",
+          "text": "Because stimulation can trigger scaling and thick plaques"
+        },
+        {
+          "label": "B",
+          "text": "Because stimulation can provoke flushing and inflammation"
+        },
+        {
+          "label": "C",
+          "text": "Because stimulation can spread bacteria and infect others"
+        },
+        {
+          "label": "D",
+          "text": "Because stimulation can cause bleaching and pale spots"
+        }
+      ],
+      "question": "When working with a client who has rosacea, why should an esthetician avoid harsh stimulating treatments and known triggers?",
+      "source_question_id": 52
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "B",
+      "correct_answer_text": "Overproduction of melanin that darkens patches of skin",
+      "id": "esthetician-53",
+      "options": [
+        {
+          "label": "A",
+          "text": "Underproduction of melanin that lightens patches of skin"
+        },
+        {
+          "label": "B",
+          "text": "Overproduction of melanin that darkens patches of skin"
+        },
+        {
+          "label": "C",
+          "text": "Widening of surface vessels that reddens patches of skin"
+        },
+        {
+          "label": "D",
+          "text": "Buildup of surface cells that thickens patches of skin"
+        }
+      ],
+      "question": "Hyperpigmentation refers to a skin condition characterized by:",
+      "source_question_id": 53
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "B",
+      "correct_answer_text": "Melasma",
+      "id": "esthetician-54",
+      "options": [
+        {
+          "label": "A",
+          "text": "Lentigo"
+        },
+        {
+          "label": "B",
+          "text": "Melasma"
+        },
+        {
+          "label": "C",
+          "text": "Rosacea"
+        },
+        {
+          "label": "D",
+          "text": "Vitiligo"
+        }
+      ],
+      "question": "A client develops symmetrical brown patches across the cheeks, forehead, and upper lip that worsened during pregnancy and sun exposure. This specific form of hyperpigmentation is known as:",
+      "source_question_id": 54
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "B",
+      "correct_answer_text": "Because UV light makes melanocytes deepen the patches",
+      "id": "esthetician-55",
+      "options": [
+        {
+          "label": "A",
+          "text": "Because sunscreen removes the existing pigment"
+        },
+        {
+          "label": "B",
+          "text": "Because UV light makes melanocytes deepen the patches"
+        },
+        {
+          "label": "C",
+          "text": "Because the sun turns the brown pigment into skin cancer"
+        },
+        {
+          "label": "D",
+          "text": "Because UV light fades the patches naturally"
+        }
+      ],
+      "question": "Why is daily broad-spectrum sun protection essential for a client being treated for melasma?",
+      "source_question_id": 55
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "A",
+      "correct_answer_text": "Too little melanin, leaving pale areas of skin",
+      "id": "esthetician-56",
+      "options": [
+        {
+          "label": "A",
+          "text": "Too little melanin, leaving pale areas of skin"
+        },
+        {
+          "label": "B",
+          "text": "Too much melanin, leaving darker areas of skin"
+        },
+        {
+          "label": "C",
+          "text": "Too much blood flow, leaving red areas of skin"
+        },
+        {
+          "label": "D",
+          "text": "Too little sebum, leaving flaky areas of skin"
+        }
+      ],
+      "question": "Hypopigmentation differs from hyperpigmentation in that it involves:",
+      "source_question_id": 56
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "D",
+      "correct_answer_text": "Fungus",
+      "id": "esthetician-57",
+      "options": [
+        {
+          "label": "A",
+          "text": "Virus"
+        },
+        {
+          "label": "B",
+          "text": "Bacterium"
+        },
+        {
+          "label": "C",
+          "text": "Protozoan"
+        },
+        {
+          "label": "D",
+          "text": "Fungus"
+        }
+      ],
+      "question": "Tinea is a category of skin infection caused by which type of microorganism?",
+      "source_question_id": 57
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "A",
+      "correct_answer_text": "Postpone the facial until the sore has fully healed",
+      "id": "esthetician-58",
+      "options": [
+        {
+          "label": "A",
+          "text": "Postpone the facial until the sore has fully healed"
+        },
+        {
+          "label": "B",
+          "text": "Cover the sore with a bandage, then give the facial"
+        },
+        {
+          "label": "C",
+          "text": "Postpone the facial until the sore has crusted over"
+        },
+        {
+          "label": "D",
+          "text": "Swab the sore with antiseptic, then give the facial"
+        }
+      ],
+      "question": "A client arrives with an active cold sore (herpes simplex) on the lip before a facial. What is the appropriate action?",
+      "source_question_id": 58
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "D",
+      "correct_answer_text": "Macule",
+      "id": "esthetician-59",
+      "options": [
+        {
+          "label": "A",
+          "text": "Scale"
+        },
+        {
+          "label": "B",
+          "text": "Ulcer"
+        },
+        {
+          "label": "C",
+          "text": "Keloid"
+        },
+        {
+          "label": "D",
+          "text": "Macule"
+        }
+      ],
+      "question": "Skin lesions are classified as primary or secondary. Which of the following is a primary lesion?",
+      "source_question_id": 59
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "C",
+      "correct_answer_text": "Papule",
+      "id": "esthetician-60",
+      "options": [
+        {
+          "label": "A",
+          "text": "Nodule"
+        },
+        {
+          "label": "B",
+          "text": "Vesicle"
+        },
+        {
+          "label": "C",
+          "text": "Papule"
+        },
+        {
+          "label": "D",
+          "text": "Pustule"
+        }
+      ],
+      "question": "Which term describes a small, elevated, solid lesion of the skin, such as a small pimple, that contains no fluid?",
+      "source_question_id": 60
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "C",
+      "correct_answer_text": "Years of ultraviolet exposure",
+      "id": "esthetician-61",
+      "options": [
+        {
+          "label": "A",
+          "text": "Years of repeated expressions"
+        },
+        {
+          "label": "B",
+          "text": "Years of chronological aging"
+        },
+        {
+          "label": "C",
+          "text": "Years of ultraviolet exposure"
+        },
+        {
+          "label": "D",
+          "text": "Years of heavy cigarette use"
+        }
+      ],
+      "question": "Photoaging refers to premature skin aging caused primarily by:",
+      "source_question_id": 61
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "B",
+      "correct_answer_text": "Deep wrinkles with mottled pigment and leathery texture",
+      "id": "esthetician-62",
+      "options": [
+        {
+          "label": "A",
+          "text": "Fine lines with an even tone and thin, translucent skin"
+        },
+        {
+          "label": "B",
+          "text": "Deep wrinkles with mottled pigment and leathery texture"
+        },
+        {
+          "label": "C",
+          "text": "Fine lines with a tight feel and a rough, flaking surface"
+        },
+        {
+          "label": "D",
+          "text": "Hollow cheeks with deep folds and thinner upper lips"
+        }
+      ],
+      "question": "Which visible sign on a client's skin is most characteristic of long-term sun damage rather than chronological aging alone?",
+      "source_question_id": 62
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "A",
+      "correct_answer_text": "Refer the client to a physician for evaluation",
+      "id": "esthetician-63",
+      "options": [
+        {
+          "label": "A",
+          "text": "Refer the client to a physician for evaluation"
+        },
+        {
+          "label": "B",
+          "text": "Tell the client that the lesion looks like melanoma"
+        },
+        {
+          "label": "C",
+          "text": "Ask the manager whether the mole is harmless"
+        },
+        {
+          "label": "D",
+          "text": "Wait a month to see whether the mole changes"
+        }
+      ],
+      "question": "An esthetician notices an asymmetrical mole with irregular borders, varied color, and a diameter larger than a pencil eraser that has recently changed. The appropriate response is to:",
+      "source_question_id": 63
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "C",
+      "correct_answer_text": "Melanoma",
+      "id": "esthetician-64",
+      "options": [
+        {
+          "label": "A",
+          "text": "Basal cell carcinoma"
+        },
+        {
+          "label": "B",
+          "text": "Nevus"
+        },
+        {
+          "label": "C",
+          "text": "Melanoma"
+        },
+        {
+          "label": "D",
+          "text": "Squamous cell carcinoma"
+        }
+      ],
+      "question": "Which is the most serious and potentially life-threatening form of skin cancer that estheticians should be able to flag for referral?",
+      "source_question_id": 64
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "D",
+      "correct_answer_text": "Thick, silvery scale on sharply bordered plaques",
+      "id": "esthetician-65",
+      "options": [
+        {
+          "label": "A",
+          "text": "Itchy, weeping patches with poorly defined edges"
+        },
+        {
+          "label": "B",
+          "text": "Greasy, yellow scale on red skin near the nose"
+        },
+        {
+          "label": "C",
+          "text": "Scaly, ring-shaped patches with clearing centers"
+        },
+        {
+          "label": "D",
+          "text": "Thick, silvery scale on sharply bordered plaques"
+        }
+      ],
+      "question": "Psoriasis and eczema can both cause red, irritated skin, but psoriasis is most distinctly characterized by:",
+      "source_question_id": 65
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "C",
+      "correct_answer_text": "A chronic inflammatory condition causing itchy, red, sometimes oozing skin",
+      "id": "esthetician-66",
+      "options": [
+        {
+          "label": "A",
+          "text": "A chronic autoimmune condition causing thick, silvery, sharply edged plaques"
+        },
+        {
+          "label": "B",
+          "text": "A chronic vascular condition causing flushed, red, sometimes bumpy skin"
+        },
+        {
+          "label": "C",
+          "text": "A chronic inflammatory condition causing itchy, red, sometimes oozing skin"
+        },
+        {
+          "label": "D",
+          "text": "A chronic autoimmune condition causing smooth, chalky, sharply edged patches"
+        }
+      ],
+      "question": "Eczema (atopic dermatitis) is best described as:",
+      "source_question_id": 66
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "A",
+      "correct_answer_text": "Impetigo",
+      "id": "esthetician-67",
+      "options": [
+        {
+          "label": "A",
+          "text": "Impetigo"
+        },
+        {
+          "label": "B",
+          "text": "Vitiligo"
+        },
+        {
+          "label": "C",
+          "text": "Eczema"
+        },
+        {
+          "label": "D",
+          "text": "Rosacea"
+        }
+      ],
+      "question": "Which of the following is considered a contagious skin disease that contraindicates a facial service?",
+      "source_question_id": 67
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "D",
+      "correct_answer_text": "To keep the infection off staff and later clients",
+      "id": "esthetician-68",
+      "options": [
+        {
+          "label": "A",
+          "text": "To diagnose the infection and recommend a cream"
+        },
+        {
+          "label": "B",
+          "text": "To pick products that will clear up the infection"
+        },
+        {
+          "label": "C",
+          "text": "To book facials that will help the infection heal"
+        },
+        {
+          "label": "D",
+          "text": "To keep the infection off staff and later clients"
+        }
+      ],
+      "question": "Why must an esthetician be able to recognize contagious skin diseases before beginning a service?",
+      "source_question_id": 68
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "C",
+      "correct_answer_text": "Fibroblasts",
+      "id": "esthetician-69",
+      "options": [
+        {
+          "label": "A",
+          "text": "Melanocytes"
+        },
+        {
+          "label": "B",
+          "text": "Macrophages"
+        },
+        {
+          "label": "C",
+          "text": "Fibroblasts"
+        },
+        {
+          "label": "D",
+          "text": "Adipocytes"
+        }
+      ],
+      "question": "Within the dermis, which cells produce the collagen and elastin fibers that maintain skin structure?",
+      "source_question_id": 69
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "B",
+      "correct_answer_text": "Using broad-spectrum sunscreen every day",
+      "id": "esthetician-70",
+      "options": [
+        {
+          "label": "A",
+          "text": "Using antioxidant-rich lotions every day"
+        },
+        {
+          "label": "B",
+          "text": "Using broad-spectrum sunscreen every day"
+        },
+        {
+          "label": "C",
+          "text": "Using hydrating moisturizers every day"
+        },
+        {
+          "label": "D",
+          "text": "Using prescription retinoids every day"
+        }
+      ],
+      "question": "A client wants to slow visible skin aging at home. Based on skin physiology, which recommendation most directly addresses the leading external cause of premature aging?",
+      "source_question_id": 70
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "C",
+      "correct_answer_text": "Scalp and face",
+      "id": "esthetician-71",
+      "options": [
+        {
+          "label": "A",
+          "text": "Palms and soles"
+        },
+        {
+          "label": "B",
+          "text": "Armpits and groin"
+        },
+        {
+          "label": "C",
+          "text": "Scalp and face"
+        },
+        {
+          "label": "D",
+          "text": "Forearms and legs"
+        }
+      ],
+      "question": "Sebaceous glands are most numerous on which areas of the body, helping explain why these zones tend to be oilier?",
+      "source_question_id": 71
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "C",
+      "correct_answer_text": "Because a pH shift can upset the acid mantle and weaken the actives",
+      "id": "esthetician-72",
+      "options": [
+        {
+          "label": "A",
+          "text": "Because the cleanser and the acid can react and release toxic fumes"
+        },
+        {
+          "label": "B",
+          "text": "Because the alkaline cleanser can coat the skin and block the acid"
+        },
+        {
+          "label": "C",
+          "text": "Because a pH shift can upset the acid mantle and weaken the actives"
+        },
+        {
+          "label": "D",
+          "text": "Because a pH shift can make the acid turn caustic and burn the skin"
+        }
+      ],
+      "question": "Why does layering products in the wrong pH order, such as a strongly alkaline cleanser before an acid treatment, potentially reduce effectiveness?",
+      "source_question_id": 72
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "A",
+      "correct_answer_text": "Limiting dehydration and blocking germs",
+      "id": "esthetician-73",
+      "options": [
+        {
+          "label": "A",
+          "text": "Limiting dehydration and blocking germs"
+        },
+        {
+          "label": "B",
+          "text": "Sensing touch and relaying pain to nerves"
+        },
+        {
+          "label": "C",
+          "text": "Secreting sebum and oiling hair shafts"
+        },
+        {
+          "label": "D",
+          "text": "Releasing sweat and cooling the body down"
+        }
+      ],
+      "question": "The protective barrier formed by the stratum corneum primarily helps the body by:",
+      "source_question_id": 73
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "B",
+      "correct_answer_text": "Melanin production rises as a protective response to UV",
+      "id": "esthetician-74",
+      "options": [
+        {
+          "label": "A",
+          "text": "Melanin production falls off as a result of repeated UV exposure"
+        },
+        {
+          "label": "B",
+          "text": "Melanin production rises as a protective response to UV"
+        },
+        {
+          "label": "C",
+          "text": "Melanin is produced by keratinocytes in the outer layer"
+        },
+        {
+          "label": "D",
+          "text": "Melanin coats the outer layer so sunscreen is unneeded"
+        }
+      ],
+      "question": "Which statement about melanin and sun exposure is accurate?",
+      "source_question_id": 74
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "A",
+      "correct_answer_text": "Sagging, thinning, and wrinkling skin",
+      "id": "esthetician-75",
+      "options": [
+        {
+          "label": "A",
+          "text": "Sagging, thinning, and wrinkling skin"
+        },
+        {
+          "label": "B",
+          "text": "Age spots, freckling, and uneven tone"
+        },
+        {
+          "label": "C",
+          "text": "Dryness, flaking, and reduced oiliness"
+        },
+        {
+          "label": "D",
+          "text": "Dullness, roughness, and slow turnover"
+        }
+      ],
+      "question": "A new product claims to 'boost collagen.' From a physiology standpoint, declining collagen with age contributes most directly to:",
+      "source_question_id": 75
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "C",
+      "correct_answer_text": "Forms in the basal layer, rises as it matures, and is shed at the surface",
+      "id": "esthetician-76",
+      "options": [
+        {
+          "label": "A",
+          "text": "Forms in the horny layer, sinks as it matures, and is absorbed at the base"
+        },
+        {
+          "label": "B",
+          "text": "Forms in the dermis, rises as it matures, and is held at the spiny layer"
+        },
+        {
+          "label": "C",
+          "text": "Forms in the basal layer, rises as it matures, and is shed at the surface"
+        },
+        {
+          "label": "D",
+          "text": "Forms in the basal layer, sinks as it matures, and is absorbed at the base"
+        }
+      ],
+      "question": "Which describes the correct general progression of a keratinocyte's life cycle in the epidermis?",
+      "source_question_id": 76
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "A",
+      "correct_answer_text": "Disinfection with an EPA-registered disinfectant",
+      "id": "esthetician-77",
+      "options": [
+        {
+          "label": "A",
+          "text": "Disinfection with an EPA-registered disinfectant"
+        },
+        {
+          "label": "B",
+          "text": "Sterilization with an FDA-cleared autoclave"
+        },
+        {
+          "label": "C",
+          "text": "Sanitation with detergent and warm running water"
+        },
+        {
+          "label": "D",
+          "text": "Disposal with used lancets in a sealed container"
+        }
+      ],
+      "question": "An esthetician needs to disinfect a non-porous tool that touched intact skin but no blood. The minimum required level of decontamination is:",
+      "source_question_id": 77
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "A",
+      "correct_answer_text": "Discarded after one use on a client",
+      "id": "esthetician-78",
+      "options": [
+        {
+          "label": "A",
+          "text": "Discarded after one use on a client"
+        },
+        {
+          "label": "B",
+          "text": "Rinsed and dried after client use"
+        },
+        {
+          "label": "C",
+          "text": "Disinfected fully before the next client"
+        },
+        {
+          "label": "D",
+          "text": "Held in a UV cabinet for the next client"
+        }
+      ],
+      "question": "Single-use (disposable) items such as wax sticks and cotton pads must be:",
+      "source_question_id": 78
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "B",
+      "correct_answer_text": "Bacteria - impetigo",
+      "id": "esthetician-79",
+      "options": [
+        {
+          "label": "A",
+          "text": "Virus - tinea pedis"
+        },
+        {
+          "label": "B",
+          "text": "Bacteria - impetigo"
+        },
+        {
+          "label": "C",
+          "text": "Fungus - cold sores"
+        },
+        {
+          "label": "D",
+          "text": "Parasite - boils"
+        }
+      ],
+      "question": "Which of the following pairs a microorganism type with a correct example?",
+      "source_question_id": 79
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "D",
+      "correct_answer_text": "So strokes can follow muscle direction to tone without stretching the skin",
+      "id": "esthetician-80",
+      "options": [
+        {
+          "label": "A",
+          "text": "So strokes can push against muscle direction to break down the muscle fibers"
+        },
+        {
+          "label": "B",
+          "text": "So strokes can prompt the muscles into making fresh collagen fibers"
+        },
+        {
+          "label": "C",
+          "text": "So strokes can push lymph into the muscles and flush out the toxins"
+        },
+        {
+          "label": "D",
+          "text": "So strokes can follow muscle direction to tone without stretching the skin"
+        }
+      ],
+      "question": "Why is understanding the muscles of the face important when planning facial massage manipulations?",
+      "source_question_id": 80
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "C",
+      "correct_answer_text": "Mouth corners down to the clavicles",
+      "id": "esthetician-81",
+      "options": [
+        {
+          "label": "A",
+          "text": "Shoulder blades up to the hairline"
+        },
+        {
+          "label": "B",
+          "text": "Eyebrows back to the occipital bone"
+        },
+        {
+          "label": "C",
+          "text": "Mouth corners down to the clavicles"
+        },
+        {
+          "label": "D",
+          "text": "Breastbone outward to the upper arm"
+        }
+      ],
+      "question": "The platysma is a broad sheet-like muscle located in which region relevant to facial and neck massage?",
+      "source_question_id": 81
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "C",
+      "correct_answer_text": "It favors helpful microbes and the enzymes that renew lipids",
+      "id": "esthetician-82",
+      "options": [
+        {
+          "label": "A",
+          "text": "It tightens enlarged pores and the glands that produce sebum"
+        },
+        {
+          "label": "B",
+          "text": "It dissolves excess debris and the plugs that clog follicles"
+        },
+        {
+          "label": "C",
+          "text": "It favors helpful microbes and the enzymes that renew lipids"
+        },
+        {
+          "label": "D",
+          "text": "It thickens outer cells and the layer that scatters sunlight"
+        }
+      ],
+      "question": "Which best explains why a slightly acidic skin pH supports barrier health?",
+      "source_question_id": 82
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "A",
+      "correct_answer_text": "III to IV",
+      "id": "esthetician-83",
+      "options": [
+        {
+          "label": "A",
+          "text": "III to IV"
+        },
+        {
+          "label": "B",
+          "text": "I to II"
+        },
+        {
+          "label": "C",
+          "text": "V to VI"
+        },
+        {
+          "label": "D",
+          "text": "II to III"
+        }
+      ],
+      "question": "An esthetician analyzing skin notes that the client tans easily and rarely burns, with light-brown skin tone. This client most likely corresponds to which Fitzpatrick category range?",
+      "source_question_id": 83
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "A",
+      "correct_answer_text": "Epidermis, dermis, subcutaneous tissue",
+      "id": "esthetician-84",
+      "options": [
+        {
+          "label": "A",
+          "text": "Epidermis, dermis, subcutaneous tissue"
+        },
+        {
+          "label": "B",
+          "text": "Subcutaneous tissue, dermis, epidermis"
+        },
+        {
+          "label": "C",
+          "text": "Dermis, epidermis, subcutaneous tissue"
+        },
+        {
+          "label": "D",
+          "text": "Epidermis, subcutaneous tissue, dermis"
+        }
+      ],
+      "question": "Which describes the correct depth order of structures from the surface inward?",
+      "source_question_id": 84
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "C",
+      "correct_answer_text": "Neutralize the free radicals that sun exposure creates",
+      "id": "esthetician-85",
+      "options": [
+        {
+          "label": "A",
+          "text": "Raise the protection factor value that sunscreens list"
+        },
+        {
+          "label": "B",
+          "text": "Absorb the ultraviolet rays that chemical filters trap"
+        },
+        {
+          "label": "C",
+          "text": "Neutralize the free radicals that sun exposure creates"
+        },
+        {
+          "label": "D",
+          "text": "Reflect the visible light that mineral powders scatter"
+        }
+      ],
+      "question": "Antioxidants such as vitamin C are often paired with sunscreen because they:",
+      "source_question_id": 85
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "A",
+      "correct_answer_text": "Lactic acid",
+      "id": "esthetician-86",
+      "options": [
+        {
+          "label": "A",
+          "text": "Lactic acid"
+        },
+        {
+          "label": "B",
+          "text": "Glycolic acid"
+        },
+        {
+          "label": "C",
+          "text": "Malic acid"
+        },
+        {
+          "label": "D",
+          "text": "Tartaric acid"
+        }
+      ],
+      "question": "A client wants gentle exfoliation suited to sensitive, dry skin. Which alpha hydroxy acid is generally considered milder and more hydrating?",
+      "source_question_id": 86
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "D",
+      "correct_answer_text": "They block the transmission of bloodborne pathogens",
+      "id": "esthetician-87",
+      "options": [
+        {
+          "label": "A",
+          "text": "They prevent the irritation of strong disinfectants"
+        },
+        {
+          "label": "B",
+          "text": "They minimize the absorption of product ingredients"
+        },
+        {
+          "label": "C",
+          "text": "They limit the contamination of cosmetic containers"
+        },
+        {
+          "label": "D",
+          "text": "They block the transmission of bloodborne pathogens"
+        }
+      ],
+      "question": "What is the main reason an esthetician must wear gloves when there is any possibility of contact with blood?",
+      "source_question_id": 87
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "C",
+      "correct_answer_text": "Sterilization kills resistant spores; disinfection does not",
+      "id": "esthetician-88",
+      "options": [
+        {
+          "label": "A",
+          "text": "Disinfection kills hardy endospores; sterilization does not"
+        },
+        {
+          "label": "B",
+          "text": "Sterilization uses quaternary sprays; disinfection does not"
+        },
+        {
+          "label": "C",
+          "text": "Sterilization kills resistant spores; disinfection does not"
+        },
+        {
+          "label": "D",
+          "text": "Sterilization uses isopropyl alcohol; disinfection does not"
+        }
+      ],
+      "question": "Which statement correctly distinguishes sterilization from disinfection?",
+      "source_question_id": 88
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "C",
+      "correct_answer_text": "Hypopigmentation, as in vitiligo",
+      "id": "esthetician-89",
+      "options": [
+        {
+          "label": "A",
+          "text": "Hyperpigmentation, as in melasma"
+        },
+        {
+          "label": "B",
+          "text": "Infection, as in tinea versicolor"
+        },
+        {
+          "label": "C",
+          "text": "Hypopigmentation, as in vitiligo"
+        },
+        {
+          "label": "D",
+          "text": "Dermatitis, as in pityriasis alba"
+        }
+      ],
+      "question": "A client's skin shows white, depigmented patches with sharp borders and no scaling or redness. This is most consistent with:",
+      "source_question_id": 89
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "A",
+      "correct_answer_text": "Diagnosis exceeds the scope of esthetics licensure",
+      "id": "esthetician-90",
+      "options": [
+        {
+          "label": "A",
+          "text": "Diagnosis exceeds the scope of esthetics licensure"
+        },
+        {
+          "label": "B",
+          "text": "Diagnosis needs the approval of master instructors"
+        },
+        {
+          "label": "C",
+          "text": "Diagnosis upsets the confidence of anxious clients"
+        },
+        {
+          "label": "D",
+          "text": "Diagnosis requires the equipment of pathology labs"
+        }
+      ],
+      "question": "Why should an esthetician avoid attempting to diagnose a skin disease for a client?",
+      "source_question_id": 90
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "A",
+      "correct_answer_text": "Starting keratinization and barrier formation",
+      "id": "esthetician-91",
+      "options": [
+        {
+          "label": "A",
+          "text": "Starting keratinization and barrier formation"
+        },
+        {
+          "label": "B",
+          "text": "Building desmosomes and intercellular bridges"
+        },
+        {
+          "label": "C",
+          "text": "Supporting mitosis and epidermal regeneration"
+        },
+        {
+          "label": "D",
+          "text": "Manufacturing melanin and protective pigments"
+        }
+      ],
+      "question": "The granular layer (stratum granulosum) of the epidermis is named for granules that play a role in:",
+      "source_question_id": 91
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "B",
+      "correct_answer_text": "Germinativum, spinosum, granulosum, lucidum, corneum",
+      "id": "esthetician-92",
+      "options": [
+        {
+          "label": "A",
+          "text": "Germinativum, granulosum, spinosum, lucidum, corneum"
+        },
+        {
+          "label": "B",
+          "text": "Germinativum, spinosum, granulosum, lucidum, corneum"
+        },
+        {
+          "label": "C",
+          "text": "Corneum, lucidum, granulosum, spinosum, germinativum"
+        },
+        {
+          "label": "D",
+          "text": "Corneum, lucidum, spinosum, granulosum, germinativum"
+        }
+      ],
+      "question": "Which sequence correctly lists epidermal layers from deepest to most superficial?",
+      "source_question_id": 92
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "B",
+      "correct_answer_text": "The stratum corneum",
+      "id": "esthetician-93",
+      "options": [
+        {
+          "label": "A",
+          "text": "The papillary layer"
+        },
+        {
+          "label": "B",
+          "text": "The stratum corneum"
+        },
+        {
+          "label": "C",
+          "text": "The stratum basale"
+        },
+        {
+          "label": "D",
+          "text": "The reticular layer"
+        }
+      ],
+      "question": "A facial steamer increases hydration and softens debris partly by interacting with which surface layer to ease extractions?",
+      "source_question_id": 93
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "B",
+      "correct_answer_text": "Shield cell nuclei against ultraviolet damage",
+      "id": "esthetician-94",
+      "options": [
+        {
+          "label": "A",
+          "text": "Fortify dermal fibers against solar breakdown"
+        },
+        {
+          "label": "B",
+          "text": "Shield cell nuclei against ultraviolet damage"
+        },
+        {
+          "label": "C",
+          "text": "Guard pore linings against bacterial invasion"
+        },
+        {
+          "label": "D",
+          "text": "Harden surface keratin against daily friction"
+        }
+      ],
+      "question": "Melanocytes transfer melanin to surrounding keratinocytes mainly to:",
+      "source_question_id": 94
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "C",
+      "correct_answer_text": "They are disposable goods made to be discarded",
+      "id": "esthetician-95",
+      "options": [
+        {
+          "label": "A",
+          "text": "They are textiles too compact to be penetrated"
+        },
+        {
+          "label": "B",
+          "text": "They are washable cloths meant to be laundered"
+        },
+        {
+          "label": "C",
+          "text": "They are disposable goods made to be discarded"
+        },
+        {
+          "label": "D",
+          "text": "They are supplies sanitary enough to be reused"
+        }
+      ],
+      "question": "Why is an autoclave generally not used for porous, single-use items like cotton or sponges?",
+      "source_question_id": 95
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "B",
+      "correct_answer_text": "Disinfect, then sterilize if needed",
+      "id": "esthetician-96",
+      "options": [
+        {
+          "label": "A",
+          "text": "Sanitize, then disinfect if needed"
+        },
+        {
+          "label": "B",
+          "text": "Disinfect, then sterilize if needed"
+        },
+        {
+          "label": "C",
+          "text": "Sterilize, then disinfect if needed"
+        },
+        {
+          "label": "D",
+          "text": "Disinfect, then sanitize if needed"
+        }
+      ],
+      "question": "Which is the correct order of steps for an implement: clean, then which two actions in order?",
+      "source_question_id": 96
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "D",
+      "correct_answer_text": "Blending with sweat into a mildly acidic film",
+      "id": "esthetician-97",
+      "options": [
+        {
+          "label": "A",
+          "text": "Reacting with oxygen into a dark keratin plug"
+        },
+        {
+          "label": "B",
+          "text": "Binding with dead cells into a thicker callus"
+        },
+        {
+          "label": "C",
+          "text": "Fusing with melanin into a tan pigment shield"
+        },
+        {
+          "label": "D",
+          "text": "Blending with sweat into a mildly acidic film"
+        }
+      ],
+      "question": "The sebaceous gland's secretion, sebum, contributes to the acid mantle by:",
+      "source_question_id": 97
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "D",
+      "correct_answer_text": "Cooling the body as sweat evaporates",
+      "id": "esthetician-98",
+      "options": [
+        {
+          "label": "A",
+          "text": "Softening the skin as sebum migrates"
+        },
+        {
+          "label": "B",
+          "text": "Flushing the toxins as fluid escapes"
+        },
+        {
+          "label": "C",
+          "text": "Shading the cells as melanin spreads"
+        },
+        {
+          "label": "D",
+          "text": "Cooling the body as sweat evaporates"
+        }
+      ],
+      "question": "Which describes the primary function of sudoriferous glands beyond eliminating some waste?",
+      "source_question_id": 98
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "A",
+      "correct_answer_text": "Beta hydroxy acid",
+      "id": "esthetician-99",
+      "options": [
+        {
+          "label": "A",
+          "text": "Beta hydroxy acid"
+        },
+        {
+          "label": "B",
+          "text": "Alpha hydroxy acid"
+        },
+        {
+          "label": "C",
+          "text": "Enzyme exfoliant"
+        },
+        {
+          "label": "D",
+          "text": "Granular exfoliant"
+        }
+      ],
+      "question": "A product is described as oil-soluble and able to clear congestion deep within follicles. This best matches the action of:",
+      "source_question_id": 99
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "A",
+      "correct_answer_text": "Ultraviolet radiation from the sun",
+      "id": "esthetician-100",
+      "options": [
+        {
+          "label": "A",
+          "text": "Ultraviolet radiation from the sun"
+        },
+        {
+          "label": "B",
+          "text": "Dihydroxyacetone from the self-tanning gel"
+        },
+        {
+          "label": "C",
+          "text": "Carotenoids absorbed from the diet"
+        },
+        {
+          "label": "D",
+          "text": "Concentrated heat from the steamer"
+        }
+      ],
+      "question": "Which factor most directly stimulates increased melanin production and resulting tanning?",
+      "source_question_id": 100
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "D",
+      "correct_answer_text": "AHAs suit dry, photodamaged skin; BHAs suit oily, acneic skin",
+      "id": "esthetician-101",
+      "options": [
+        {
+          "label": "A",
+          "text": "AHAs suit oily, congested skin; BHAs suit dry, dehydrated skin"
+        },
+        {
+          "label": "B",
+          "text": "AHAs suit thin, reactive skin; BHAs suit mature, wrinkled skin"
+        },
+        {
+          "label": "C",
+          "text": "AHAs suit thin, couperose skin; BHAs suit clear, healthy skin"
+        },
+        {
+          "label": "D",
+          "text": "AHAs suit dry, photodamaged skin; BHAs suit oily, acneic skin"
+        }
+      ],
+      "question": "When comparing AHAs and BHAs, which general guideline best matches each to skin type?",
+      "source_question_id": 101
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "B",
+      "correct_answer_text": "It is the thick inner layer holding vessels, nerves, and glands",
+      "id": "esthetician-102",
+      "options": [
+        {
+          "label": "A",
+          "text": "It is the thin outer layer holding keratin, melanin, and lipids"
+        },
+        {
+          "label": "B",
+          "text": "It is the thick inner layer holding vessels, nerves, and glands"
+        },
+        {
+          "label": "C",
+          "text": "It is the deep fatty layer holding adipocytes, energy, and heat"
+        },
+        {
+          "label": "D",
+          "text": "It is the oily surface layer holding sebum, sweat, and bacteria"
+        }
+      ],
+      "question": "Which statement about the dermis is accurate?",
+      "source_question_id": 102
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "D",
+      "correct_answer_text": "The acid mantle and barrier lipids",
+      "id": "esthetician-103",
+      "options": [
+        {
+          "label": "A",
+          "text": "The capillary cells and blood flow"
+        },
+        {
+          "label": "B",
+          "text": "The nerve endings and pain signals"
+        },
+        {
+          "label": "C",
+          "text": "The deep collagen and elastin mesh"
+        },
+        {
+          "label": "D",
+          "text": "The acid mantle and barrier lipids"
+        }
+      ],
+      "question": "A client reports that an over-exfoliated area now stings with most products and looks red. This suggests damage to which protective feature?",
+      "source_question_id": 103
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "D",
+      "correct_answer_text": "They fill the surface gaps to smooth uneven texture",
+      "id": "esthetician-104",
+      "options": [
+        {
+          "label": "A",
+          "text": "They draw the ambient moisture to plump outer cells"
+        },
+        {
+          "label": "B",
+          "text": "They loosen the cell bonds to release flaky buildup"
+        },
+        {
+          "label": "C",
+          "text": "They emulsify the excess sebum to rinse away debris"
+        },
+        {
+          "label": "D",
+          "text": "They fill the surface gaps to smooth uneven texture"
+        }
+      ],
+      "question": "Why are emollients included in moisturizers for clients with rough, dry skin?",
+      "source_question_id": 104
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "D",
+      "correct_answer_text": "Vesicle",
+      "id": "esthetician-105",
+      "options": [
+        {
+          "label": "A",
+          "text": "Papule"
+        },
+        {
+          "label": "B",
+          "text": "Fissure"
+        },
+        {
+          "label": "C",
+          "text": "Nodule"
+        },
+        {
+          "label": "D",
+          "text": "Vesicle"
+        }
+      ],
+      "question": "Which of the following correctly identifies a fluid-filled primary lesion?",
+      "source_question_id": 105
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "A",
+      "correct_answer_text": "Avoid the outbreak and refer, since herpes simplex spreads",
+      "id": "esthetician-106",
+      "options": [
+        {
+          "label": "A",
+          "text": "Avoid the outbreak and refer, since herpes simplex spreads"
+        },
+        {
+          "label": "B",
+          "text": "Wear the gloves and continue, since nitrile blocks viruses"
+        },
+        {
+          "label": "C",
+          "text": "Treat the clusters and disinfect, since sulfur dries sores"
+        },
+        {
+          "label": "D",
+          "text": "Lance the vesicles and drain, since pressure prolongs pain"
+        }
+      ],
+      "question": "An esthetician sees grouped fluid-filled blisters on a tingling, reddened area near a client's mouth. Recognizing this likely viral lesion, the esthetician should:",
+      "source_question_id": 106
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "B",
+      "correct_answer_text": "In higher types, melanocytes generate more pigment",
+      "id": "esthetician-107",
+      "options": [
+        {
+          "label": "A",
+          "text": "In higher types, the epidermis houses more melanocytes"
+        },
+        {
+          "label": "B",
+          "text": "In higher types, melanocytes generate more pigment"
+        },
+        {
+          "label": "C",
+          "text": "In higher types, melanosomes pack more pheomelanin"
+        },
+        {
+          "label": "D",
+          "text": "In higher types, adipocytes pack more carotenoids"
+        }
+      ],
+      "question": "Which best explains why melanin distribution differs across the Fitzpatrick types?",
+      "source_question_id": 107
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "D",
+      "correct_answer_text": "The zones of facial sensation that treatments stimulate",
+      "id": "esthetician-108",
+      "options": [
+        {
+          "label": "A",
+          "text": "The movement of facial expressions that massage relaxes"
+        },
+        {
+          "label": "B",
+          "text": "The circulation of facial tissue that massage increases"
+        },
+        {
+          "label": "C",
+          "text": "The drainage of facial lymph that treatments accelerate"
+        },
+        {
+          "label": "D",
+          "text": "The zones of facial sensation that treatments stimulate"
+        }
+      ],
+      "question": "The trigeminal nerve has three branches. This is most relevant to an esthetician because it explains:",
+      "source_question_id": 108
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "C",
+      "correct_answer_text": "Collagen gives firmness and strength; elastin gives stretch and recoil",
+      "id": "esthetician-109",
+      "options": [
+        {
+          "label": "A",
+          "text": "Collagen gives elasticity and bounce; elastin gives stiffness and bulk"
+        },
+        {
+          "label": "B",
+          "text": "Collagen gives moisture and softness; elastin gives radiance and color"
+        },
+        {
+          "label": "C",
+          "text": "Collagen gives firmness and strength; elastin gives stretch and recoil"
+        },
+        {
+          "label": "D",
+          "text": "Collagen gives insulation and warmth; elastin gives cushion and volume"
+        }
+      ],
+      "question": "Which describes a key difference between collagen and elastin in the dermis?",
+      "source_question_id": 109
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "A",
+      "correct_answer_text": "A humectant to attract water and an occlusive to trap it",
+      "id": "esthetician-110",
+      "options": [
+        {
+          "label": "A",
+          "text": "A humectant to attract water and an occlusive to trap it"
+        },
+        {
+          "label": "B",
+          "text": "An occlusive to produce water and a humectant to seal it"
+        },
+        {
+          "label": "C",
+          "text": "A surfactant to remove dirt and an astringent to firm it"
+        },
+        {
+          "label": "D",
+          "text": "An exfoliant to remove buildup and a toner to balance it"
+        }
+      ],
+      "question": "An esthetician wants to support a client's barrier with both hydration and moisture retention. The best combination of ingredient categories is:",
+      "source_question_id": 110
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "D",
+      "correct_answer_text": "Because it moves the muscles of expression being massaged",
+      "id": "esthetician-111",
+      "options": [
+        {
+          "label": "A",
+          "text": "Because it detects the pressure of strokes being received"
+        },
+        {
+          "label": "B",
+          "text": "Because it dilates the vessels of tissue being stimulated"
+        },
+        {
+          "label": "C",
+          "text": "Because it signals the secretion of sebum being extracted"
+        },
+        {
+          "label": "D",
+          "text": "Because it moves the muscles of expression being massaged"
+        }
+      ],
+      "question": "Why does the facial nerve being a motor nerve matter when an esthetician performs expressive-area massage?",
+      "source_question_id": 111
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "D",
+      "correct_answer_text": "Killing fungi, viruses, and bacteria",
+      "id": "esthetician-112",
+      "options": [
+        {
+          "label": "A",
+          "text": "Removing soils, debris, and biofilms"
+        },
+        {
+          "label": "B",
+          "text": "Destroying spores, prions, and cysts"
+        },
+        {
+          "label": "C",
+          "text": "Sterilizing tools, towels, and bowls"
+        },
+        {
+          "label": "D",
+          "text": "Killing fungi, viruses, and bacteria"
+        }
+      ],
+      "question": "A disinfectant label states it is bactericidal, virucidal, and fungicidal. This means the product is capable of:",
+      "source_question_id": 112
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "C",
+      "correct_answer_text": "Gloves and disinfected tools for each client alike",
+      "id": "esthetician-113",
+      "options": [
+        {
+          "label": "A",
+          "text": "Gloves and sanitizers for each visibly sick client"
+        },
+        {
+          "label": "B",
+          "text": "Gloves and tools reused for each successive client"
+        },
+        {
+          "label": "C",
+          "text": "Gloves and disinfected tools for each client alike"
+        },
+        {
+          "label": "D",
+          "text": "Gloves and styptic for each visibly injured client"
+        }
+      ],
+      "question": "Which of the following is the best example of applying universal precautions during every service?",
+      "source_question_id": 113
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "B",
+      "correct_answer_text": "Delivering fresh oxygen and nutrients to the tissues",
+      "id": "esthetician-114",
+      "options": [
+        {
+          "label": "A",
+          "text": "Returning deoxygenated blood and wastes to the heart"
+        },
+        {
+          "label": "B",
+          "text": "Delivering fresh oxygen and nutrients to the tissues"
+        },
+        {
+          "label": "C",
+          "text": "Draining extracellular fluid and debris to the nodes"
+        },
+        {
+          "label": "D",
+          "text": "Conducting nerve impulses and sensation to the brain"
+        }
+      ],
+      "question": "The arteries of the face are part of the circulatory system. Their main contribution to skin health is:",
+      "source_question_id": 114
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "C",
+      "correct_answer_text": "Cells reproduce by mitosis into two identical copies",
+      "id": "esthetician-115",
+      "options": [
+        {
+          "label": "A",
+          "text": "Cells reproduce by meiosis into two separate gametes"
+        },
+        {
+          "label": "B",
+          "text": "Cells reproduce by diffusion into four smaller parts"
+        },
+        {
+          "label": "C",
+          "text": "Cells reproduce by mitosis into two identical copies"
+        },
+        {
+          "label": "D",
+          "text": "Cells reproduce by mutation into four abnormal parts"
+        }
+      ],
+      "question": "Which statement about cells and their reproduction is accurate?",
+      "source_question_id": 115
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "B",
+      "correct_answer_text": "Rosacea",
+      "id": "esthetician-116",
+      "options": [
+        {
+          "label": "A",
+          "text": "Impetigo"
+        },
+        {
+          "label": "B",
+          "text": "Rosacea"
+        },
+        {
+          "label": "C",
+          "text": "Shingles"
+        },
+        {
+          "label": "D",
+          "text": "Ringworm"
+        }
+      ],
+      "question": "A client with chronic redness, papules, and pustules limited to the central face but without comedones most likely has which condition rather than typical acne?",
+      "source_question_id": 116
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "A",
+      "correct_answer_text": "It can spread the infection and aggravate the sores",
+      "id": "esthetician-117",
+      "options": [
+        {
+          "label": "A",
+          "text": "It can spread the infection and aggravate the sores"
+        },
+        {
+          "label": "B",
+          "text": "It can breach the barrier and dehydrate the surface"
+        },
+        {
+          "label": "C",
+          "text": "It can darken the patches and mottle the complexion"
+        },
+        {
+          "label": "D",
+          "text": "It can irritate the follicles and trap the regrowth"
+        }
+      ],
+      "question": "Why must an esthetician avoid waxing or strong exfoliation over an area with an active herpes simplex outbreak?",
+      "source_question_id": 117
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "C",
+      "correct_answer_text": "Macule",
+      "id": "esthetician-118",
+      "options": [
+        {
+          "label": "A",
+          "text": "Papule"
+        },
+        {
+          "label": "B",
+          "text": "Plaque"
+        },
+        {
+          "label": "C",
+          "text": "Macule"
+        },
+        {
+          "label": "D",
+          "text": "Nodule"
+        }
+      ],
+      "question": "A client shows a flat, brown, freckle-like spot with no elevation. Which lesion term applies?",
+      "source_question_id": 118
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "B",
+      "correct_answer_text": "Sunlight restimulates melanocytes to deposit more pigment",
+      "id": "esthetician-119",
+      "options": [
+        {
+          "label": "A",
+          "text": "Sunlight dehydrates keratinocytes to reveal more dullness"
+        },
+        {
+          "label": "B",
+          "text": "Sunlight restimulates melanocytes to deposit more pigment"
+        },
+        {
+          "label": "C",
+          "text": "Sunlight lightens the surrounding skin to produce more contrast"
+        },
+        {
+          "label": "D",
+          "text": "Sunlight oxidizes impurities to generate more blackheads"
+        }
+      ],
+      "question": "Which best explains why hyperpigmentation often worsens without diligent sun protection?",
+      "source_question_id": 119
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "B",
+      "correct_answer_text": "Standard precautions",
+      "id": "esthetician-120",
+      "options": [
+        {
+          "label": "A",
+          "text": "Isolation procedures"
+        },
+        {
+          "label": "B",
+          "text": "Standard precautions"
+        },
+        {
+          "label": "C",
+          "text": "Contact precautions"
+        },
+        {
+          "label": "D",
+          "text": "Aseptic procedures"
+        }
+      ],
+      "question": "An esthetician should treat all blood and visibly contaminated items as potentially infectious. This practice is part of:",
+      "source_question_id": 120
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "B",
+      "correct_answer_text": "Its acidity inhibits many microbes before they can invade",
+      "id": "esthetician-121",
+      "options": [
+        {
+          "label": "A",
+          "text": "Its melanin blocks harmful rays before they can penetrate"
+        },
+        {
+          "label": "B",
+          "text": "Its acidity inhibits many microbes before they can invade"
+        },
+        {
+          "label": "C",
+          "text": "Its immune cells engulf bacteria before they can multiply"
+        },
+        {
+          "label": "D",
+          "text": "Its tough keratin resists irritants before they can enter"
+        }
+      ],
+      "question": "Why is the slightly acidic acid mantle considered a first line of defense for the skin?",
+      "source_question_id": 121
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "D",
+      "correct_answer_text": "Ringworm",
+      "id": "esthetician-122",
+      "options": [
+        {
+          "label": "A",
+          "text": "Impetigo"
+        },
+        {
+          "label": "B",
+          "text": "Shingles"
+        },
+        {
+          "label": "C",
+          "text": "Furuncle"
+        },
+        {
+          "label": "D",
+          "text": "Ringworm"
+        }
+      ],
+      "question": "Which condition is a fungal infection that an esthetician might recognize and refer rather than treat?",
+      "source_question_id": 122
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "C",
+      "correct_answer_text": "Lower numbers are more acidic, and each step is a tenfold change",
+      "id": "esthetician-123",
+      "options": [
+        {
+          "label": "A",
+          "text": "Higher numbers are more acidic, and each point is a tenfold jump"
+        },
+        {
+          "label": "B",
+          "text": "Lower numbers are more acidic, and each unit is a uniform shift"
+        },
+        {
+          "label": "C",
+          "text": "Lower numbers are more acidic, and each step is a tenfold change"
+        },
+        {
+          "label": "D",
+          "text": "Higher numbers are more acidic, and each level is a uniform rise"
+        }
+      ],
+      "question": "Which describes the correct relationship between pH numbers and acidity strength?",
+      "source_question_id": 123
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "B",
+      "correct_answer_text": "Stimulated blood and lymph flow help transport metabolic waste",
+      "id": "esthetician-124",
+      "options": [
+        {
+          "label": "A",
+          "text": "Active oil glands and follicles help discharge metabolic waste"
+        },
+        {
+          "label": "B",
+          "text": "Stimulated blood and lymph flow help transport metabolic waste"
+        },
+        {
+          "label": "C",
+          "text": "Faster cell turnover and exfoliation help shed metabolic waste"
+        },
+        {
+          "label": "D",
+          "text": "Warm tissue and loosened muscles help dissolve metabolic waste"
+        }
+      ],
+      "question": "From a physiology standpoint, why does facial massage that boosts circulation also indirectly support waste removal?",
+      "source_question_id": 124
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "D",
+      "correct_answer_text": "Fair skin burns easily, while darker skin risks pigment changes",
+      "id": "esthetician-125",
+      "options": [
+        {
+          "label": "A",
+          "text": "Fair skin captures laser energy, while darker skin reflects light"
+        },
+        {
+          "label": "B",
+          "text": "Fair skin tans fast, while darker skin rarely shows discoloration"
+        },
+        {
+          "label": "C",
+          "text": "Fair skin regenerates slowly, while darker skin heals much faster"
+        },
+        {
+          "label": "D",
+          "text": "Fair skin burns easily, while darker skin risks pigment changes"
+        }
+      ],
+      "question": "A client with skin that always burns severely and never tans wants laser-type treatments. Why does their Fitzpatrick type guide caution?",
+      "source_question_id": 125
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "B",
+      "correct_answer_text": "Because products and treatments ultimately change cell processes",
+      "id": "esthetician-126",
+      "options": [
+        {
+          "label": "A",
+          "text": "Because licensed estheticians diagnose and manage cell disorders"
+        },
+        {
+          "label": "B",
+          "text": "Because products and treatments ultimately change cell processes"
+        },
+        {
+          "label": "C",
+          "text": "Because thorough analysis requires microscopes and cell cultures"
+        },
+        {
+          "label": "D",
+          "text": "Because regeneration and cell replacement cease past adolescence"
+        }
+      ],
+      "question": "Why should an esthetician understand cell structure and function as a foundation for skincare?",
+      "source_question_id": 126
+    },
+    {
+      "category": "Scientific Concepts",
+      "correct_answer": "C",
+      "correct_answer_text": "They slow transepidermal water loss so the barrier can recover",
+      "id": "esthetician-127",
+      "options": [
+        {
+          "label": "A",
+          "text": "They attract water molecules inward so the epidermis can plump"
+        },
+        {
+          "label": "B",
+          "text": "They accelerate turnover so the dulled surface cells can flake"
+        },
+        {
+          "label": "C",
+          "text": "They slow transepidermal water loss so the barrier can recover"
+        },
+        {
+          "label": "D",
+          "text": "They neutralize free radicals so the stressed cells can repair"
+        }
+      ],
+      "question": "Which best describes why occlusive ingredients are especially helpful for very dry or compromised skin at night?",
+      "source_question_id": 127
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "D",
+      "correct_answer_text": "Dry skin",
+      "id": "esthetician-128",
+      "options": [
+        {
+          "label": "A",
+          "text": "Oily skin"
+        },
+        {
+          "label": "B",
+          "text": "Combination skin"
+        },
+        {
+          "label": "C",
+          "text": "Mature skin"
+        },
+        {
+          "label": "D",
+          "text": "Dry skin"
+        }
+      ],
+      "question": "During a skin analysis, an esthetician brushes a soft, dry sensation across the cheeks, notes small flaky patches, and sees no visible shine in the T-zone. Which skin type do these findings most strongly indicate?",
+      "source_question_id": 128
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "A",
+      "correct_answer_text": "To detect possible contraindications and tailor treatment safely",
+      "id": "esthetician-129",
+      "options": [
+        {
+          "label": "A",
+          "text": "To detect possible contraindications and tailor treatment safely"
+        },
+        {
+          "label": "B",
+          "text": "To understand personal preferences and establish genuine rapport"
+        },
+        {
+          "label": "C",
+          "text": "To determine skin classification and quantify sebaceous activity"
+        },
+        {
+          "label": "D",
+          "text": "To gather contact information and schedule appointment reminders"
+        }
+      ],
+      "question": "An esthetician completes a client intake form before a first facial. What is the primary purpose of gathering this written health and product history?",
+      "source_question_id": 129
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "A",
+      "correct_answer_text": "Surface issues such as pigmentation, oiliness, and dehydration",
+      "id": "esthetician-130",
+      "options": [
+        {
+          "label": "A",
+          "text": "Surface issues such as pigmentation, oiliness, and dehydration"
+        },
+        {
+          "label": "B",
+          "text": "Internal structures such as collagen, elastin, and capillaries"
+        },
+        {
+          "label": "C",
+          "text": "Textural irregularities such as scars, wrinkles, and roughness"
+        },
+        {
+          "label": "D",
+          "text": "Firmness indicators such as elasticity, laxity, and resilience"
+        }
+      ],
+      "question": "A Wood's lamp is used during professional skin analysis primarily because its ultraviolet light reveals what about the skin?",
+      "source_question_id": 130
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "D",
+      "correct_answer_text": "Retinoids thin and sensitize the skin, so irritation occurs easily",
+      "id": "esthetician-131",
+      "options": [
+        {
+          "label": "A",
+          "text": "Retinoids capture and neutralize the acids, so peels lose strength"
+        },
+        {
+          "label": "B",
+          "text": "Retinoids harden and thicken the corneum, so products enter poorly"
+        },
+        {
+          "label": "C",
+          "text": "Retinoids coat and seal the surface, so exfoliants spread unevenly"
+        },
+        {
+          "label": "D",
+          "text": "Retinoids thin and sensitize the skin, so irritation occurs easily"
+        }
+      ],
+      "question": "A client books a facial and mentions she used a prescription retinoid cream last night. Why should the esthetician avoid aggressive exfoliation during today's service?",
+      "source_question_id": 131
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "B",
+      "correct_answer_text": "Active herpes simplex blisters on the lip",
+      "id": "esthetician-132",
+      "options": [
+        {
+          "label": "A",
+          "text": "Mild stable rosacea redness on the cheeks"
+        },
+        {
+          "label": "B",
+          "text": "Active herpes simplex blisters on the lip"
+        },
+        {
+          "label": "C",
+          "text": "Flat brown solar lentigines on the temple"
+        },
+        {
+          "label": "D",
+          "text": "Irritated red acne papules on the jawline"
+        }
+      ],
+      "question": "Which of the following is a contraindication that should cause an esthetician to postpone a standard facial?",
+      "source_question_id": 132
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "A",
+      "correct_answer_text": "Gentle, relaxed gliding strokes",
+      "id": "esthetician-133",
+      "options": [
+        {
+          "label": "A",
+          "text": "Gentle, relaxed gliding strokes"
+        },
+        {
+          "label": "B",
+          "text": "Firm, rhythmic kneading strokes"
+        },
+        {
+          "label": "C",
+          "text": "Fast, energetic tapping strokes"
+        },
+        {
+          "label": "D",
+          "text": "Heavy, circular rubbing strokes"
+        }
+      ],
+      "question": "Effleurage, the massage movement most often used to begin and end a facial massage, is best described as which type of stroke?",
+      "source_question_id": 133
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "A",
+      "correct_answer_text": "Petrissage",
+      "id": "esthetician-134",
+      "options": [
+        {
+          "label": "A",
+          "text": "Petrissage"
+        },
+        {
+          "label": "B",
+          "text": "Effleurage"
+        },
+        {
+          "label": "C",
+          "text": "Percussion"
+        },
+        {
+          "label": "D",
+          "text": "Friction"
+        }
+      ],
+      "question": "Which facial massage movement involves kneading, lifting, and squeezing the tissue to improve circulation?",
+      "source_question_id": 134
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "B",
+      "correct_answer_text": "Quick tapping or slapping that stimulates the tissue",
+      "id": "esthetician-135",
+      "options": [
+        {
+          "label": "A",
+          "text": "Rhythmic kneading or squeezing that lifts the tissue"
+        },
+        {
+          "label": "B",
+          "text": "Quick tapping or slapping that stimulates the tissue"
+        },
+        {
+          "label": "C",
+          "text": "Delicate gliding or stroking that soothes the tissue"
+        },
+        {
+          "label": "D",
+          "text": "Vigorous wringing or rubbing that loosens the tissue"
+        }
+      ],
+      "question": "Tapotement should be applied with caution or omitted during a relaxing facial because this movement is characterized by what action?",
+      "source_question_id": 135
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "A",
+      "correct_answer_text": "To work from insertion to origin and support the soft tissues",
+      "id": "esthetician-136",
+      "options": [
+        {
+          "label": "A",
+          "text": "To work from insertion to origin and support the soft tissues"
+        },
+        {
+          "label": "B",
+          "text": "To press from origin to insertion and relax the tight muscles"
+        },
+        {
+          "label": "C",
+          "text": "To draw impurities from depth to surface and unclog the pores"
+        },
+        {
+          "label": "D",
+          "text": "To push nutrients from surface to depth and nourish the cells"
+        }
+      ],
+      "question": "Why should facial massage movements generally be directed from the center of the face outward and in an upward direction?",
+      "source_question_id": 136
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "A",
+      "correct_answer_text": "Microdermabrasion",
+      "id": "esthetician-137",
+      "options": [
+        {
+          "label": "A",
+          "text": "Microdermabrasion"
+        },
+        {
+          "label": "B",
+          "text": "Lactic acid peel"
+        },
+        {
+          "label": "C",
+          "text": "Papain enzyme mask"
+        },
+        {
+          "label": "D",
+          "text": "Salicylic cleanser"
+        }
+      ],
+      "question": "A client wants smoother skin but is anxious about chemicals. Which exfoliation method is mechanical (physical) rather than chemical?",
+      "source_question_id": 137
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "C",
+      "correct_answer_text": "Digesting keratin protein to loosen dead surface cells",
+      "id": "esthetician-138",
+      "options": [
+        {
+          "label": "A",
+          "text": "Increasing skin acidity to detach packed corneum cells"
+        },
+        {
+          "label": "B",
+          "text": "Spraying abrasive crystals to scour off hardened cells"
+        },
+        {
+          "label": "C",
+          "text": "Digesting keratin protein to loosen dead surface cells"
+        },
+        {
+          "label": "D",
+          "text": "Stimulating basal mitosis to push up replacement cells"
+        }
+      ],
+      "question": "An enzyme peel works to exfoliate the skin primarily by which mechanism?",
+      "source_question_id": 138
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "D",
+      "correct_answer_text": "Softening the area first with steam or warm compresses",
+      "id": "esthetician-139",
+      "options": [
+        {
+          "label": "A",
+          "text": "Chilling the blackhead first with ice or frozen spoons"
+        },
+        {
+          "label": "B",
+          "text": "Tightening the follicle first with alum or witch hazel"
+        },
+        {
+          "label": "C",
+          "text": "Drying the surface first with alcohol or kaolin powder"
+        },
+        {
+          "label": "D",
+          "text": "Softening the area first with steam or warm compresses"
+        }
+      ],
+      "question": "An esthetician is performing a manual extraction of a blackhead. What preparation step makes the comedone easiest to remove safely?",
+      "source_question_id": 139
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "C",
+      "correct_answer_text": "Reduce tissue trauma and minimize bruises or scars",
+      "id": "esthetician-140",
+      "options": [
+        {
+          "label": "A",
+          "text": "Kill surface bacteria and calm redness or soreness"
+        },
+        {
+          "label": "B",
+          "text": "Pierce closed comedones and release milia or cysts"
+        },
+        {
+          "label": "C",
+          "text": "Reduce tissue trauma and minimize bruises or scars"
+        },
+        {
+          "label": "D",
+          "text": "Tighten enlarged pores and remove residue or sebum"
+        }
+      ],
+      "question": "During comedone extractions, the esthetician should wrap the fingertips and apply gentle even pressure around the lesion mainly to accomplish what?",
+      "source_question_id": 140
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "A",
+      "correct_answer_text": "Kaolin or bentonite clay mask",
+      "id": "esthetician-141",
+      "options": [
+        {
+          "label": "A",
+          "text": "Kaolin or bentonite clay mask"
+        },
+        {
+          "label": "B",
+          "text": "Ceramide or cocoa butter mask"
+        },
+        {
+          "label": "C",
+          "text": "Paraffin or warm beeswax mask"
+        },
+        {
+          "label": "D",
+          "text": "Aloe or hyaluronic sheet mask"
+        }
+      ],
+      "question": "A client with oily, congested skin and large pores would most benefit from which type of mask?",
+      "source_question_id": 141
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "B",
+      "correct_answer_text": "Cream or humectant gel mask",
+      "id": "esthetician-142",
+      "options": [
+        {
+          "label": "A",
+          "text": "Kaolin or mineral clay mask"
+        },
+        {
+          "label": "B",
+          "text": "Cream or humectant gel mask"
+        },
+        {
+          "label": "C",
+          "text": "Papain or fruit enzyme mask"
+        },
+        {
+          "label": "D",
+          "text": "Salicylic or zinc acne mask"
+        }
+      ],
+      "question": "Which type of facial mask is most appropriate for a client with dry, dehydrated skin?",
+      "source_question_id": 142
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "D",
+      "correct_answer_text": "Alkaline solution with the negative pole",
+      "id": "esthetician-143",
+      "options": [
+        {
+          "label": "A",
+          "text": "Alkaline cleanser with the positive pole"
+        },
+        {
+          "label": "B",
+          "text": "Acidic astringent with the negative pole"
+        },
+        {
+          "label": "C",
+          "text": "Acidic antiseptic with the positive pole"
+        },
+        {
+          "label": "D",
+          "text": "Alkaline solution with the negative pole"
+        }
+      ],
+      "question": "In a galvanic facial, desincrustation softens and emulsifies sebum to ease extractions. Which polarity and product type are used to achieve this?",
+      "source_question_id": 143
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "D",
+      "correct_answer_text": "Push water-soluble serums deeper using electric current",
+      "id": "esthetician-144",
+      "options": [
+        {
+          "label": "A",
+          "text": "Liquefy impacted sebum deposits using alkaline solution"
+        },
+        {
+          "label": "B",
+          "text": "Kill surface bacteria using germicidal glass electrodes"
+        },
+        {
+          "label": "C",
+          "text": "Train slack facial muscles using low-level microcurrent"
+        },
+        {
+          "label": "D",
+          "text": "Push water-soluble serums deeper using electric current"
+        }
+      ],
+      "question": "Iontophoresis during a galvanic facial is used primarily to accomplish what?",
+      "source_question_id": 144
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "C",
+      "correct_answer_text": "Driving negatively charged alkaline liquids deeper and softening tissue",
+      "id": "esthetician-145",
+      "options": [
+        {
+          "label": "A",
+          "text": "Pushing positively ionized acidic solutions inward and tightening pores"
+        },
+        {
+          "label": "B",
+          "text": "Constricting dilated surface blood vessels and calming sensitive nerves"
+        },
+        {
+          "label": "C",
+          "text": "Driving negatively charged alkaline liquids deeper and softening tissue"
+        },
+        {
+          "label": "D",
+          "text": "Generating antibacterial ozone vapor and drying inflamed acne blemishes"
+        }
+      ],
+      "question": "In galvanic skin care, anaphoresis refers to which effect produced by the negative pole?",
+      "source_question_id": 145
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "D",
+      "correct_answer_text": "Calmed, tightened tissue with a refined appearance",
+      "id": "esthetician-146",
+      "options": [
+        {
+          "label": "A",
+          "text": "Softened, dilated follicles with a relaxed texture"
+        },
+        {
+          "label": "B",
+          "text": "Emulsified, saponified sebum with a slippery layer"
+        },
+        {
+          "label": "C",
+          "text": "Flushed, stimulated capillaries with a rosier glow"
+        },
+        {
+          "label": "D",
+          "text": "Calmed, tightened tissue with a refined appearance"
+        }
+      ],
+      "question": "Cataphoresis, performed with the positive pole at the end of a galvanic treatment, produces which result on the skin?",
+      "source_question_id": 146
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "C",
+      "correct_answer_text": "Killing surface bacteria and boosting blood circulation",
+      "id": "esthetician-147",
+      "options": [
+        {
+          "label": "A",
+          "text": "Infusing water-soluble serums and softening sebum plugs"
+        },
+        {
+          "label": "B",
+          "text": "Strengthening facial muscles and lifting slack contours"
+        },
+        {
+          "label": "C",
+          "text": "Killing surface bacteria and boosting blood circulation"
+        },
+        {
+          "label": "D",
+          "text": "Abrading dead keratinocytes and refining coarse texture"
+        }
+      ],
+      "question": "The high-frequency machine used in facials is valued primarily for which benefit?",
+      "source_question_id": 147
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "C",
+      "correct_answer_text": "They can cause electric sparks or burn the skin",
+      "id": "esthetician-148",
+      "options": [
+        {
+          "label": "A",
+          "text": "They can reduce the machine's antiseptic effect"
+        },
+        {
+          "label": "B",
+          "text": "They can reflect light and strain eyesight"
+        },
+        {
+          "label": "C",
+          "text": "They can cause electric sparks or burn the skin"
+        },
+        {
+          "label": "D",
+          "text": "They can provoke allergies to metal and perfume"
+        }
+      ],
+      "question": "While using the high-frequency machine, the esthetician must avoid metal jewelry and alcohol-based products near the client mainly for what reason?",
+      "source_question_id": 148
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "C",
+      "correct_answer_text": "Blue light",
+      "id": "esthetician-149",
+      "options": [
+        {
+          "label": "A",
+          "text": "Red light"
+        },
+        {
+          "label": "B",
+          "text": "Amber light"
+        },
+        {
+          "label": "C",
+          "text": "Blue light"
+        },
+        {
+          "label": "D",
+          "text": "Green light"
+        }
+      ],
+      "question": "A client wants to reduce acne breakouts. Which LED light wavelength is most commonly used to target acne-causing bacteria?",
+      "source_question_id": 149
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "A",
+      "correct_answer_text": "Stimulating collagen production to counter signs of aging",
+      "id": "esthetician-150",
+      "options": [
+        {
+          "label": "A",
+          "text": "Stimulating collagen production to counter signs of aging"
+        },
+        {
+          "label": "B",
+          "text": "Destroying acne bacteria in the follicles to reduce breakouts"
+        },
+        {
+          "label": "C",
+          "text": "Suppressing melanin activity to fade discoloration"
+        },
+        {
+          "label": "D",
+          "text": "Improving lymphatic drainage to minimize puffiness"
+        }
+      ],
+      "question": "Red LED light therapy is most often selected during a facial to achieve which goal?",
+      "source_question_id": 150
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "B",
+      "correct_answer_text": "Relax follicles and soften skin to ease cleansing and extractions",
+      "id": "esthetician-151",
+      "options": [
+        {
+          "label": "A",
+          "text": "Chill tissue and constrict pores to encourage toning and firmness"
+        },
+        {
+          "label": "B",
+          "text": "Relax follicles and soften skin to ease cleansing and extractions"
+        },
+        {
+          "label": "C",
+          "text": "Disinfect lesions and dry blemishes to speed healing and recovery"
+        },
+        {
+          "label": "D",
+          "text": "Dissolve cosmetics and strip grease to permit removal and rinsing"
+        }
+      ],
+      "question": "A facial steamer is introduced early in a facial primarily to accomplish what?",
+      "source_question_id": 151
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "D",
+      "correct_answer_text": "Tap water minerals can accumulate and make the unit spit",
+      "id": "esthetician-152",
+      "options": [
+        {
+          "label": "A",
+          "text": "Tap water microbes can endure heat and infect the client"
+        },
+        {
+          "label": "B",
+          "text": "Distilled water can steam cooler and limit the burn risk"
+        },
+        {
+          "label": "C",
+          "text": "Distilled water can boil faster and trim the energy bill"
+        },
+        {
+          "label": "D",
+          "text": "Tap water minerals can accumulate and make the unit spit"
+        }
+      ],
+      "question": "Why should an esthetician keep a facial steamer filled only with distilled or purified water?",
+      "source_question_id": 152
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "B",
+      "correct_answer_text": "Gentle surface exfoliation and product absorption",
+      "id": "esthetician-153",
+      "options": [
+        {
+          "label": "A",
+          "text": "Electrical muscle stimulation and facial firmness"
+        },
+        {
+          "label": "B",
+          "text": "Gentle surface exfoliation and product absorption"
+        },
+        {
+          "label": "C",
+          "text": "Germicidal ozone production and blemish clearance"
+        },
+        {
+          "label": "D",
+          "text": "Galvanic oil saponification and pore decongestion"
+        }
+      ],
+      "question": "An ultrasonic skin care device that uses a flat spatula and high-frequency vibration with water is used primarily for which purpose?",
+      "source_question_id": 153
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "B",
+      "correct_answer_text": "The epidermal layers",
+      "id": "esthetician-154",
+      "options": [
+        {
+          "label": "A",
+          "text": "The papillary dermis"
+        },
+        {
+          "label": "B",
+          "text": "The epidermal layers"
+        },
+        {
+          "label": "C",
+          "text": "The reticular dermis"
+        },
+        {
+          "label": "D",
+          "text": "The subcutaneous layer"
+        }
+      ],
+      "question": "Within an esthetician's scope of practice, chemical peels are limited to which depth?",
+      "source_question_id": 154
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "D",
+      "correct_answer_text": "Neutralize or rinse off the peel and cool the skin",
+      "id": "esthetician-155",
+      "options": [
+        {
+          "label": "A",
+          "text": "Wait out or lengthen the peel and monitor the skin"
+        },
+        {
+          "label": "B",
+          "text": "Steam or cover the peel and evenly warm the skin"
+        },
+        {
+          "label": "C",
+          "text": "Rub or buff the peel and gently stimulate the skin"
+        },
+        {
+          "label": "D",
+          "text": "Neutralize or rinse off the peel and cool the skin"
+        }
+      ],
+      "question": "After applying a superficial AHA peel, a client reports stinging and the esthetician sees frosting beginning to appear. What is the most appropriate immediate action?",
+      "source_question_id": 155
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "C",
+      "correct_answer_text": "Hard wax",
+      "id": "esthetician-156",
+      "options": [
+        {
+          "label": "A",
+          "text": "Cold wax"
+        },
+        {
+          "label": "B",
+          "text": "Honey wax"
+        },
+        {
+          "label": "C",
+          "text": "Hard wax"
+        },
+        {
+          "label": "D",
+          "text": "Cream wax"
+        }
+      ],
+      "question": "A client has coarse, dense hair on the bikini area. Which wax type is generally preferred because it grips coarse hair and is removed without a strip?",
+      "source_question_id": 156
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "A",
+      "correct_answer_text": "Pulled away with a muslin cloth or paper strip",
+      "id": "esthetician-157",
+      "options": [
+        {
+          "label": "A",
+          "text": "Pulled away with a muslin cloth or paper strip"
+        },
+        {
+          "label": "B",
+          "text": "Peeled away with a gloved finger or lifted tab"
+        },
+        {
+          "label": "C",
+          "text": "Dissolved away with a gauze pad or oil remover"
+        },
+        {
+          "label": "D",
+          "text": "Flicked away with a quick hand or wrist motion"
+        }
+      ],
+      "question": "Soft wax differs from hard wax mainly in that soft wax is removed how?",
+      "source_question_id": 157
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "B",
+      "correct_answer_text": "Remove hair cleanly while minimizing breakage and skin trauma",
+      "id": "esthetician-158",
+      "options": [
+        {
+          "label": "A",
+          "text": "Seal follicles quickly and stop surface germs or stray debris"
+        },
+        {
+          "label": "B",
+          "text": "Remove hair cleanly while minimizing breakage and skin trauma"
+        },
+        {
+          "label": "C",
+          "text": "Train the regrowth to lie flatter and grow back more evenly"
+        },
+        {
+          "label": "D",
+          "text": "Retain wax heat longer and lessen early cracking or stiffness"
+        }
+      ],
+      "question": "When waxing, the esthetician applies wax in the direction of hair growth and removes it in the opposite direction primarily to accomplish what?",
+      "source_question_id": 158
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "C",
+      "correct_answer_text": "It contaminates the shared wax and can transmit infection",
+      "id": "esthetician-159",
+      "options": [
+        {
+          "label": "A",
+          "text": "It depletes the costly wax and can inflate expenses"
+        },
+        {
+          "label": "B",
+          "text": "It thins the melted wax and can weaken its grip on the hair"
+        },
+        {
+          "label": "C",
+          "text": "It contaminates the shared wax and can transmit infection"
+        },
+        {
+          "label": "D",
+          "text": "It overheats the wax spatula and can scorch clients"
+        }
+      ],
+      "question": "Why must an esthetician avoid double-dipping the applicator when waxing multiple clients?",
+      "source_question_id": 159
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "A",
+      "correct_answer_text": "Pressed on against growth and lifted off with growth",
+      "id": "esthetician-160",
+      "options": [
+        {
+          "label": "A",
+          "text": "Pressed on against growth and lifted off with growth"
+        },
+        {
+          "label": "B",
+          "text": "Applied on with growth and pulled off against growth"
+        },
+        {
+          "label": "C",
+          "text": "Laid on against growth and ripped off against growth"
+        },
+        {
+          "label": "D",
+          "text": "Smoothed on with growth and stripped off with growth"
+        }
+      ],
+      "question": "Sugaring is a hair-removal method that differs from traditional waxing because the sugar paste is applied and removed in which directions?",
+      "source_question_id": 160
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "C",
+      "correct_answer_text": "Hair and dead cells, sparing the live skin",
+      "id": "esthetician-161",
+      "options": [
+        {
+          "label": "A",
+          "text": "Hair and skin alike, lifting the top layer"
+        },
+        {
+          "label": "B",
+          "text": "Hair and root bulb, deep inside the skin"
+        },
+        {
+          "label": "C",
+          "text": "Hair and dead cells, sparing the live skin"
+        },
+        {
+          "label": "D",
+          "text": "Hair and moist skin, with water aiding the grip"
+        }
+      ],
+      "question": "One advantage often cited for sugar paste used in sugaring is that it adheres to which surface?",
+      "source_question_id": 161
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "D",
+      "correct_answer_text": "Decline the wax, as the drug can make the skin tear",
+      "id": "esthetician-164",
+      "options": [
+        {
+          "label": "A",
+          "text": "Switch the wax to hard wax, as it can spare the skin"
+        },
+        {
+          "label": "B",
+          "text": "Test the wax, as the patch can show skin damage"
+        },
+        {
+          "label": "C",
+          "text": "Proceed with the wax, as a signed waiver can cover any skin injury"
+        },
+        {
+          "label": "D",
+          "text": "Decline the wax, as the drug can make the skin tear"
+        }
+      ],
+      "question": "A client scheduled for an eyebrow wax reports she has been taking isotretinoin (Accutane). What should the esthetician do?",
+      "source_question_id": 164
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "D",
+      "correct_answer_text": "Sunburn or broken skin at the site",
+      "id": "esthetician-165",
+      "options": [
+        {
+          "label": "A",
+          "text": "Freckles or dark spots at the site"
+        },
+        {
+          "label": "B",
+          "text": "Dense or coarse hair at the site"
+        },
+        {
+          "label": "C",
+          "text": "Dryness or surface oil at the site"
+        },
+        {
+          "label": "D",
+          "text": "Sunburn or broken skin at the site"
+        }
+      ],
+      "question": "Which of the following is a contraindication to waxing a particular area?",
+      "source_question_id": 165
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "A",
+      "correct_answer_text": "Exfoliate gently and moisturize between services",
+      "id": "esthetician-166",
+      "options": [
+        {
+          "label": "A",
+          "text": "Exfoliate gently and moisturize between services"
+        },
+        {
+          "label": "B",
+          "text": "Tweeze meticulously and epilate between services"
+        },
+        {
+          "label": "C",
+          "text": "Skip moisturizers and ointments between services"
+        },
+        {
+          "label": "D",
+          "text": "Apply antiseptic and astringent between services"
+        }
+      ],
+      "question": "To help a client prevent ingrown hairs after waxing, the esthetician should recommend which aftercare practice?",
+      "source_question_id": 166
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "B",
+      "correct_answer_text": "Curls back or grows sideways under the skin, often trapped by dead cells",
+      "id": "esthetician-167",
+      "options": [
+        {
+          "label": "A",
+          "text": "Regrows much thicker or darker, often coarsened by the daily use of razors"
+        },
+        {
+          "label": "B",
+          "text": "Curls back or grows sideways under the skin, often trapped by dead cells"
+        },
+        {
+          "label": "C",
+          "text": "Rests early or sheds prematurely, often pushed out by the new growth"
+        },
+        {
+          "label": "D",
+          "text": "Swells up or gets infected in the follicle, often invaded by staph bacteria"
+        }
+      ],
+      "question": "An ingrown hair forms when a regrowing hair does what?",
+      "source_question_id": 167
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "C",
+      "correct_answer_text": "Darken or color the brow hairs to give definition",
+      "id": "esthetician-169",
+      "options": [
+        {
+          "label": "A",
+          "text": "Lift or laminate the brow hairs to hold direction"
+        },
+        {
+          "label": "B",
+          "text": "Bleach or lighten the brow hairs to mute contrast"
+        },
+        {
+          "label": "C",
+          "text": "Darken or color the brow hairs to give definition"
+        },
+        {
+          "label": "D",
+          "text": "Tweeze or thread the brow hairs to reshape arches"
+        }
+      ],
+      "question": "Eyebrow tinting is performed primarily to achieve what result for the client?",
+      "source_question_id": 169
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "C",
+      "correct_answer_text": "Check whether the dye triggers allergic symptoms",
+      "id": "esthetician-170",
+      "options": [
+        {
+          "label": "A",
+          "text": "Check whether the dye matches original haircolor"
+        },
+        {
+          "label": "B",
+          "text": "Check whether the dye penetrates resistant hairs"
+        },
+        {
+          "label": "C",
+          "text": "Check whether the dye triggers allergic symptoms"
+        },
+        {
+          "label": "D",
+          "text": "Check whether the dye discolors adjacent eyelids"
+        }
+      ],
+      "question": "Before applying any brow or lash tint, the esthetician must perform a patch test mainly to do what?",
+      "source_question_id": 170
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "A",
+      "correct_answer_text": "Keep the color off delicate skin and eyes",
+      "id": "esthetician-171",
+      "options": [
+        {
+          "label": "A",
+          "text": "Keep the color off delicate skin and eyes"
+        },
+        {
+          "label": "B",
+          "text": "Keep the bottom lashes flat and set apart"
+        },
+        {
+          "label": "C",
+          "text": "Keep the tint gel moist and highly active"
+        },
+        {
+          "label": "D",
+          "text": "Keep the thin lid areas soft and hydrated"
+        }
+      ],
+      "question": "While applying lash tint, the esthetician must protect the lower lash line and under-eye with a barrier mainly to accomplish what?",
+      "source_question_id": 171
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "C",
+      "correct_answer_text": "One fully isolated natural lash",
+      "id": "esthetician-172",
+      "options": [
+        {
+          "label": "A",
+          "text": "Two adjacent natural lash hairs"
+        },
+        {
+          "label": "B",
+          "text": "Eyelid skin alongside lash line"
+        },
+        {
+          "label": "C",
+          "text": "One fully isolated natural lash"
+        },
+        {
+          "label": "D",
+          "text": "Eyelid margin beside lash roots"
+        }
+      ],
+      "question": "When applying individual eyelash extensions, the esthetician bonds each synthetic lash to what?",
+      "source_question_id": 172
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "B",
+      "correct_answer_text": "Sensitivity or allergic reaction to the glue",
+      "id": "esthetician-173",
+      "options": [
+        {
+          "label": "A",
+          "text": "Heaviness or diameter unsuited to the lashes"
+        },
+        {
+          "label": "B",
+          "text": "Sensitivity or allergic reaction to the glue"
+        },
+        {
+          "label": "C",
+          "text": "Mites or bacteria transferred to the eyelids"
+        },
+        {
+          "label": "D",
+          "text": "Mascara or remover applied to the extensions"
+        }
+      ],
+      "question": "A client returns with irritation and redness after lash extensions. The most likely cause that the esthetician should investigate first is what?",
+      "source_question_id": 173
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "D",
+      "correct_answer_text": "Above the inner corner",
+      "id": "esthetician-174",
+      "options": [
+        {
+          "label": "A",
+          "text": "Above the outer corner"
+        },
+        {
+          "label": "B",
+          "text": "Above the pupil center"
+        },
+        {
+          "label": "C",
+          "text": "Above the pupil margin"
+        },
+        {
+          "label": "D",
+          "text": "Above the inner corner"
+        }
+      ],
+      "question": "When shaping eyebrows, the standard guideline places the start of the brow where in relation to the eye?",
+      "source_question_id": 174
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "A",
+      "correct_answer_text": "Over the outer edge of the iris or pupil",
+      "id": "esthetician-175",
+      "options": [
+        {
+          "label": "A",
+          "text": "Over the outer edge of the iris or pupil"
+        },
+        {
+          "label": "B",
+          "text": "Over the inner corner of the eye or bridge"
+        },
+        {
+          "label": "C",
+          "text": "Over the outer corner of the eye or temple"
+        },
+        {
+          "label": "D",
+          "text": "Over the very middle of the brow or eyelid"
+        }
+      ],
+      "question": "Using the standard brow-mapping technique, the highest point of the arch is generally positioned where?",
+      "source_question_id": 175
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "D",
+      "correct_answer_text": "Green",
+      "id": "esthetician-176",
+      "options": [
+        {
+          "label": "A",
+          "text": "Peach"
+        },
+        {
+          "label": "B",
+          "text": "Coral"
+        },
+        {
+          "label": "C",
+          "text": "Lilac"
+        },
+        {
+          "label": "D",
+          "text": "Green"
+        }
+      ],
+      "question": "In makeup color theory, a client with a strong red or rosy complexion can be visually balanced using a corrective product in which color family?",
+      "source_question_id": 176
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "B",
+      "correct_answer_text": "Peach or orange",
+      "id": "esthetician-177",
+      "options": [
+        {
+          "label": "A",
+          "text": "Green or mint"
+        },
+        {
+          "label": "B",
+          "text": "Peach or orange"
+        },
+        {
+          "label": "C",
+          "text": "Violet or lilac"
+        },
+        {
+          "label": "D",
+          "text": "White or ivory"
+        }
+      ],
+      "question": "To neutralize dark under-eye circles that appear bluish on the skin, corrective makeup theory recommends a concealer in which tone?",
+      "source_question_id": 177
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "A",
+      "correct_answer_text": "The warm, cool, or neutral hue underlying the surface",
+      "id": "esthetician-178",
+      "options": [
+        {
+          "label": "A",
+          "text": "The warm, cool, or neutral hue underlying the surface"
+        },
+        {
+          "label": "B",
+          "text": "The light, medium, or deep shade coloring the surface"
+        },
+        {
+          "label": "C",
+          "text": "The oily, dry, or balanced type affecting the surface"
+        },
+        {
+          "label": "D",
+          "text": "The fine, rough, or bumpy texture forming the surface"
+        }
+      ],
+      "question": "When selecting a foundation, matching the product to the client's skin undertone matters because undertone refers to what?",
+      "source_question_id": 178
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "D",
+      "correct_answer_text": "Rose-based shades that mirror the cool tones",
+      "id": "esthetician-179",
+      "options": [
+        {
+          "label": "A",
+          "text": "Yellow-based shades that warm the cool tones"
+        },
+        {
+          "label": "B",
+          "text": "Olive-based shades that quiet the cool tones"
+        },
+        {
+          "label": "C",
+          "text": "Orange-based shades that mask the cool tones"
+        },
+        {
+          "label": "D",
+          "text": "Rose-based shades that mirror the cool tones"
+        }
+      ],
+      "question": "In color theory for makeup, a client with cool (pink or blue) undertones is generally most flattered by foundations and shades described as what?",
+      "source_question_id": 179
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "A",
+      "correct_answer_text": "Skin hydration, detox sensation, or temporary smoothing",
+      "id": "esthetician-180",
+      "options": [
+        {
+          "label": "A",
+          "text": "Skin hydration, detox sensation, or temporary smoothing"
+        },
+        {
+          "label": "B",
+          "text": "Fat dissolution, weight loss, or permanent slenderizing"
+        },
+        {
+          "label": "C",
+          "text": "Deep exfoliation, cell renewal, or extended brightening"
+        },
+        {
+          "label": "D",
+          "text": "Cellulite removal, tissue lifting, or durable tightness"
+        }
+      ],
+      "question": "A body wrap treatment most commonly aims to provide which primary benefit to the client?",
+      "source_question_id": 180
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "B",
+      "correct_answer_text": "Mechanically exfoliate dead cells to smooth and soften skin",
+      "id": "esthetician-181",
+      "options": [
+        {
+          "label": "A",
+          "text": "Chemically loosen keratin bonds to brighten and refine skin"
+        },
+        {
+          "label": "B",
+          "text": "Mechanically exfoliate dead cells to smooth and soften skin"
+        },
+        {
+          "label": "C",
+          "text": "Thoroughly draw impurities out to cleanse and detoxify skin"
+        },
+        {
+          "label": "D",
+          "text": "Occlusively trap natural moisture to plump and hydrate skin"
+        }
+      ],
+      "question": "A body scrub is performed primarily to accomplish what?",
+      "source_question_id": 181
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "C",
+      "correct_answer_text": "DHA reacting with amino acids in the surface cells",
+      "id": "esthetician-182",
+      "options": [
+        {
+          "label": "A",
+          "text": "UVA light interacting with melanin in the basal layer"
+        },
+        {
+          "label": "B",
+          "text": "Oral tyrosine combining with tyrosinase in the melanocytes"
+        },
+        {
+          "label": "C",
+          "text": "DHA reacting with amino acids in the surface cells"
+        },
+        {
+          "label": "D",
+          "text": "Bronzer blending with natural oils in the skin"
+        }
+      ],
+      "question": "Sunless (self-)tanning products create color on the skin primarily through which active ingredient and reaction?",
+      "source_question_id": 182
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "B",
+      "correct_answer_text": "Bronze color lacks meaningful SPF",
+      "id": "esthetician-183",
+      "options": [
+        {
+          "label": "A",
+          "text": "Darkened skin obstructs UVB alone"
+        },
+        {
+          "label": "B",
+          "text": "Bronze color lacks meaningful SPF"
+        },
+        {
+          "label": "C",
+          "text": "Sweat dissolves DHA color quickly"
+        },
+        {
+          "label": "D",
+          "text": "Bronzed skin deflects harmful UVA"
+        }
+      ],
+      "question": "Why must clients be told that a sunless tan provides little to no protection from the sun?",
+      "source_question_id": 183
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "D",
+      "correct_answer_text": "Therapeutic and sensory effects such as relaxation",
+      "id": "esthetician-184",
+      "options": [
+        {
+          "label": "A",
+          "text": "Clinical and curative effects such as disinfection"
+        },
+        {
+          "label": "B",
+          "text": "Protective and barrier effects such as sunscreen"
+        },
+        {
+          "label": "C",
+          "text": "Abrasive and enzymatic effects such as exfoliation"
+        },
+        {
+          "label": "D",
+          "text": "Therapeutic and sensory effects such as relaxation"
+        }
+      ],
+      "question": "An aromatherapy facial incorporates essential oils mainly to provide which added benefit?",
+      "source_question_id": 184
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "B",
+      "correct_answer_text": "Her known allergies and sensitivities to botanicals",
+      "id": "esthetician-185",
+      "options": [
+        {
+          "label": "A",
+          "text": "Her preferred fragrances and aversions to perfumery"
+        },
+        {
+          "label": "B",
+          "text": "Her known allergies and sensitivities to botanicals"
+        },
+        {
+          "label": "C",
+          "text": "Her earlier treatments and responses to exfoliation"
+        },
+        {
+          "label": "D",
+          "text": "Her comfort preferences and reaction to temperature"
+        }
+      ],
+      "question": "Before using a new essential oil blend in an aromatherapy facial, the esthetician should verify what about the client?",
+      "source_question_id": 185
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "C",
+      "correct_answer_text": "Steam, extractions, clay mask, and oil-control products",
+      "id": "esthetician-186",
+      "options": [
+        {
+          "label": "A",
+          "text": "Massage, ampoules, hydrogel mask, and lipid-rich lotion"
+        },
+        {
+          "label": "B",
+          "text": "Essences, serums, oatmeal mask, and redness-relief balm"
+        },
+        {
+          "label": "C",
+          "text": "Steam, extractions, clay mask, and oil-control products"
+        },
+        {
+          "label": "D",
+          "text": "Microcurrent, peptides, gold mask, and anti-wrinkle gel"
+        }
+      ],
+      "question": "A client presents with very oily skin, enlarged pores, and frequent breakouts. Which combination of facial elements would best serve this client?",
+      "source_question_id": 186
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "B",
+      "correct_answer_text": "Galvanic treatments and specific essential oils",
+      "id": "esthetician-187",
+      "options": [
+        {
+          "label": "A",
+          "text": "Hyaluronic ampoules and colloidal oatmeal masks"
+        },
+        {
+          "label": "B",
+          "text": "Galvanic treatments and specific essential oils"
+        },
+        {
+          "label": "C",
+          "text": "Gentle manual extractions and enzyme exfoliants"
+        },
+        {
+          "label": "D",
+          "text": "Niacinamide lotions and mineral zinc sunscreens"
+        }
+      ],
+      "question": "During a consultation, a client mentions she is pregnant. Which service or modality should the esthetician most cautiously reconsider or avoid?",
+      "source_question_id": 187
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "A",
+      "correct_answer_text": "Recommend a dermatology checkup and skip the area",
+      "id": "esthetician-188",
+      "options": [
+        {
+          "label": "A",
+          "text": "Recommend a dermatology checkup and skip the area"
+        },
+        {
+          "label": "B",
+          "text": "Diagnose a probable melanoma and explain the risk"
+        },
+        {
+          "label": "C",
+          "text": "Chart a detailed description and recheck the mole"
+        },
+        {
+          "label": "D",
+          "text": "Administer a glycolic peel and lighten the lesion"
+        }
+      ],
+      "question": "An esthetician notices an irregular, multicolored mole with uneven borders during a back facial. What is the correct professional response?",
+      "source_question_id": 188
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "A",
+      "correct_answer_text": "Cleanse, analyze, exfoliate/steam, extract, massage, mask, moisturize",
+      "id": "esthetician-189",
+      "options": [
+        {
+          "label": "A",
+          "text": "Cleanse, analyze, exfoliate/steam, extract, massage, mask, moisturize"
+        },
+        {
+          "label": "B",
+          "text": "Cleanse, analyze, exfoliate/steam, extract, mask, massage, moisturize"
+        },
+        {
+          "label": "C",
+          "text": "Cleanse, analyze, extract, exfoliate/steam, massage, mask, moisturize"
+        },
+        {
+          "label": "D",
+          "text": "Cleanse, analyze, extract, exfoliate/steam, mask, massage, moisturize"
+        }
+      ],
+      "question": "Which sequence correctly orders the basic steps of a standard European facial?",
+      "source_question_id": 189
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "B",
+      "correct_answer_text": "Avoid the treatment near pustules, as it is contraindicated",
+      "id": "esthetician-190",
+      "options": [
+        {
+          "label": "A",
+          "text": "Use the low suction setting, as it is much gentler"
+        },
+        {
+          "label": "B",
+          "text": "Avoid the treatment near pustules, as it is contraindicated"
+        },
+        {
+          "label": "C",
+          "text": "Extract the lesions beforehand, as it is standard procedure"
+        },
+        {
+          "label": "D",
+          "text": "Replace the service with a strong chemical peel, as it is nonabrasive"
+        }
+      ],
+      "question": "A client requests microdermabrasion but reveals she has active, inflamed pustular acne. What should the esthetician do?",
+      "source_question_id": 190
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "D",
+      "correct_answer_text": "Sprayed abrasive granules with vacuum suction",
+      "id": "esthetician-191",
+      "options": [
+        {
+          "label": "A",
+          "text": "Embedded diamond abrasion with vacuum suction"
+        },
+        {
+          "label": "B",
+          "text": "Pressurized serum jets with gentle extraction"
+        },
+        {
+          "label": "C",
+          "text": "Angled stainless scalpels with gentle strokes"
+        },
+        {
+          "label": "D",
+          "text": "Sprayed abrasive granules with vacuum suction"
+        }
+      ],
+      "question": "Crystal microdermabrasion exfoliates the skin by which mechanism?",
+      "source_question_id": 191
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "A",
+      "correct_answer_text": "Gentle products, minimal touch, and nonstimulating modalities",
+      "id": "esthetician-192",
+      "options": [
+        {
+          "label": "A",
+          "text": "Gentle products, minimal touch, and nonstimulating modalities"
+        },
+        {
+          "label": "B",
+          "text": "Granular scrubs, extended steam, and stimulating manipulation"
+        },
+        {
+          "label": "C",
+          "text": "Repeated extractions, bentonite masks, and drying astringents"
+        },
+        {
+          "label": "D",
+          "text": "Brightening serums, microcurrent pulses, and glycolic lotions"
+        }
+      ],
+      "question": "A client with sensitive, reactive skin and visible redness wants a facial. Which approach best protects her skin?",
+      "source_question_id": 192
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "C",
+      "correct_answer_text": "To spot allergic reactions or sensitivity before full application",
+      "id": "esthetician-193",
+      "options": [
+        {
+          "label": "A",
+          "text": "To steadily build tolerance or resistance before full application"
+        },
+        {
+          "label": "B",
+          "text": "To forecast developed shade or saturation before full application"
+        },
+        {
+          "label": "C",
+          "text": "To spot allergic reactions or sensitivity before full application"
+        },
+        {
+          "label": "D",
+          "text": "To assess epidermal thickness or moisture before full application"
+        }
+      ],
+      "question": "Why is a 24-48 hour patch test recommended before a client's first chemical peel as well as before tinting?",
+      "source_question_id": 193
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "C",
+      "correct_answer_text": "It is oil-soluble and penetrates sebaceous follicles",
+      "id": "esthetician-194",
+      "options": [
+        {
+          "label": "A",
+          "text": "It is water-soluble and exfoliates superficial cells"
+        },
+        {
+          "label": "B",
+          "text": "It is humectant-based and attracts external moisture"
+        },
+        {
+          "label": "C",
+          "text": "It is oil-soluble and penetrates sebaceous follicles"
+        },
+        {
+          "label": "D",
+          "text": "It is protease-based and hydrolyzes keratin proteins"
+        }
+      ],
+      "question": "A salicylic acid superficial peel is often chosen for oily, acne-prone skin because salicylic acid has which property useful in this service?",
+      "source_question_id": 194
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "C",
+      "correct_answer_text": "Protect and seal the treated, vulnerable skin",
+      "id": "esthetician-195",
+      "options": [
+        {
+          "label": "A",
+          "text": "Rebalance and tone the cleaned, alkaline skin"
+        },
+        {
+          "label": "B",
+          "text": "Chill and constrict the steamed, flushed skin"
+        },
+        {
+          "label": "C",
+          "text": "Protect and seal the treated, vulnerable skin"
+        },
+        {
+          "label": "D",
+          "text": "Neutralize and buffer the peeled, acidic skin"
+        }
+      ],
+      "question": "After any facial, the esthetician finishes by applying a moisturizer and, for daytime, sunscreen mainly to accomplish what?",
+      "source_question_id": 195
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "D",
+      "correct_answer_text": "Privacy and comfort, uncovering the treated area alone",
+      "id": "esthetician-196",
+      "options": [
+        {
+          "label": "A",
+          "text": "Visibility and efficiency, baring the larger work zone"
+        },
+        {
+          "label": "B",
+          "text": "Linens and upholstery, shielding the vinyl couch cover"
+        },
+        {
+          "label": "C",
+          "text": "Posture and reach, adjusting the table height suitably"
+        },
+        {
+          "label": "D",
+          "text": "Privacy and comfort, uncovering the treated area alone"
+        }
+      ],
+      "question": "When draping a client for a back facial or body treatment, the esthetician's primary professional concern is what?",
+      "source_question_id": 196
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "B",
+      "correct_answer_text": "Encourage gentle fluid flow to reduce puffiness",
+      "id": "esthetician-197",
+      "options": [
+        {
+          "label": "A",
+          "text": "Stimulate brisk blood circulation to flush skin"
+        },
+        {
+          "label": "B",
+          "text": "Encourage gentle fluid flow to reduce puffiness"
+        },
+        {
+          "label": "C",
+          "text": "Release tight muscle tension to soften wrinkles"
+        },
+        {
+          "label": "D",
+          "text": "Promote quick serum absorption to boost results"
+        }
+      ],
+      "question": "During manual lymphatic-style facial movements, the esthetician uses very light pressure directed toward the lymph nodes primarily to do what?",
+      "source_question_id": 197
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "B",
+      "correct_answer_text": "Darker skin is prone to post-inflammatory hyperpigmentation",
+      "id": "esthetician-198",
+      "options": [
+        {
+          "label": "A",
+          "text": "Darker skin is nonresponsive to low-concentration solutions"
+        },
+        {
+          "label": "B",
+          "text": "Darker skin is prone to post-inflammatory hyperpigmentation"
+        },
+        {
+          "label": "C",
+          "text": "Darker skin is hypersensitive to acid-associated irritation"
+        },
+        {
+          "label": "D",
+          "text": "Darker skin is predisposed to rosacea-linked telangiectasia"
+        }
+      ],
+      "question": "A client with a Fitzpatrick type V skin tone requests a chemical peel. Why must the esthetician be especially cautious and conservative?",
+      "source_question_id": 198
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "D",
+      "correct_answer_text": "Prevent bacteria entering the open follicles",
+      "id": "esthetician-199",
+      "options": [
+        {
+          "label": "A",
+          "text": "Soften sebum plugging the enlarged follicles"
+        },
+        {
+          "label": "B",
+          "text": "Highlight impacted pores using the magnifier"
+        },
+        {
+          "label": "C",
+          "text": "Avoid rupturing capillaries around the pores"
+        },
+        {
+          "label": "D",
+          "text": "Prevent bacteria entering the open follicles"
+        }
+      ],
+      "question": "Before performing extractions, the esthetician should ensure the hands and the client's skin are properly cleansed and gloves are worn mainly to do what?",
+      "source_question_id": 199
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "A",
+      "correct_answer_text": "Its germicidal, antiseptic action that helps prevent new breakouts",
+      "id": "esthetician-200",
+      "options": [
+        {
+          "label": "A",
+          "text": "Its germicidal, antiseptic action that helps prevent new breakouts"
+        },
+        {
+          "label": "B",
+          "text": "Its galvanic, polarized current that drives ionized serums deeper"
+        },
+        {
+          "label": "C",
+          "text": "Its gentle, low-level microcurrent that tightens slack facial muscles"
+        },
+        {
+          "label": "D",
+          "text": "Its analgesic, sedative effect that relieves tender skin soreness"
+        }
+      ],
+      "question": "A high-frequency electrode is commonly applied after extractions specifically because of which property?",
+      "source_question_id": 200
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "C",
+      "correct_answer_text": "A light AHA or enzyme peel",
+      "id": "esthetician-201",
+      "options": [
+        {
+          "label": "A",
+          "text": "A microdermabrasion session"
+        },
+        {
+          "label": "B",
+          "text": "A strong TCA or phenol peel"
+        },
+        {
+          "label": "C",
+          "text": "A light AHA or enzyme peel"
+        },
+        {
+          "label": "D",
+          "text": "A dermaplaning session"
+        }
+      ],
+      "question": "A client wants softer, smoother skin and has no sensitivities but dislikes mechanical scrubbing. Which professional exfoliation option fits best?",
+      "source_question_id": 201
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "D",
+      "correct_answer_text": "A gentle enzyme peel with minimal manipulation",
+      "id": "esthetician-202",
+      "options": [
+        {
+          "label": "A",
+          "text": "Microdermabrasion with a low suction setting"
+        },
+        {
+          "label": "B",
+          "text": "A soft-bristle rotary brush with light strokes"
+        },
+        {
+          "label": "C",
+          "text": "A mild glycolic treatment with brief contact"
+        },
+        {
+          "label": "D",
+          "text": "A gentle enzyme peel with minimal manipulation"
+        }
+      ],
+      "question": "When advising on physical versus chemical exfoliation for a client with rosacea-prone, reactive skin, which choice is generally safer?",
+      "source_question_id": 202
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "B",
+      "correct_answer_text": "Polar effects such as desincrustation and iontophoresis",
+      "id": "esthetician-203",
+      "options": [
+        {
+          "label": "A",
+          "text": "Thermal effects such as germicidal sparking and warming"
+        },
+        {
+          "label": "B",
+          "text": "Polar effects such as desincrustation and iontophoresis"
+        },
+        {
+          "label": "C",
+          "text": "Contractile effects such as muscle firming and toning"
+        },
+        {
+          "label": "D",
+          "text": "Ultrasonic effects such as cavitation and phonophoresis"
+        }
+      ],
+      "question": "The galvanic machine produces a constant, direct current. What does this constant current allow the esthetician to perform that an alternating current cannot?",
+      "source_question_id": 203
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "C",
+      "correct_answer_text": "Softened and emulsified sebum for easier extractions",
+      "id": "esthetician-204",
+      "options": [
+        {
+          "label": "A",
+          "text": "Firmed and tightened skin for smaller-looking pores"
+        },
+        {
+          "label": "B",
+          "text": "Stimulated and contracted muscles for toned contours"
+        },
+        {
+          "label": "C",
+          "text": "Softened and emulsified sebum for easier extractions"
+        },
+        {
+          "label": "D",
+          "text": "Dried and disinfected blemishes for faster healing"
+        }
+      ],
+      "question": "An esthetician applies an alkaline desincrustation gel and the negative galvanic pole to a client's congested T-zone. The expected benefit is what?",
+      "source_question_id": 204
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "B",
+      "correct_answer_text": "Reschedule after the eyes recover",
+      "id": "esthetician-205",
+      "options": [
+        {
+          "label": "A",
+          "text": "Proceed after the eyes are rinsed"
+        },
+        {
+          "label": "B",
+          "text": "Reschedule after the eyes recover"
+        },
+        {
+          "label": "C",
+          "text": "Apply lashes after the patch test"
+        },
+        {
+          "label": "D",
+          "text": "Apply lashes after the lid wash"
+        }
+      ],
+      "question": "A client requests lash extensions but has a history of eye infections and currently has watery, red eyes. The esthetician should do what?",
+      "source_question_id": 205
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "B",
+      "correct_answer_text": "It prevents pain and damage from stuck lashes during shedding",
+      "id": "esthetician-206",
+      "options": [
+        {
+          "label": "A",
+          "text": "It prevents stinging and redness from adhesive fumes during curing"
+        },
+        {
+          "label": "B",
+          "text": "It prevents pain and damage from stuck lashes during shedding"
+        },
+        {
+          "label": "C",
+          "text": "It prevents drooping and strain from heavy extensions during wear"
+        },
+        {
+          "label": "D",
+          "text": "It prevents burning and itching from lid contact during wear"
+        }
+      ],
+      "question": "Why is isolation of each natural lash essential when applying lash extensions?",
+      "source_question_id": 206
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "C",
+      "correct_answer_text": "Calm redness and irritation after waxing",
+      "id": "esthetician-207",
+      "options": [
+        {
+          "label": "A",
+          "text": "Lift residue and tackiness after waxing"
+        },
+        {
+          "label": "B",
+          "text": "Disinfect pores and follicles after waxing"
+        },
+        {
+          "label": "C",
+          "text": "Calm redness and irritation after waxing"
+        },
+        {
+          "label": "D",
+          "text": "Block ingrown hairs and bumps after waxing"
+        }
+      ],
+      "question": "After a brow wax, an esthetician applies a soothing, anti-inflammatory product. The primary aftercare goal is to do what?",
+      "source_question_id": 207
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "A",
+      "correct_answer_text": "A hydrating or anti-aging facial with rich masks and humectant serums",
+      "id": "esthetician-208",
+      "options": [
+        {
+          "label": "A",
+          "text": "A hydrating or anti-aging facial with rich masks and humectant serums"
+        },
+        {
+          "label": "B",
+          "text": "A deep-cleansing or acne facial with warm steam and manual extractions"
+        },
+        {
+          "label": "C",
+          "text": "A brightening or dark-spot facial with kojic acid and licorice extract"
+        },
+        {
+          "label": "D",
+          "text": "A purifying or oil-control facial with salicylic peels and astringents"
+        }
+      ],
+      "question": "A client books a series of treatments to soften the appearance of fine lines and wants ongoing hydration support at home. Which professional facial focus best matches this goal?",
+      "source_question_id": 208
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "B",
+      "correct_answer_text": "Absorbs extra oil and draws out follicle debris",
+      "id": "esthetician-209",
+      "options": [
+        {
+          "label": "A",
+          "text": "Seals serum and plumps dehydrated surface cells"
+        },
+        {
+          "label": "B",
+          "text": "Absorbs extra oil and draws out follicle debris"
+        },
+        {
+          "label": "C",
+          "text": "Generates gentle heat and drives actives deeper"
+        },
+        {
+          "label": "D",
+          "text": "Kills acne bacteria and disinfects open lesions"
+        }
+      ],
+      "question": "During a back facial the esthetician uses a kaolin-based clay mask on the congested area. The clay is chosen mainly because it does what to the skin?",
+      "source_question_id": 209
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "A",
+      "correct_answer_text": "Calm redness and soothe manipulated skin",
+      "id": "esthetician-210",
+      "options": [
+        {
+          "label": "A",
+          "text": "Calm redness and soothe manipulated skin"
+        },
+        {
+          "label": "B",
+          "text": "Close dilated pores and firm slack tissue"
+        },
+        {
+          "label": "C",
+          "text": "Absorb loosened sebum and leftover debris"
+        },
+        {
+          "label": "D",
+          "text": "Exfoliate cells and smooth rough texture"
+        }
+      ],
+      "question": "A client asks why the esthetician applies a cool, soothing gel mask at the end of a facial that included steam and extractions. The most accurate reason is that the mask helps do what?",
+      "source_question_id": 210
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "A",
+      "correct_answer_text": "Support muscle tone and lift against gravity",
+      "id": "esthetician-211",
+      "options": [
+        {
+          "label": "A",
+          "text": "Support muscle tone and lift against gravity"
+        },
+        {
+          "label": "B",
+          "text": "Sweep lymph upward and drain submental nodes"
+        },
+        {
+          "label": "C",
+          "text": "Hasten venous return and increase blood flow"
+        },
+        {
+          "label": "D",
+          "text": "Ease neck tension and promote relaxation"
+        }
+      ],
+      "question": "When performing a facial massage over the neck, the esthetician directs strokes in an upward direction primarily to do what?",
+      "source_question_id": 211
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "C",
+      "correct_answer_text": "Apply a clay mask to the T-zone and a hydrating mask to the cheeks",
+      "id": "esthetician-212",
+      "options": [
+        {
+          "label": "A",
+          "text": "Apply a heavy cream to the T-zone and a kaolin mask to the cheeks"
+        },
+        {
+          "label": "B",
+          "text": "Apply a charcoal mask over the whole face to minimize shine"
+        },
+        {
+          "label": "C",
+          "text": "Apply a clay mask to the T-zone and a hydrating mask to the cheeks"
+        },
+        {
+          "label": "D",
+          "text": "Apply a heavy occlusive mask over the whole face to seal in moisture"
+        }
+      ],
+      "question": "A client with combination skin shows an oily T-zone but normal cheeks. A practical professional approach during a facial is to do what?",
+      "source_question_id": 212
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "A",
+      "correct_answer_text": "Dry or mature skin that needs a gentle, non-stripping cleanse",
+      "id": "esthetician-213",
+      "options": [
+        {
+          "label": "A",
+          "text": "Dry or mature skin that needs a gentle, non-stripping cleanse"
+        },
+        {
+          "label": "B",
+          "text": "Oily or congested skin that needs a deep, oil-cutting cleanse"
+        },
+        {
+          "label": "C",
+          "text": "Acneic or blemished skin that needs a drying, medicated cleanse"
+        },
+        {
+          "label": "D",
+          "text": "Combination or shiny skin that needs a light, balancing cleanse"
+        }
+      ],
+      "question": "An esthetician selects a cream-based cleanser for a client. This choice is most appropriate for which skin type?",
+      "source_question_id": 213
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "C",
+      "correct_answer_text": "Apply products correctly to sustain salon results",
+      "id": "esthetician-214",
+      "options": [
+        {
+          "label": "A",
+          "text": "Use products sparingly to stretch supplies further"
+        },
+        {
+          "label": "B",
+          "text": "Rotate products monthly to prevent skin adaptation"
+        },
+        {
+          "label": "C",
+          "text": "Apply products correctly to sustain salon results"
+        },
+        {
+          "label": "D",
+          "text": "Use products daily to replace professional facials"
+        }
+      ],
+      "question": "After completing a facial, the esthetician reviews a written home-care plan with the client. Including the order of product application is important mainly so that the client can do what?",
+      "source_question_id": 214
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "D",
+      "correct_answer_text": "Soften surface debris and aid absorption",
+      "id": "esthetician-215",
+      "options": [
+        {
+          "label": "A",
+          "text": "Constrict capillaries and calm flushed areas"
+        },
+        {
+          "label": "B",
+          "text": "Coagulate tissue proteins and seal follicles"
+        },
+        {
+          "label": "C",
+          "text": "Dehydrate outer cells and harden sebum plugs"
+        },
+        {
+          "label": "D",
+          "text": "Soften surface debris and aid absorption"
+        }
+      ],
+      "question": "During product penetration of a treatment serum, gentle warmth from a steamer can help because mild heat tends to do what?",
+      "source_question_id": 215
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "A",
+      "correct_answer_text": "Prolonging skin contact and slowing evaporation",
+      "id": "esthetician-216",
+      "options": [
+        {
+          "label": "A",
+          "text": "Prolonging skin contact and slowing evaporation"
+        },
+        {
+          "label": "B",
+          "text": "Tightening sagging jowls and firming facial contours"
+        },
+        {
+          "label": "C",
+          "text": "Generating gentle warmth and dilating follicles"
+        },
+        {
+          "label": "D",
+          "text": "Compressing puffy tissue and draining extra fluid"
+        }
+      ],
+      "question": "A spa offers a hydrating sheet mask infused with serum during the relaxation portion of a facial. The fabric carrier mainly helps the actives by doing what?",
+      "source_question_id": 216
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "D",
+      "correct_answer_text": "Brightens discoloration when paired with daily sunscreen",
+      "id": "esthetician-217",
+      "options": [
+        {
+          "label": "A",
+          "text": "Fades pigment when paired with prescription hydroquinone"
+        },
+        {
+          "label": "B",
+          "text": "Resurfaces texture when paired with strong at-home peels"
+        },
+        {
+          "label": "C",
+          "text": "Hides blotchiness when paired with self-tanning lotion"
+        },
+        {
+          "label": "D",
+          "text": "Brightens discoloration when paired with daily sunscreen"
+        }
+      ],
+      "question": "An esthetician wants to recommend a targeted treatment product for a client concerned with dark spots and uneven tone. The most appropriate at-home category to suggest, within scope, is a product that does what?",
+      "source_question_id": 217
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "D",
+      "correct_answer_text": "After cleansing, to lift residue and refresh skin",
+      "id": "esthetician-218",
+      "options": [
+        {
+          "label": "A",
+          "text": "Before cleansing, to dissolve makeup and loosen dirt"
+        },
+        {
+          "label": "B",
+          "text": "After serum, to push actives deeper and boost uptake"
+        },
+        {
+          "label": "C",
+          "text": "Before makeup, to prime pores and hold foundation"
+        },
+        {
+          "label": "D",
+          "text": "After cleansing, to lift residue and refresh skin"
+        }
+      ],
+      "question": "A toner with witch hazel is selected for a client. Within a facial routine, this toner is applied at which point and for what main purpose?",
+      "source_question_id": 218
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "B",
+      "correct_answer_text": "Reinforcing the surface and limiting transepidermal water loss",
+      "id": "esthetician-219",
+      "options": [
+        {
+          "label": "A",
+          "text": "Attracting humidity and plumping the dehydrated skin"
+        },
+        {
+          "label": "B",
+          "text": "Reinforcing the surface and limiting transepidermal water loss"
+        },
+        {
+          "label": "C",
+          "text": "Dissolving the flaky buildup and accelerating cell turnover"
+        },
+        {
+          "label": "D",
+          "text": "Reflecting ultraviolet rays and shielding the sensitized areas"
+        }
+      ],
+      "question": "A lipid-rich barrier cream is recommended for a client with a compromised, flaky, sensitized barrier. The cream supports the skin chiefly by doing what?",
+      "source_question_id": 219
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "D",
+      "correct_answer_text": "Resist follicle blockage and comedone formation",
+      "id": "esthetician-220",
+      "options": [
+        {
+          "label": "A",
+          "text": "Limit allergic reactions and contact irritation"
+        },
+        {
+          "label": "B",
+          "text": "Avoid added oils and heavy occlusive emollients"
+        },
+        {
+          "label": "C",
+          "text": "Kill acne bacteria and disinfect active lesions"
+        },
+        {
+          "label": "D",
+          "text": "Resist follicle blockage and comedone formation"
+        }
+      ],
+      "question": "During a facial for a client reporting frequent breakouts, the esthetician chooses a non-comedogenic moisturizer. Non-comedogenic means the product is formulated to do what?",
+      "source_question_id": 220
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "C",
+      "correct_answer_text": "Fragrance-free and made for sensitive skin",
+      "id": "esthetician-221",
+      "options": [
+        {
+          "label": "A",
+          "text": "Unscented and designed for sensitive skin"
+        },
+        {
+          "label": "B",
+          "text": "Hypoallergenic and fit for sensitive skin"
+        },
+        {
+          "label": "C",
+          "text": "Fragrance-free and made for sensitive skin"
+        },
+        {
+          "label": "D",
+          "text": "Plant-scented and meant for sensitive skin"
+        }
+      ],
+      "question": "A client with sensitive skin reacts to fragrance. When selecting facial products for her, the esthetician should prioritize formulas that are what?",
+      "source_question_id": 221
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "B",
+      "correct_answer_text": "Trap heat so the emollients soften and hydrate",
+      "id": "esthetician-222",
+      "options": [
+        {
+          "label": "A",
+          "text": "Hasten cooling so the wax hardens and tightens"
+        },
+        {
+          "label": "B",
+          "text": "Trap heat so the emollients soften and hydrate"
+        },
+        {
+          "label": "C",
+          "text": "Promote sweating so the pores purge and unclog"
+        },
+        {
+          "label": "D",
+          "text": "Compress tissue so the fluids drain and settle"
+        }
+      ],
+      "question": "An esthetician offers a paraffin treatment as part of a hand-and-arm add-on during a facial visit. After dipping, the area is wrapped to do what?",
+      "source_question_id": 222
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "D",
+      "correct_answer_text": "A skin analysis to guide formula choices",
+      "id": "esthetician-223",
+      "options": [
+        {
+          "label": "A",
+          "text": "A patch test to predict product tolerance"
+        },
+        {
+          "label": "B",
+          "text": "A baseline photo to document results"
+        },
+        {
+          "label": "C",
+          "text": "A scent preference survey to set ambiance"
+        },
+        {
+          "label": "D",
+          "text": "A skin analysis to guide formula choices"
+        }
+      ],
+      "question": "When a client requests a relaxing facial with minimal active treatment, the esthetician should still include which essential analysis step before product selection?",
+      "source_question_id": 223
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "A",
+      "correct_answer_text": "Keep ample slip with light strokes to avoid irritation",
+      "id": "esthetician-224",
+      "options": [
+        {
+          "label": "A",
+          "text": "Keep ample slip with light strokes to avoid irritation"
+        },
+        {
+          "label": "B",
+          "text": "Choose firm kneading with heavy oil to release tension"
+        },
+        {
+          "label": "C",
+          "text": "Apply brisk tapping with thin gel to boost circulation"
+        },
+        {
+          "label": "D",
+          "text": "Use dry friction with little product to warm tissue"
+        }
+      ],
+      "question": "A client receiving a gentle facial has very reactive skin. When applying massage, the esthetician should choose a medium and pressure that do what?",
+      "source_question_id": 224
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "A",
+      "correct_answer_text": "A moisturizer with occlusives to slow evaporation",
+      "id": "esthetician-225",
+      "options": [
+        {
+          "label": "A",
+          "text": "A moisturizer with occlusives to slow evaporation"
+        },
+        {
+          "label": "B",
+          "text": "A second serum with hyaluronic acid to draw water"
+        },
+        {
+          "label": "C",
+          "text": "A facial mist with rosewater to keep layers moist"
+        },
+        {
+          "label": "D",
+          "text": "A toner with astringents to tighten surface pores"
+        }
+      ],
+      "question": "A facial protocol for dehydrated skin emphasizes humectant-rich layers. To lock in those humectants in a dry climate, the esthetician should follow them with what?",
+      "source_question_id": 225
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "C",
+      "correct_answer_text": "Leave skin more sensitive to sun",
+      "id": "esthetician-226",
+      "options": [
+        {
+          "label": "A",
+          "text": "Leave skin more inclined to breakouts"
+        },
+        {
+          "label": "B",
+          "text": "Leave skin more liable to dehydration"
+        },
+        {
+          "label": "C",
+          "text": "Leave skin more sensitive to sun"
+        },
+        {
+          "label": "D",
+          "text": "Leave skin more exposed to bacteria"
+        }
+      ],
+      "question": "An esthetician performs a hydrating facial and finishes with a daytime sunscreen even though the service was gentle. This step is included because professional treatments can do what?",
+      "source_question_id": 226
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "B",
+      "correct_answer_text": "Oil-soluble and able to penetrate oily follicles",
+      "id": "esthetician-227",
+      "options": [
+        {
+          "label": "A",
+          "text": "Water-soluble and able to smooth rough surface texture"
+        },
+        {
+          "label": "B",
+          "text": "Oil-soluble and able to penetrate oily follicles"
+        },
+        {
+          "label": "C",
+          "text": "Occlusive and able to seal the follicle"
+        },
+        {
+          "label": "D",
+          "text": "Humectant and able to attract surface moisture"
+        }
+      ],
+      "question": "For a back treatment targeting body acne, the esthetician selects a salicylic-based cleanser as a first step because salicylic acid is known for being what?",
+      "source_question_id": 227
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "C",
+      "correct_answer_text": "Improve appearance and condition with ongoing care",
+      "id": "esthetician-228",
+      "options": [
+        {
+          "label": "A",
+          "text": "Erase deep wrinkles and creases with one treatment"
+        },
+        {
+          "label": "B",
+          "text": "Restore volume and collagen with peptide serums"
+        },
+        {
+          "label": "C",
+          "text": "Improve appearance and condition with ongoing care"
+        },
+        {
+          "label": "D",
+          "text": "Lift sagging muscles and jowls with facial massage"
+        }
+      ],
+      "question": "A client with mature skin asks whether a single facial will reverse deep wrinkles. The esthetician should explain that professional facials primarily do what?",
+      "source_question_id": 228
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "D",
+      "correct_answer_text": "Cleanse gently and avoid tissue strain",
+      "id": "esthetician-229",
+      "options": [
+        {
+          "label": "A",
+          "text": "Build lather and drive cleanser deeper"
+        },
+        {
+          "label": "B",
+          "text": "Stimulate muscles and aid circulation"
+        },
+        {
+          "label": "C",
+          "text": "Create surface warmth and soften sebum"
+        },
+        {
+          "label": "D",
+          "text": "Cleanse gently and avoid tissue strain"
+        }
+      ],
+      "question": "During the cleansing step the esthetician uses upward, outward movements with the fingertips. This technique is preferred over scrubbing back and forth mainly to do what?",
+      "source_question_id": 229
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "A",
+      "correct_answer_text": "Restore moisture and soothe exfoliated tissue",
+      "id": "esthetician-230",
+      "options": [
+        {
+          "label": "A",
+          "text": "Restore moisture and soothe exfoliated tissue"
+        },
+        {
+          "label": "B",
+          "text": "Draw out impurities and soak up softened sebum"
+        },
+        {
+          "label": "C",
+          "text": "Deactivate enzymes and halt further digestion"
+        },
+        {
+          "label": "D",
+          "text": "Tighten dilated pores and refine rough texture"
+        }
+      ],
+      "question": "A client with normal-to-dry skin enjoys a gentle enzyme treatment as part of her facial. The enzyme step is followed by a hydrating mask mainly to do what?",
+      "source_question_id": 230
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "B",
+      "correct_answer_text": "Thin and fragile, so it needs minimal pulling or pressure",
+      "id": "esthetician-231",
+      "options": [
+        {
+          "label": "A",
+          "text": "Thick and resilient, so it needs brisk rubbing or massage"
+        },
+        {
+          "label": "B",
+          "text": "Thin and fragile, so it needs minimal pulling or pressure"
+        },
+        {
+          "label": "C",
+          "text": "Oily and congested, so it needs daily scrubbing or peels"
+        },
+        {
+          "label": "D",
+          "text": "Tough and fibrous, so it needs hard kneading or friction"
+        }
+      ],
+      "question": "When recommending an eye cream as part of home care, the esthetician advises applying it with the ring finger and a gentle tapping motion mainly because the eye area is what?",
+      "source_question_id": 231
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "C",
+      "correct_answer_text": "Light exfoliation, hydration, and a brightening serum with sunscreen",
+      "id": "esthetician-232",
+      "options": [
+        {
+          "label": "A",
+          "text": "Microcurrent toning, lymph drainage, and a firming balm with peptides"
+        },
+        {
+          "label": "B",
+          "text": "Acid peels, microdermabrasion, and a dermaplaning pass with retinol"
+        },
+        {
+          "label": "C",
+          "text": "Light exfoliation, hydration, and a brightening serum with sunscreen"
+        },
+        {
+          "label": "D",
+          "text": "Warm steam, facial massage, and a moisture mask with replenishing oil"
+        }
+      ],
+      "question": "A client wants a facial that addresses dullness and rough texture but has no sensitivities. A balanced professional choice is a treatment that combines what?",
+      "source_question_id": 232
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "B",
+      "correct_answer_text": "Light with smaller molecules and concentrated actives",
+      "id": "esthetician-233",
+      "options": [
+        {
+          "label": "A",
+          "text": "Dense with occlusive petrolatum and emollient butters"
+        },
+        {
+          "label": "B",
+          "text": "Light with smaller molecules and concentrated actives"
+        },
+        {
+          "label": "C",
+          "text": "Alcohol-heavy with volatile solvents and quick drying"
+        },
+        {
+          "label": "D",
+          "text": "Mineral-based with titanium dioxide and film formers"
+        }
+      ],
+      "question": "An esthetician explains to a client that a serum penetrates better than a cream because serums are typically formulated to be what?",
+      "source_question_id": 233
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "D",
+      "correct_answer_text": "Aloe or chamomile to reduce visible redness",
+      "id": "esthetician-234",
+      "options": [
+        {
+          "label": "A",
+          "text": "Peppermint or camphor to cool flushed areas"
+        },
+        {
+          "label": "B",
+          "text": "Witch hazel or alcohol to refine large pores"
+        },
+        {
+          "label": "C",
+          "text": "Lavender or citrus oil to promote relaxation"
+        },
+        {
+          "label": "D",
+          "text": "Aloe or chamomile to reduce visible redness"
+        }
+      ],
+      "question": "During a facial for a client with rosacea-prone skin, the esthetician avoids stimulating products and chooses calming ingredients. A suitable soothing ingredient to feature would be what?",
+      "source_question_id": 234
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "C",
+      "correct_answer_text": "Maintain moisture balance and support the barrier",
+      "id": "esthetician-235",
+      "options": [
+        {
+          "label": "A",
+          "text": "Deliver retinoids and accelerate the renewal rate"
+        },
+        {
+          "label": "B",
+          "text": "Exfoliate dead cells and resurface the complexion"
+        },
+        {
+          "label": "C",
+          "text": "Maintain moisture balance and support the barrier"
+        },
+        {
+          "label": "D",
+          "text": "Brighten dark spots and lighten the blotchy areas"
+        }
+      ],
+      "question": "The esthetician applies moisturizer as the final treatment step of a nighttime-oriented facial. The moisturizer's primary role here is to do what?",
+      "source_question_id": 235
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "B",
+      "correct_answer_text": "A light oil-free lotion or gel for clog-free hydration",
+      "id": "esthetician-236",
+      "options": [
+        {
+          "label": "A",
+          "text": "A heavy occlusive cream or butter for sebum regulation"
+        },
+        {
+          "label": "B",
+          "text": "A light oil-free lotion or gel for clog-free hydration"
+        },
+        {
+          "label": "C",
+          "text": "A mattifying primer or powder for longer shine control"
+        },
+        {
+          "label": "D",
+          "text": "A strong astringent or clay mask for drying oily skin"
+        }
+      ],
+      "question": "A client with oily skin worries that using any moisturizer will worsen breakouts. The esthetician should explain that oily skin still benefits from what?",
+      "source_question_id": 236
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "A",
+      "correct_answer_text": "From thinnest to thickest so light layers absorb first",
+      "id": "esthetician-237",
+      "options": [
+        {
+          "label": "A",
+          "text": "From thinnest to thickest so light layers absorb first"
+        },
+        {
+          "label": "B",
+          "text": "From heaviest to lightest so richer creams settle first"
+        },
+        {
+          "label": "C",
+          "text": "From oil-based to water-based so oils penetrate first"
+        },
+        {
+          "label": "D",
+          "text": "From largest to smallest molecules so large ones are absorbed first"
+        }
+      ],
+      "question": "During a hydrating facial, an esthetician applies a serum, then a mask, then moisturizer. The general rule guiding this order is to apply products in which sequence?",
+      "source_question_id": 237
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "A",
+      "correct_answer_text": "Thinner and more fragile than the rest of the face",
+      "id": "esthetician-238",
+      "options": [
+        {
+          "label": "A",
+          "text": "Thinner and more fragile than the rest of the face"
+        },
+        {
+          "label": "B",
+          "text": "Thicker and more resilient than the rest of the face"
+        },
+        {
+          "label": "C",
+          "text": "Oilier and more acne-prone than the rest of the face"
+        },
+        {
+          "label": "D",
+          "text": "Smoother and more elastic than the rest of the face"
+        }
+      ],
+      "question": "A client requests an add-on lip and eye treatment during her facial. The esthetician chooses gentle, hydrating products for these zones mainly because the skin there is what?",
+      "source_question_id": 238
+    },
+    {
+      "category": "Skin Care and Services",
+      "correct_answer": "D",
+      "correct_answer_text": "A broad-spectrum sunscreen to shield treated skin",
+      "id": "esthetician-239",
+      "options": [
+        {
+          "label": "A",
+          "text": "A potent antioxidant serum to guard surface cells"
+        },
+        {
+          "label": "B",
+          "text": "A tinted moisturizer to disguise residual redness"
+        },
+        {
+          "label": "C",
+          "text": "A mineral setting powder to control midday shine"
+        },
+        {
+          "label": "D",
+          "text": "A broad-spectrum sunscreen to shield treated skin"
+        }
+      ],
+      "question": "When finishing a facial for a client who will go outdoors immediately, the most important final product to apply during daytime is what?",
+      "source_question_id": 239
+    }
+  ],
+  "retrieved_at": "2026-11-16T07:34:38.305Z",
+  "source_url": "https://careeremployer.com/test-prep/practice-tests/esthetician-practice-test"
+}

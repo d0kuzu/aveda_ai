@@ -1,6 +1,7 @@
 package tutor
 
 import (
+	"diaxel/internal/constants"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -31,8 +32,9 @@ type ExamData struct {
 }
 
 var (
-	examsOnce sync.Once
-	examsMap  map[string]*ExamData
+	examsOnce      sync.Once
+	examsMap       map[string]*ExamData
+	canadaExamsMap map[string]*ExamData
 )
 
 var programFiles = map[string]string{
@@ -40,6 +42,10 @@ var programFiles = map[string]string{
 	"cosmetology":     "cosmetology.json",
 	"esthetician":     "esthetician.json",
 	"nail-technician": "nail-technician.json",
+}
+
+func IsCanadaAssistant(assistantID string) bool {
+	return strings.EqualFold(strings.TrimSpace(assistantID), constants.AvedaCanadaAssistantID)
 }
 
 func NormalizeProgram(input string) (string, bool) {
@@ -86,10 +92,8 @@ func ProgramDisplayName(program string) string {
 	}
 }
 
-func loadAllExams() {
-	examsMap = make(map[string]*ExamData)
-	searchDirs := []string{"json", "ai-service/json", "../json", "../ai-service/json"}
-
+func loadExamPool(searchDirs []string, poolLabel string) map[string]*ExamData {
+	pool := make(map[string]*ExamData)
 	for progKey, fileName := range programFiles {
 		var content []byte
 		var err error
@@ -101,26 +105,46 @@ func loadAllExams() {
 			}
 		}
 		if err != nil {
-			log.Printf("[Tutor Questions] Error reading %s: %v", fileName, err)
+			log.Printf("[Tutor Questions] Error reading %s (%s): %v", fileName, poolLabel, err)
 			continue
 		}
 
 		var data ExamData
 		if err := json.Unmarshal(content, &data); err != nil {
-			log.Printf("[Tutor Questions] Error parsing %s: %v", fileName, err)
+			log.Printf("[Tutor Questions] Error parsing %s (%s): %v", fileName, poolLabel, err)
 			continue
 		}
-		examsMap[progKey] = &data
-		log.Printf("[Tutor Questions] Loaded %s (%d questions)", data.Exam, len(data.Questions))
+		pool[progKey] = &data
+		log.Printf("[Tutor Questions] Loaded %s [%s] (%d questions)", data.Exam, poolLabel, len(data.Questions))
 	}
+	return pool
+}
+
+func loadAllExams() {
+	defaultDirs := []string{"json", "ai-service/json", "../json", "../ai-service/json"}
+	canadaDirs := []string{"json/canada", "ai-service/json/canada", "../json/canada", "../ai-service/json/canada"}
+
+	examsMap = loadExamPool(defaultDirs, "default")
+	canadaExamsMap = loadExamPool(canadaDirs, "canada")
 }
 
 func GetExamData(program string) (*ExamData, error) {
+	return GetExamDataForAssistant("", program)
+}
+
+func GetExamDataForAssistant(assistantID, program string) (*ExamData, error) {
 	examsOnce.Do(loadAllExams)
 	norm, ok := NormalizeProgram(program)
 	if !ok {
 		return nil, fmt.Errorf("invalid program '%s': must be one of barber, cosmetology, esthetician, nail-technician", program)
 	}
+
+	if IsCanadaAssistant(assistantID) {
+		if data, exists := canadaExamsMap[norm]; exists && data != nil {
+			return data, nil
+		}
+	}
+
 	data, exists := examsMap[norm]
 	if !exists || data == nil {
 		return nil, fmt.Errorf("questions for program '%s' not found", norm)
@@ -129,7 +153,11 @@ func GetExamData(program string) (*ExamData, error) {
 }
 
 func GetQuestion(program string, index int) (*Question, int, error) {
-	data, err := GetExamData(program)
+	return GetQuestionForAssistant("", program, index)
+}
+
+func GetQuestionForAssistant(assistantID, program string, index int) (*Question, int, error) {
+	data, err := GetExamDataForAssistant(assistantID, program)
 	if err != nil {
 		return nil, 0, err
 	}
