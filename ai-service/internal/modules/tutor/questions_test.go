@@ -37,7 +37,7 @@ func TestLoadAllExams(t *testing.T) {
 		}
 	}
 
-	// Verify Canada program selection mapping (1 = Esthetician / Skin Care, 2 = Nail Technician)
+	// Verify Canada program selection mapping (1 = Esthetician / Skin Care, 2 = Nail Technician, 3 = Barbering, 4 = Hair Styling)
 	canadaCases := map[string]string{
 		"1":                       "esthetician",
 		"Esthetician / Skin Care": "esthetician",
@@ -46,6 +46,15 @@ func TestLoadAllExams(t *testing.T) {
 		"2":                       "nail-technician",
 		"Nail Technician":         "nail-technician",
 		"nail-technician":         "nail-technician",
+		"3":                       "barber",
+		"Barbering":               "barber",
+		"barbering":               "barber",
+		"barber":                  "barber",
+		"4":                       "cosmetology",
+		"Hair Styling":            "cosmetology",
+		"hair-styling":            "cosmetology",
+		"hairstyling":             "cosmetology",
+		"cosmetology":             "cosmetology",
 	}
 	for input, expectedNorm := range canadaCases {
 		got, ok := NormalizeProgramForAssistant(constants.AvedaCanadaTutorAssistantID, input)
@@ -58,10 +67,39 @@ func TestLoadAllExams(t *testing.T) {
 		}
 	}
 
-	// Ensure Barber and Cosmetology are not valid for Canada
-	for _, invalidCanadaProg := range []string{"barber", "cosmetology", "3", "4"} {
-		if _, ok := NormalizeProgramForAssistant(constants.AvedaCanadaTutorAssistantID, invalidCanadaProg); ok {
-			t.Errorf("Canada NormalizeProgramForAssistant(%q) should be false", invalidCanadaProg)
+	// Validate every question in all 4 Canada JSON files and all 4 US JSON files
+	for _, assistantID := range []string{constants.AvedaTutorAssistantID, constants.AvedaCanadaTutorAssistantID} {
+		for _, prog := range []string{"barber", "cosmetology", "esthetician", "nail-technician"} {
+			data, err := GetExamDataForAssistant(assistantID, prog)
+			if err != nil || data == nil {
+				t.Fatalf("GetExamDataForAssistant(%s, %s) failed: %v", assistantID, prog, err)
+			}
+			for idx, q := range data.Questions {
+				if strings.TrimSpace(q.ID) == "" {
+					t.Errorf("[%s/%s] question %d has empty ID", assistantID, prog, idx)
+				}
+				if strings.TrimSpace(q.Question) == "" {
+					t.Errorf("[%s/%s] question %d (%s) has empty Question text", assistantID, prog, idx, q.ID)
+				}
+				if len(q.Options) < 2 {
+					t.Errorf("[%s/%s] question %d (%s) has fewer than 2 options (%d)", assistantID, prog, idx, q.ID, len(q.Options))
+				}
+				foundCorrect := false
+				for _, opt := range q.Options {
+					if strings.TrimSpace(opt.Label) == "" || strings.TrimSpace(opt.Text) == "" {
+						t.Errorf("[%s/%s] question %d (%s) has option with empty label or text: %+v", assistantID, prog, idx, q.ID, opt)
+					}
+					if strings.EqualFold(strings.TrimSpace(opt.Label), strings.TrimSpace(q.CorrectAnswer)) {
+						foundCorrect = true
+					}
+				}
+				if !foundCorrect {
+					t.Errorf("[%s/%s] question %d (%s) correct_answer %q not found among options", assistantID, prog, idx, q.ID, q.CorrectAnswer)
+				}
+				if strings.TrimSpace(q.CorrectAnswerText) == "" {
+					t.Errorf("[%s/%s] question %d (%s) has empty correct_answer_text", assistantID, prog, idx, q.ID)
+				}
+			}
 		}
 	}
 }

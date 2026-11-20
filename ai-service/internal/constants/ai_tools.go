@@ -232,8 +232,8 @@ var TutorTools = []openai.Tool{
 				"properties": map[string]interface{}{
 					"program": map[string]interface{}{
 						"type":        "string",
-						"enum":        []string{"barber", "cosmetology", "esthetician", "nail-technician"},
-						"description": "The chosen program identifier: 'esthetician' (for Esthetician or Esthetician / Skin Care), 'nail-technician' (for Nail Technician), 'barber' (for Barber), or 'cosmetology' (for Cosmetology).",
+						"enum":        []string{"barber", "barbering", "cosmetology", "hair-styling", "esthetician", "nail-technician"},
+						"description": "The chosen program identifier: 'esthetician' (for Esthetician or Esthetician / Skin Care), 'nail-technician' (for Nail Technician), 'barber' or 'barbering' (for Barber / Barbering), 'cosmetology' or 'hair-styling' (for Cosmetology / Hair Styling).",
 					},
 				},
 				"required": []string{"program"},

@@ -88,11 +88,13 @@ func (c *Client) StartTutorMessages(chatResp *dbpb.ChatResponse) []openai.ChatCo
 - When the student chooses one of the 4 programs (by name or number 1-4), MUST call the tool "select_tutor_program".`
 
 		canadaStep1 := `Step 1 (Program Selection):
-- The student must first choose ONE of the 2 available programs (ALWAYS format the list with each program on its own new line):
+- The student must first choose ONE of the 4 available programs (ALWAYS format the list with each program on its own new line):
   1. Esthetician / Skin Care
   2. Nail Technician
-- If they have not chosen a program yet (or ask what programs exist), list these 2 programs on separate lines as shown above and ask which one they want to study.
-- When the student chooses one of the 2 programs (by name or number: 1 = Esthetician / Skin Care -> pass program="esthetician", 2 = Nail Technician -> pass program="nail-technician"), MUST call the tool "select_tutor_program".`
+  3. Barbering
+  4. Hair Styling
+- If they have not chosen a program yet (or ask what programs exist), list these 4 programs on separate lines as shown above and ask which one they want to study.
+- When the student chooses one of the 4 programs (by name or number: 1 = Esthetician / Skin Care -> pass program="esthetician", 2 = Nail Technician -> pass program="nail-technician", 3 = Barbering -> pass program="barber", 4 = Hair Styling -> pass program="cosmetology"), MUST call the tool "select_tutor_program".`
 
 		systemPrompt = strings.Replace(systemPrompt, oldStep1, canadaStep1, 1)
 	}

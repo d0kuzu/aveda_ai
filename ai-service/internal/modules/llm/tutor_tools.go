@@ -19,7 +19,7 @@ func (c *Client) handleSelectTutorProgram(ctx context.Context, argsJSON, userId,
 	normProgram, ok := tutor.NormalizeProgramForAssistant(assistantId, args.Program)
 	if !ok {
 		if tutor.IsCanadaAssistant(assistantId) {
-			return "Error: Invalid program. Available programs are: 1. Esthetician / Skin Care, 2. Nail Technician. Please ask the student to choose one of these two.", nil
+			return "Error: Invalid program. Available programs are: 1. Esthetician / Skin Care, 2. Nail Technician, 3. Barbering, 4. Hair Styling. Please ask the student to choose one of these four.", nil
 		}
 		return "Error: Invalid program. Available programs are: 1. Barber, 2. Cosmetology, 3. Esthetician, 4. Nail Technician. Please ask the student to choose one of these four.", nil
 	}
@@ -56,7 +56,7 @@ func (c *Client) handleStartTutoring(ctx context.Context, userId, assistantId st
 
 	if chat.TutingProgram == "" {
 		if tutor.IsCanadaAssistant(assistantId) {
-			return "Error: No program has been selected yet. Please ask the student which of the 2 programs (1. Esthetician / Skin Care, or 2. Nail Technician) they want to study first.", nil
+			return "Error: No program has been selected yet. Please ask the student which of the 4 programs (1. Esthetician / Skin Care, 2. Nail Technician, 3. Barbering, or 4. Hair Styling) they want to study first.", nil
 		}
 		return "Error: No program has been selected yet. Please ask the student which of the 4 programs (Barber, Cosmetology, Esthetician, or Nail Technician) they want to study first.", nil
 	}
@@ -90,7 +90,7 @@ func (c *Client) handleGetCurrentTutorQuestion(ctx context.Context, userId, assi
 
 	if chat.TutingProgram == "" {
 		if tutor.IsCanadaAssistant(assistantId) {
-			return "Error: No program selected yet. Ask the student to choose 1. Esthetician / Skin Care or 2. Nail Technician.", nil
+			return "Error: No program selected yet. Ask the student to choose 1. Esthetician / Skin Care, 2. Nail Technician, 3. Barbering, or 4. Hair Styling.", nil
 		}
 		return "Error: No program selected yet. Ask the student to choose Barber, Cosmetology, Esthetician, or Nail Technician.", nil
 	}
@@ -126,7 +126,7 @@ func (c *Client) handleSubmitTutorAnswer(ctx context.Context, argsJSON, userId, 
 
 	if chat.TutingProgram == "" {
 		if tutor.IsCanadaAssistant(assistantId) {
-			return "Error: No program selected yet. Ask the student to choose 1. Esthetician / Skin Care or 2. Nail Technician.", nil
+			return "Error: No program selected yet. Ask the student to choose 1. Esthetician / Skin Care, 2. Nail Technician, 3. Barbering, or 4. Hair Styling.", nil
 		}
 		return "Error: No program selected yet. Ask the student to choose Barber, Cosmetology, Esthetician, or Nail Technician.", nil
 	}

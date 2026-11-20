@@ -90,7 +90,7 @@ func (w *Worker) processTutorChats(ctx context.Context) {
 			// Case 1: Student hasn't started tutoring yet
 			if chat.TutingProgram == "" {
 				if IsCanadaAssistant(chat.AssistantId) {
-					msgText = "Hi there! Just checking in from Exam Prep. Which program would you like to choose to start practicing questions?\n1. Esthetician / Skin Care\n2. Nail Technician"
+					msgText = "Hi there! Just checking in from Exam Prep. Which program would you like to choose to start practicing questions?\n1. Esthetician / Skin Care\n2. Nail Technician\n3. Barbering\n4. Hair Styling"
 				} else {
 					msgText = "Hi there! Just checking in from State Board Exam Prep. Which program would you like to choose to start practicing questions?\n1. Barber\n2. Cosmetology\n3. Esthetician\n4. Nail Technician"
 				}

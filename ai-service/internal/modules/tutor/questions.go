@@ -44,11 +44,6 @@ var programFiles = map[string]string{
 	"nail-technician": "nail-technician.json",
 }
 
-var canadaProgramFiles = map[string]string{
-	"esthetician":     "esthetician.json",
-	"nail-technician": "nail-technician.json",
-}
-
 func IsCanadaAssistant(assistantID string) bool {
 	trimmed := strings.TrimSpace(assistantID)
 	return strings.EqualFold(trimmed, constants.AvedaCanadaTutorAssistantID) ||
@@ -61,7 +56,7 @@ func NormalizeProgram(input string) (string, bool) {
 	switch s {
 	case "1", "barber", "barbering":
 		return "barber", true
-	case "2", "cosmetology", "cosmetologist":
+	case "2", "cosmetology", "cosmetologist", "hair styling", "hair-styling", "hairstyling", "hair stylist", "hair-stylist", "hairstylist":
 		return "cosmetology", true
 	case "3", "esthetician", "esthetics", "aesthetician", "skin care", "skincare", "skin-care", "esthetician / skin care", "esthetician/skin care":
 		return "esthetician", true
@@ -71,7 +66,7 @@ func NormalizeProgram(input string) (string, bool) {
 		if strings.Contains(s, "barber") {
 			return "barber", true
 		}
-		if strings.Contains(s, "cosmetolog") {
+		if strings.Contains(s, "cosmetolog") || strings.Contains(s, "hair") {
 			return "cosmetology", true
 		}
 		if strings.Contains(s, "esthetic") || strings.Contains(s, "aesthetic") || strings.Contains(s, "skin") {
@@ -93,12 +88,22 @@ func NormalizeProgramForAssistant(assistantID, input string) (string, bool) {
 			return "esthetician", true
 		case "2", "nail-technician", "nail technician", "nails", "nail", "manicuring":
 			return "nail-technician", true
+		case "3", "barber", "barbering":
+			return "barber", true
+		case "4", "cosmetology", "cosmetologist", "hair styling", "hair-styling", "hairstyling", "hair stylist", "hair-stylist", "hairstylist":
+			return "cosmetology", true
 		default:
 			if strings.Contains(s, "esthetic") || strings.Contains(s, "aesthetic") || strings.Contains(s, "skin") {
 				return "esthetician", true
 			}
 			if strings.Contains(s, "nail") || strings.Contains(s, "manicur") {
 				return "nail-technician", true
+			}
+			if strings.Contains(s, "barber") {
+				return "barber", true
+			}
+			if strings.Contains(s, "hair") || strings.Contains(s, "cosmetolog") {
+				return "cosmetology", true
 			}
 			return "", false
 		}
@@ -122,8 +127,17 @@ func ProgramDisplayName(program string) string {
 }
 
 func ProgramDisplayNameForAssistant(assistantID, program string) string {
-	if IsCanadaAssistant(assistantID) && program == "esthetician" {
-		return "Esthetician / Skin Care"
+	if IsCanadaAssistant(assistantID) {
+		switch program {
+		case "esthetician":
+			return "Esthetician / Skin Care"
+		case "nail-technician":
+			return "Nail Technician"
+		case "barber":
+			return "Barbering"
+		case "cosmetology":
+			return "Hair Styling"
+		}
 	}
 	return ProgramDisplayName(program)
 }
@@ -161,7 +175,7 @@ func loadAllExams() {
 	canadaDirs := []string{"json/canada", "ai-service/json/canada", "../json/canada", "../ai-service/json/canada"}
 
 	examsMap = loadExamPool(defaultDirs, programFiles, "default")
-	canadaExamsMap = loadExamPool(canadaDirs, canadaProgramFiles, "canada")
+	canadaExamsMap = loadExamPool(canadaDirs, programFiles, "canada")
 }
 
 func GetExamData(program string) (*ExamData, error) {
@@ -173,7 +187,7 @@ func GetExamDataForAssistant(assistantID, program string) (*ExamData, error) {
 	norm, ok := NormalizeProgramForAssistant(assistantID, program)
 	if !ok {
 		if IsCanadaAssistant(assistantID) {
-			return nil, fmt.Errorf("invalid program '%s': must be one of esthetician (Esthetician / Skin Care) or nail-technician (Nail Technician)", program)
+			return nil, fmt.Errorf("invalid program '%s': must be one of esthetician (Esthetician / Skin Care), nail-technician (Nail Technician), barber (Barbering), or cosmetology (Hair Styling)", program)
 		}
 		return nil, fmt.Errorf("invalid program '%s': must be one of barber, cosmetology, esthetician, nail-technician", program)
 	}
