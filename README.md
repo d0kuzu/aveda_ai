@@ -12,23 +12,29 @@ Auth выпускает JWT с `sub`, равным сохранённому `use
 
 ## Запуск
 
-В корне репозитория создайте `.env` из `.env.example`. В PowerShell это можно сделать командой:
+Для локального запуска понадобятся Go 1.25.8 или новее и PostgreSQL. На новом экземпляре PostgreSQL откройте `psql -h localhost -U postgres -d postgres` и один раз создайте отдельную базу и роль для каждого сервиса. Команды `\password` запросят пароли интерактивно.
 
-```powershell
-if (!(Test-Path .env)) { Copy-Item .env.example .env }
+```sql
+CREATE ROLE auth_app LOGIN;
+\password auth_app
+CREATE DATABASE auth_db OWNER auth_app;
+REVOKE CONNECT, TEMPORARY ON DATABASE auth_db FROM PUBLIC;
+
+CREATE ROLE ai_app LOGIN;
+\password ai_app
+CREATE DATABASE ai_db OWNER ai_app;
+REVOKE CONNECT, TEMPORARY ON DATABASE ai_db FROM PUBLIC;
 ```
 
-Задайте отдельные случайные значения для `POSTGRES_PASSWORD`, `AUTH_DB_PASSWORD`, `AI_DB_PASSWORD`, `ACCESS_SECRET` и `REFRESH_SECRET`. Для ответов модели заполните `OPENAI_API_KEY`. Для Telegram нужны `TELEGRAM_WEBHOOK_SECRET` и публичный HTTPS-адрес gateway в `WEBHOOK_BASE_URL`. Для Twilio тот же адрес указывается в `BASE_URL`. Номер, SID и токен Twilio передаются при регистрации соответствующего ассистента.
+В каталогах `auth-service`, `ai-service` и `api-gateway` скопируйте локальный `.env.example` в `.env`. Заполните настройки каждого сервиса.
 
-```sh
-docker compose up --build
-```
+- **Auth** — укажите пароль `auth_app` в `PGPASSWORD` и задайте разные случайные значения для `ACCESS_SECRET` и `REFRESH_SECRET`.
+- **AI** — укажите пароль `ai_app` в `PGPASSWORD`. Для ответов модели заполните `OPENAI_API_KEY`. Для Telegram задайте `TELEGRAM_WEBHOOK_SECRET` и публичный HTTPS-адрес gateway в `WEBHOOK_BASE_URL`. Для Twilio тот же адрес задаётся в `BASE_URL`. Номер, SID и токен Twilio передаются при регистрации ассистента.
+- **Gateway** — скопируйте значение `ACCESS_SECRET` из настроек Auth. Адреса Auth и AI задаются через `AUTH_SERVICE_URL` и `AI_SERVICE_URL`.
 
-Gateway доступен по адресу `http://localhost:8085`, проверка состояния — `GET /health`. Только gateway публикует HTTP-порт. Приложения доступны друг другу в сети Compose. PostgreSQL доступен локально на `127.0.0.1:5433`. В dev-конфигурации команда `docker compose -f docker-compose.dev.yml up --build` использует свои тома, порт gateway 8080 и порт PostgreSQL 5432. Dev-файлу нужен Docker Compose 2.24.4 или новее.
+Примеры используют PostgreSQL на `localhost:5432`. Для другого адреса или порта измените `DATABASE_URL` в Auth и AI. Запустите `go run .` в отдельном терминале из каталога каждого сервиса. При старте Auth и AI применят встроенные миграции в своих базах. С настройками из примеров AI слушает порт 8081, Auth — 8082, gateway — 8085. Проверить gateway можно запросом `GET http://localhost:8085/health`.
 
-При первом запуске PostgreSQL создаёт базы `auth_db` и `ai_db` с отдельными ролями `auth_app` и `ai_app`. Каждая роль может подключиться только к своей прикладной базе. При старте приложения применяют встроенные нумерованные SQL-миграции под транзакционной блокировкой. У каждого сервиса свой каталог `internal/modules/database/migrations`.
-
-Для запуска из IDE можно поднять только PostgreSQL командой `docker compose up -d postgres`. В каждом сервисе скопируйте его `.env.example` в `.env` и запускайте `go run .` из каталога сервиса. Укажите пароль его роли в `PGPASSWORD`. У auth и gateway должно совпадать значение `ACCESS_SECRET`. При таком запуске примеры используют порты 8081 для AI, 8082 для auth и 8085 для gateway. Доступ к HTTP-порту AI предназначен для доверенного gateway.
+Для Docker собирайте каждый образ из каталога его сервиса, например `docker build -t ai-service ./ai-service` из корня репозитория. При запуске передайте настройки через `--env-file` и укажите адреса зависимостей, доступные из контейнера. Публикуйте для клиентов только порт gateway. AI доверяет заголовкам идентификации от gateway.
 
 ## Как добавлять модуль
 
