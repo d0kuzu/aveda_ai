@@ -7,11 +7,9 @@ import (
 )
 
 func TwilioWebhookRoutes(router *gin.Engine, app *appModule.App) {
-	twilioWebhookHandler := NewTwilioWebhookHandler(app.Cfg, app.LLM, app.Twilio, app.Db)
+	twilioWebhookHandler := NewTwilioWebhookHandler(app.LLM, app.Twilio, app.Db)
 	productGroup := router.Group("twilio")
 	{
 		productGroup.POST("/webhook/:assistant_id", twilioWebhookHandler.HandleWebhook)
-		productGroup.POST("/recover/:assistant_id", twilioWebhookHandler.HandleRecovery)
-		productGroup.POST("/recover/phase2/:assistant_id", twilioWebhookHandler.HandleRecoveryPhase2)
 	}
 }

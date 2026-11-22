@@ -1,13 +1,12 @@
 .idea/
 .env
-
-# Frontend
-frontend/node_modules/
-frontend/.next/
-frontend/out/
-frontend/.env.local
-frontend/.env.production
-
-# OS
+*.exe
+**/credentials.json
+**/token.json
+/ai-service/ai-service
+/api-gateway/serverfile
+/auth-service/auth-service
+/auth-service/server
+/database-service/database-service
 .DS_Store
 Thumbs.db

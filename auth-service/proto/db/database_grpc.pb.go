@@ -19,82 +19,53 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	DatabaseService_GetAnalytics_FullMethodName                       = "/database.DatabaseService/GetAnalytics"
-	DatabaseService_GetAnalyticsByAssistant_FullMethodName            = "/database.DatabaseService/GetAnalyticsByAssistant"
-	DatabaseService_CreateUser_FullMethodName                         = "/database.DatabaseService/CreateUser"
-	DatabaseService_GetUser_FullMethodName                            = "/database.DatabaseService/GetUser"
-	DatabaseService_GetUserByEmail_FullMethodName                     = "/database.DatabaseService/GetUserByEmail"
-	DatabaseService_UpdateUser_FullMethodName                         = "/database.DatabaseService/UpdateUser"
-	DatabaseService_DeleteUser_FullMethodName                         = "/database.DatabaseService/DeleteUser"
-	DatabaseService_SaveRefreshToken_FullMethodName                   = "/database.DatabaseService/SaveRefreshToken"
-	DatabaseService_GetRefreshToken_FullMethodName                    = "/database.DatabaseService/GetRefreshToken"
-	DatabaseService_DeleteRefreshToken_FullMethodName                 = "/database.DatabaseService/DeleteRefreshToken"
-	DatabaseService_CreateAssistant_FullMethodName                    = "/database.DatabaseService/CreateAssistant"
-	DatabaseService_GetAssistant_FullMethodName                       = "/database.DatabaseService/GetAssistant"
-	DatabaseService_GetAssistantByAPIToken_FullMethodName             = "/database.DatabaseService/GetAssistantByAPIToken"
-	DatabaseService_UpdateAssistant_FullMethodName                    = "/database.DatabaseService/UpdateAssistant"
-	DatabaseService_DeleteAssistant_FullMethodName                    = "/database.DatabaseService/DeleteAssistant"
-	DatabaseService_GetAssistantsByUserID_FullMethodName              = "/database.DatabaseService/GetAssistantsByUserID"
-	DatabaseService_CreateChat_FullMethodName                         = "/database.DatabaseService/CreateChat"
-	DatabaseService_GetChat_FullMethodName                            = "/database.DatabaseService/GetChat"
-	DatabaseService_GetChatsByUser_FullMethodName                     = "/database.DatabaseService/GetChatsByUser"
-	DatabaseService_UpdateChat_FullMethodName                         = "/database.DatabaseService/UpdateChat"
-	DatabaseService_DeleteChat_FullMethodName                         = "/database.DatabaseService/DeleteChat"
-	DatabaseService_SaveMessage_FullMethodName                        = "/database.DatabaseService/SaveMessage"
-	DatabaseService_GetChatMessages_FullMethodName                    = "/database.DatabaseService/GetChatMessages"
-	DatabaseService_GetAllChatMessages_FullMethodName                 = "/database.DatabaseService/GetAllChatMessages"
-	DatabaseService_UpdateMessage_FullMethodName                      = "/database.DatabaseService/UpdateMessage"
-	DatabaseService_DeleteMessage_FullMethodName                      = "/database.DatabaseService/DeleteMessage"
-	DatabaseService_GetChatPagesCount_FullMethodName                  = "/database.DatabaseService/GetChatPagesCount"
-	DatabaseService_GetChatPage_FullMethodName                        = "/database.DatabaseService/GetChatPage"
-	DatabaseService_GetChatPagesCountByUserID_FullMethodName          = "/database.DatabaseService/GetChatPagesCountByUserID"
-	DatabaseService_GetChatPageByUserID_FullMethodName                = "/database.DatabaseService/GetChatPageByUserID"
-	DatabaseService_SearchChatsByCustomer_FullMethodName              = "/database.DatabaseService/SearchChatsByCustomer"
-	DatabaseService_GetLatestChatByCustomer_FullMethodName            = "/database.DatabaseService/GetLatestChatByCustomer"
-	DatabaseService_SaveTwilioConfig_FullMethodName                   = "/database.DatabaseService/SaveTwilioConfig"
-	DatabaseService_GetTwilioConfig_FullMethodName                    = "/database.DatabaseService/GetTwilioConfig"
-	DatabaseService_DeleteTwilioConfig_FullMethodName                 = "/database.DatabaseService/DeleteTwilioConfig"
-	DatabaseService_GetChatsForFollowup_FullMethodName                = "/database.DatabaseService/GetChatsForFollowup"
-	DatabaseService_UpdateChatFollowupStage_FullMethodName            = "/database.DatabaseService/UpdateChatFollowupStage"
-	DatabaseService_GetCampusloginByUserId_FullMethodName             = "/database.DatabaseService/GetCampusloginByUserId"
-	DatabaseService_GetCampusloginByPhone_FullMethodName              = "/database.DatabaseService/GetCampusloginByPhone"
-	DatabaseService_UpsertCampuslogin_FullMethodName                  = "/database.DatabaseService/UpsertCampuslogin"
-	DatabaseService_SetCampusloginFlags_FullMethodName                = "/database.DatabaseService/SetCampusloginFlags"
-	DatabaseService_DeleteAllChatsAndMessages_FullMethodName          = "/database.DatabaseService/DeleteAllChatsAndMessages"
-	DatabaseService_DeleteChatAndMessages_FullMethodName              = "/database.DatabaseService/DeleteChatAndMessages"
-	DatabaseService_UpdateChatIsEnd_FullMethodName                    = "/database.DatabaseService/UpdateChatIsEnd"
-	DatabaseService_UpdateChatIsBooked_FullMethodName                 = "/database.DatabaseService/UpdateChatIsBooked"
-	DatabaseService_UpdateChatIsReviewed_FullMethodName               = "/database.DatabaseService/UpdateChatIsReviewed"
-	DatabaseService_GetUnreviewedActiveChats_FullMethodName           = "/database.DatabaseService/GetUnreviewedActiveChats"
-	DatabaseService_GetPeriodMetrics_FullMethodName                   = "/database.DatabaseService/GetPeriodMetrics"
-	DatabaseService_GetPeriodChats_FullMethodName                     = "/database.DatabaseService/GetPeriodChats"
-	DatabaseService_GetWeeklyChatsStarted_FullMethodName              = "/database.DatabaseService/GetWeeklyChatsStarted"
-	DatabaseService_IsCustomerBlocked_FullMethodName                  = "/database.DatabaseService/IsCustomerBlocked"
-	DatabaseService_UpsertGoogleSyncToken_FullMethodName              = "/database.DatabaseService/UpsertGoogleSyncToken"
-	DatabaseService_GetGoogleSyncToken_FullMethodName                 = "/database.DatabaseService/GetGoogleSyncToken"
-	DatabaseService_CreateAppointment_FullMethodName                  = "/database.DatabaseService/CreateAppointment"
-	DatabaseService_GetAppointmentByGoogleEventID_FullMethodName      = "/database.DatabaseService/GetAppointmentByGoogleEventID"
-	DatabaseService_CountAppointmentsBySlot_FullMethodName            = "/database.DatabaseService/CountAppointmentsBySlot"
-	DatabaseService_BlockCustomer_FullMethodName                      = "/database.DatabaseService/BlockCustomer"
-	DatabaseService_GetAllBlockedCustomers_FullMethodName             = "/database.DatabaseService/GetAllBlockedCustomers"
-	DatabaseService_GetUnsyncedCampusloginAppointments_FullMethodName = "/database.DatabaseService/GetUnsyncedCampusloginAppointments"
-	DatabaseService_UpdateAppointmentCampusloginStatus_FullMethodName = "/database.DatabaseService/UpdateAppointmentCampusloginStatus"
-	DatabaseService_GetAppointmentByID_FullMethodName                 = "/database.DatabaseService/GetAppointmentByID"
-	DatabaseService_UpdateChatIsTutor_FullMethodName                  = "/database.DatabaseService/UpdateChatIsTutor"
-	DatabaseService_UpdateChatTutorState_FullMethodName               = "/database.DatabaseService/UpdateChatTutorState"
-	DatabaseService_GetActiveTutorChats_FullMethodName                = "/database.DatabaseService/GetActiveTutorChats"
-	DatabaseService_DeleteTutorMessagesByChat_FullMethodName          = "/database.DatabaseService/DeleteTutorMessagesByChat"
-	DatabaseService_SaveTutorMessage_FullMethodName                   = "/database.DatabaseService/SaveTutorMessage"
-	DatabaseService_GetTutorChatMessages_FullMethodName               = "/database.DatabaseService/GetTutorChatMessages"
-	DatabaseService_GetAllTutorChatMessages_FullMethodName            = "/database.DatabaseService/GetAllTutorChatMessages"
+	DatabaseService_CreateUser_FullMethodName                = "/database.DatabaseService/CreateUser"
+	DatabaseService_GetUser_FullMethodName                   = "/database.DatabaseService/GetUser"
+	DatabaseService_GetUserByEmail_FullMethodName            = "/database.DatabaseService/GetUserByEmail"
+	DatabaseService_UpdateUser_FullMethodName                = "/database.DatabaseService/UpdateUser"
+	DatabaseService_DeleteUser_FullMethodName                = "/database.DatabaseService/DeleteUser"
+	DatabaseService_SaveRefreshToken_FullMethodName          = "/database.DatabaseService/SaveRefreshToken"
+	DatabaseService_GetRefreshToken_FullMethodName           = "/database.DatabaseService/GetRefreshToken"
+	DatabaseService_DeleteRefreshToken_FullMethodName        = "/database.DatabaseService/DeleteRefreshToken"
+	DatabaseService_CreateAssistant_FullMethodName           = "/database.DatabaseService/CreateAssistant"
+	DatabaseService_GetAssistant_FullMethodName              = "/database.DatabaseService/GetAssistant"
+	DatabaseService_GetAssistantByAPIToken_FullMethodName    = "/database.DatabaseService/GetAssistantByAPIToken"
+	DatabaseService_UpdateAssistant_FullMethodName           = "/database.DatabaseService/UpdateAssistant"
+	DatabaseService_DeleteAssistant_FullMethodName           = "/database.DatabaseService/DeleteAssistant"
+	DatabaseService_GetAssistantsByUserID_FullMethodName     = "/database.DatabaseService/GetAssistantsByUserID"
+	DatabaseService_CreateChat_FullMethodName                = "/database.DatabaseService/CreateChat"
+	DatabaseService_GetChat_FullMethodName                   = "/database.DatabaseService/GetChat"
+	DatabaseService_GetChatsByUser_FullMethodName            = "/database.DatabaseService/GetChatsByUser"
+	DatabaseService_UpdateChat_FullMethodName                = "/database.DatabaseService/UpdateChat"
+	DatabaseService_DeleteChat_FullMethodName                = "/database.DatabaseService/DeleteChat"
+	DatabaseService_SaveMessage_FullMethodName               = "/database.DatabaseService/SaveMessage"
+	DatabaseService_GetChatMessages_FullMethodName           = "/database.DatabaseService/GetChatMessages"
+	DatabaseService_GetAllChatMessages_FullMethodName        = "/database.DatabaseService/GetAllChatMessages"
+	DatabaseService_UpdateMessage_FullMethodName             = "/database.DatabaseService/UpdateMessage"
+	DatabaseService_DeleteMessage_FullMethodName             = "/database.DatabaseService/DeleteMessage"
+	DatabaseService_GetChatPagesCount_FullMethodName         = "/database.DatabaseService/GetChatPagesCount"
+	DatabaseService_GetChatPage_FullMethodName               = "/database.DatabaseService/GetChatPage"
+	DatabaseService_GetChatPagesCountByUserID_FullMethodName = "/database.DatabaseService/GetChatPagesCountByUserID"
+	DatabaseService_GetChatPageByUserID_FullMethodName       = "/database.DatabaseService/GetChatPageByUserID"
+	DatabaseService_SearchChatsByCustomer_FullMethodName     = "/database.DatabaseService/SearchChatsByCustomer"
+	DatabaseService_GetLatestChatByCustomer_FullMethodName   = "/database.DatabaseService/GetLatestChatByCustomer"
+	DatabaseService_SaveTwilioConfig_FullMethodName          = "/database.DatabaseService/SaveTwilioConfig"
+	DatabaseService_GetTwilioConfig_FullMethodName           = "/database.DatabaseService/GetTwilioConfig"
+	DatabaseService_DeleteTwilioConfig_FullMethodName        = "/database.DatabaseService/DeleteTwilioConfig"
+	DatabaseService_DeleteChatAndMessages_FullMethodName     = "/database.DatabaseService/DeleteChatAndMessages"
+	DatabaseService_UpdateChatIsEnd_FullMethodName           = "/database.DatabaseService/UpdateChatIsEnd"
+	DatabaseService_GetPeriodMetrics_FullMethodName          = "/database.DatabaseService/GetPeriodMetrics"
+	DatabaseService_GetPeriodChats_FullMethodName            = "/database.DatabaseService/GetPeriodChats"
+	DatabaseService_GetWeeklyChatsStarted_FullMethodName     = "/database.DatabaseService/GetWeeklyChatsStarted"
+	DatabaseService_IsCustomerBlocked_FullMethodName         = "/database.DatabaseService/IsCustomerBlocked"
+	DatabaseService_BlockCustomer_FullMethodName             = "/database.DatabaseService/BlockCustomer"
+	DatabaseService_GetAllBlockedCustomers_FullMethodName    = "/database.DatabaseService/GetAllBlockedCustomers"
 )
 
 // DatabaseServiceClient is the client API for DatabaseService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type DatabaseServiceClient interface {
-	GetAnalytics(ctx context.Context, in *AnalyticsRequest, opts ...grpc.CallOption) (*AnalyticsResponse, error)
-	GetAnalyticsByAssistant(ctx context.Context, in *AnalyticsByAssistantRequest, opts ...grpc.CallOption) (*AnalyticsResponse, error)
 	CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*UserResponse, error)
 	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*UserResponse, error)
 	GetUserByEmail(ctx context.Context, in *GetUserByEmailRequest, opts ...grpc.CallOption) (*UserResponse, error)
@@ -128,39 +99,14 @@ type DatabaseServiceClient interface {
 	SaveTwilioConfig(ctx context.Context, in *SaveTwilioConfigRequest, opts ...grpc.CallOption) (*TwilioConfigResponse, error)
 	GetTwilioConfig(ctx context.Context, in *GetTwilioConfigRequest, opts ...grpc.CallOption) (*TwilioConfigResponse, error)
 	DeleteTwilioConfig(ctx context.Context, in *DeleteTwilioConfigRequest, opts ...grpc.CallOption) (*DeleteTwilioConfigResponse, error)
-	GetChatsForFollowup(ctx context.Context, in *GetChatsForFollowupRequest, opts ...grpc.CallOption) (*ChatsResponse, error)
-	UpdateChatFollowupStage(ctx context.Context, in *UpdateChatFollowupStageRequest, opts ...grpc.CallOption) (*ChatResponse, error)
-	GetCampusloginByUserId(ctx context.Context, in *CampusloginRequest, opts ...grpc.CallOption) (*CampusloginResponse, error)
-	GetCampusloginByPhone(ctx context.Context, in *CampusloginPhoneRequest, opts ...grpc.CallOption) (*CampusloginResponse, error)
-	UpsertCampuslogin(ctx context.Context, in *UpsertCampusloginRequest, opts ...grpc.CallOption) (*UpsertCampusloginResponse, error)
-	SetCampusloginFlags(ctx context.Context, in *SetCampusloginFlagsRequest, opts ...grpc.CallOption) (*SetCampusloginFlagsResponse, error)
-	DeleteAllChatsAndMessages(ctx context.Context, in *DeleteAllChatsAndMessagesRequest, opts ...grpc.CallOption) (*DeleteAllChatsAndMessagesResponse, error)
 	DeleteChatAndMessages(ctx context.Context, in *DeleteChatAndMessagesRequest, opts ...grpc.CallOption) (*DeleteChatAndMessagesResponse, error)
 	UpdateChatIsEnd(ctx context.Context, in *UpdateChatIsEndRequest, opts ...grpc.CallOption) (*ChatResponse, error)
-	UpdateChatIsBooked(ctx context.Context, in *UpdateChatIsBookedRequest, opts ...grpc.CallOption) (*ChatResponse, error)
-	UpdateChatIsReviewed(ctx context.Context, in *UpdateChatIsReviewedRequest, opts ...grpc.CallOption) (*ChatResponse, error)
-	GetUnreviewedActiveChats(ctx context.Context, in *GetUnreviewedActiveChatsRequest, opts ...grpc.CallOption) (*ChatsResponse, error)
 	GetPeriodMetrics(ctx context.Context, in *GetPeriodMetricsRequest, opts ...grpc.CallOption) (*GetPeriodMetricsResponse, error)
 	GetPeriodChats(ctx context.Context, in *GetPeriodChatsRequest, opts ...grpc.CallOption) (*GetPeriodChatsResponse, error)
 	GetWeeklyChatsStarted(ctx context.Context, in *GetWeeklyChatsStartedRequest, opts ...grpc.CallOption) (*GetWeeklyChatsStartedResponse, error)
 	IsCustomerBlocked(ctx context.Context, in *IsCustomerBlockedRequest, opts ...grpc.CallOption) (*IsCustomerBlockedResponse, error)
-	UpsertGoogleSyncToken(ctx context.Context, in *UpsertGoogleSyncTokenRequest, opts ...grpc.CallOption) (*GoogleSyncTokenResponse, error)
-	GetGoogleSyncToken(ctx context.Context, in *GetGoogleSyncTokenRequest, opts ...grpc.CallOption) (*GoogleSyncTokenResponse, error)
-	CreateAppointment(ctx context.Context, in *CreateAppointmentRequest, opts ...grpc.CallOption) (*AppointmentResponse, error)
-	GetAppointmentByGoogleEventID(ctx context.Context, in *GetAppointmentByGoogleEventIDRequest, opts ...grpc.CallOption) (*AppointmentResponse, error)
-	CountAppointmentsBySlot(ctx context.Context, in *CountAppointmentsBySlotRequest, opts ...grpc.CallOption) (*CountAppointmentsBySlotResponse, error)
 	BlockCustomer(ctx context.Context, in *BlockCustomerRequest, opts ...grpc.CallOption) (*BlockCustomerResponse, error)
 	GetAllBlockedCustomers(ctx context.Context, in *GetAllBlockedCustomersRequest, opts ...grpc.CallOption) (*GetAllBlockedCustomersResponse, error)
-	GetUnsyncedCampusloginAppointments(ctx context.Context, in *GetUnsyncedCampusloginAppointmentsRequest, opts ...grpc.CallOption) (*AppointmentsResponse, error)
-	UpdateAppointmentCampusloginStatus(ctx context.Context, in *UpdateAppointmentCampusloginStatusRequest, opts ...grpc.CallOption) (*AppointmentResponse, error)
-	GetAppointmentByID(ctx context.Context, in *GetAppointmentByIDRequest, opts ...grpc.CallOption) (*AppointmentResponse, error)
-	UpdateChatIsTutor(ctx context.Context, in *UpdateChatIsTutorRequest, opts ...grpc.CallOption) (*ChatResponse, error)
-	UpdateChatTutorState(ctx context.Context, in *UpdateChatTutorStateRequest, opts ...grpc.CallOption) (*ChatResponse, error)
-	GetActiveTutorChats(ctx context.Context, in *GetActiveTutorChatsRequest, opts ...grpc.CallOption) (*ChatsResponse, error)
-	DeleteTutorMessagesByChat(ctx context.Context, in *DeleteTutorMessagesByChatRequest, opts ...grpc.CallOption) (*DeleteMessageResponse, error)
-	SaveTutorMessage(ctx context.Context, in *SaveMessageRequest, opts ...grpc.CallOption) (*MessageResponse, error)
-	GetTutorChatMessages(ctx context.Context, in *GetChatMessagesRequest, opts ...grpc.CallOption) (*MessagesResponse, error)
-	GetAllTutorChatMessages(ctx context.Context, in *GetAllChatMessagesRequest, opts ...grpc.CallOption) (*MessagesResponse, error)
 }
 
 type databaseServiceClient struct {
@@ -169,26 +115,6 @@ type databaseServiceClient struct {
 
 func NewDatabaseServiceClient(cc grpc.ClientConnInterface) DatabaseServiceClient {
 	return &databaseServiceClient{cc}
-}
-
-func (c *databaseServiceClient) GetAnalytics(ctx context.Context, in *AnalyticsRequest, opts ...grpc.CallOption) (*AnalyticsResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AnalyticsResponse)
-	err := c.cc.Invoke(ctx, DatabaseService_GetAnalytics_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *databaseServiceClient) GetAnalyticsByAssistant(ctx context.Context, in *AnalyticsByAssistantRequest, opts ...grpc.CallOption) (*AnalyticsResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AnalyticsResponse)
-	err := c.cc.Invoke(ctx, DatabaseService_GetAnalyticsByAssistant_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
 }
 
 func (c *databaseServiceClient) CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*UserResponse, error) {
@@ -521,76 +447,6 @@ func (c *databaseServiceClient) DeleteTwilioConfig(ctx context.Context, in *Dele
 	return out, nil
 }
 
-func (c *databaseServiceClient) GetChatsForFollowup(ctx context.Context, in *GetChatsForFollowupRequest, opts ...grpc.CallOption) (*ChatsResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ChatsResponse)
-	err := c.cc.Invoke(ctx, DatabaseService_GetChatsForFollowup_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *databaseServiceClient) UpdateChatFollowupStage(ctx context.Context, in *UpdateChatFollowupStageRequest, opts ...grpc.CallOption) (*ChatResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ChatResponse)
-	err := c.cc.Invoke(ctx, DatabaseService_UpdateChatFollowupStage_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *databaseServiceClient) GetCampusloginByUserId(ctx context.Context, in *CampusloginRequest, opts ...grpc.CallOption) (*CampusloginResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(CampusloginResponse)
-	err := c.cc.Invoke(ctx, DatabaseService_GetCampusloginByUserId_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *databaseServiceClient) GetCampusloginByPhone(ctx context.Context, in *CampusloginPhoneRequest, opts ...grpc.CallOption) (*CampusloginResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(CampusloginResponse)
-	err := c.cc.Invoke(ctx, DatabaseService_GetCampusloginByPhone_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *databaseServiceClient) UpsertCampuslogin(ctx context.Context, in *UpsertCampusloginRequest, opts ...grpc.CallOption) (*UpsertCampusloginResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(UpsertCampusloginResponse)
-	err := c.cc.Invoke(ctx, DatabaseService_UpsertCampuslogin_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *databaseServiceClient) SetCampusloginFlags(ctx context.Context, in *SetCampusloginFlagsRequest, opts ...grpc.CallOption) (*SetCampusloginFlagsResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(SetCampusloginFlagsResponse)
-	err := c.cc.Invoke(ctx, DatabaseService_SetCampusloginFlags_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *databaseServiceClient) DeleteAllChatsAndMessages(ctx context.Context, in *DeleteAllChatsAndMessagesRequest, opts ...grpc.CallOption) (*DeleteAllChatsAndMessagesResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(DeleteAllChatsAndMessagesResponse)
-	err := c.cc.Invoke(ctx, DatabaseService_DeleteAllChatsAndMessages_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *databaseServiceClient) DeleteChatAndMessages(ctx context.Context, in *DeleteChatAndMessagesRequest, opts ...grpc.CallOption) (*DeleteChatAndMessagesResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(DeleteChatAndMessagesResponse)
@@ -605,36 +461,6 @@ func (c *databaseServiceClient) UpdateChatIsEnd(ctx context.Context, in *UpdateC
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ChatResponse)
 	err := c.cc.Invoke(ctx, DatabaseService_UpdateChatIsEnd_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *databaseServiceClient) UpdateChatIsBooked(ctx context.Context, in *UpdateChatIsBookedRequest, opts ...grpc.CallOption) (*ChatResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ChatResponse)
-	err := c.cc.Invoke(ctx, DatabaseService_UpdateChatIsBooked_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *databaseServiceClient) UpdateChatIsReviewed(ctx context.Context, in *UpdateChatIsReviewedRequest, opts ...grpc.CallOption) (*ChatResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ChatResponse)
-	err := c.cc.Invoke(ctx, DatabaseService_UpdateChatIsReviewed_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *databaseServiceClient) GetUnreviewedActiveChats(ctx context.Context, in *GetUnreviewedActiveChatsRequest, opts ...grpc.CallOption) (*ChatsResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ChatsResponse)
-	err := c.cc.Invoke(ctx, DatabaseService_GetUnreviewedActiveChats_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -681,56 +507,6 @@ func (c *databaseServiceClient) IsCustomerBlocked(ctx context.Context, in *IsCus
 	return out, nil
 }
 
-func (c *databaseServiceClient) UpsertGoogleSyncToken(ctx context.Context, in *UpsertGoogleSyncTokenRequest, opts ...grpc.CallOption) (*GoogleSyncTokenResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GoogleSyncTokenResponse)
-	err := c.cc.Invoke(ctx, DatabaseService_UpsertGoogleSyncToken_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *databaseServiceClient) GetGoogleSyncToken(ctx context.Context, in *GetGoogleSyncTokenRequest, opts ...grpc.CallOption) (*GoogleSyncTokenResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GoogleSyncTokenResponse)
-	err := c.cc.Invoke(ctx, DatabaseService_GetGoogleSyncToken_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *databaseServiceClient) CreateAppointment(ctx context.Context, in *CreateAppointmentRequest, opts ...grpc.CallOption) (*AppointmentResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AppointmentResponse)
-	err := c.cc.Invoke(ctx, DatabaseService_CreateAppointment_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *databaseServiceClient) GetAppointmentByGoogleEventID(ctx context.Context, in *GetAppointmentByGoogleEventIDRequest, opts ...grpc.CallOption) (*AppointmentResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AppointmentResponse)
-	err := c.cc.Invoke(ctx, DatabaseService_GetAppointmentByGoogleEventID_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *databaseServiceClient) CountAppointmentsBySlot(ctx context.Context, in *CountAppointmentsBySlotRequest, opts ...grpc.CallOption) (*CountAppointmentsBySlotResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(CountAppointmentsBySlotResponse)
-	err := c.cc.Invoke(ctx, DatabaseService_CountAppointmentsBySlot_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *databaseServiceClient) BlockCustomer(ctx context.Context, in *BlockCustomerRequest, opts ...grpc.CallOption) (*BlockCustomerResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(BlockCustomerResponse)
@@ -751,112 +527,10 @@ func (c *databaseServiceClient) GetAllBlockedCustomers(ctx context.Context, in *
 	return out, nil
 }
 
-func (c *databaseServiceClient) GetUnsyncedCampusloginAppointments(ctx context.Context, in *GetUnsyncedCampusloginAppointmentsRequest, opts ...grpc.CallOption) (*AppointmentsResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AppointmentsResponse)
-	err := c.cc.Invoke(ctx, DatabaseService_GetUnsyncedCampusloginAppointments_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *databaseServiceClient) UpdateAppointmentCampusloginStatus(ctx context.Context, in *UpdateAppointmentCampusloginStatusRequest, opts ...grpc.CallOption) (*AppointmentResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AppointmentResponse)
-	err := c.cc.Invoke(ctx, DatabaseService_UpdateAppointmentCampusloginStatus_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *databaseServiceClient) GetAppointmentByID(ctx context.Context, in *GetAppointmentByIDRequest, opts ...grpc.CallOption) (*AppointmentResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AppointmentResponse)
-	err := c.cc.Invoke(ctx, DatabaseService_GetAppointmentByID_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *databaseServiceClient) UpdateChatIsTutor(ctx context.Context, in *UpdateChatIsTutorRequest, opts ...grpc.CallOption) (*ChatResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ChatResponse)
-	err := c.cc.Invoke(ctx, DatabaseService_UpdateChatIsTutor_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *databaseServiceClient) UpdateChatTutorState(ctx context.Context, in *UpdateChatTutorStateRequest, opts ...grpc.CallOption) (*ChatResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ChatResponse)
-	err := c.cc.Invoke(ctx, DatabaseService_UpdateChatTutorState_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *databaseServiceClient) GetActiveTutorChats(ctx context.Context, in *GetActiveTutorChatsRequest, opts ...grpc.CallOption) (*ChatsResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ChatsResponse)
-	err := c.cc.Invoke(ctx, DatabaseService_GetActiveTutorChats_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *databaseServiceClient) DeleteTutorMessagesByChat(ctx context.Context, in *DeleteTutorMessagesByChatRequest, opts ...grpc.CallOption) (*DeleteMessageResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(DeleteMessageResponse)
-	err := c.cc.Invoke(ctx, DatabaseService_DeleteTutorMessagesByChat_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *databaseServiceClient) SaveTutorMessage(ctx context.Context, in *SaveMessageRequest, opts ...grpc.CallOption) (*MessageResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(MessageResponse)
-	err := c.cc.Invoke(ctx, DatabaseService_SaveTutorMessage_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *databaseServiceClient) GetTutorChatMessages(ctx context.Context, in *GetChatMessagesRequest, opts ...grpc.CallOption) (*MessagesResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(MessagesResponse)
-	err := c.cc.Invoke(ctx, DatabaseService_GetTutorChatMessages_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *databaseServiceClient) GetAllTutorChatMessages(ctx context.Context, in *GetAllChatMessagesRequest, opts ...grpc.CallOption) (*MessagesResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(MessagesResponse)
-	err := c.cc.Invoke(ctx, DatabaseService_GetAllTutorChatMessages_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // DatabaseServiceServer is the server API for DatabaseService service.
 // All implementations must embed UnimplementedDatabaseServiceServer
 // for forward compatibility.
 type DatabaseServiceServer interface {
-	GetAnalytics(context.Context, *AnalyticsRequest) (*AnalyticsResponse, error)
-	GetAnalyticsByAssistant(context.Context, *AnalyticsByAssistantRequest) (*AnalyticsResponse, error)
 	CreateUser(context.Context, *CreateUserRequest) (*UserResponse, error)
 	GetUser(context.Context, *GetUserRequest) (*UserResponse, error)
 	GetUserByEmail(context.Context, *GetUserByEmailRequest) (*UserResponse, error)
@@ -890,39 +564,14 @@ type DatabaseServiceServer interface {
 	SaveTwilioConfig(context.Context, *SaveTwilioConfigRequest) (*TwilioConfigResponse, error)
 	GetTwilioConfig(context.Context, *GetTwilioConfigRequest) (*TwilioConfigResponse, error)
 	DeleteTwilioConfig(context.Context, *DeleteTwilioConfigRequest) (*DeleteTwilioConfigResponse, error)
-	GetChatsForFollowup(context.Context, *GetChatsForFollowupRequest) (*ChatsResponse, error)
-	UpdateChatFollowupStage(context.Context, *UpdateChatFollowupStageRequest) (*ChatResponse, error)
-	GetCampusloginByUserId(context.Context, *CampusloginRequest) (*CampusloginResponse, error)
-	GetCampusloginByPhone(context.Context, *CampusloginPhoneRequest) (*CampusloginResponse, error)
-	UpsertCampuslogin(context.Context, *UpsertCampusloginRequest) (*UpsertCampusloginResponse, error)
-	SetCampusloginFlags(context.Context, *SetCampusloginFlagsRequest) (*SetCampusloginFlagsResponse, error)
-	DeleteAllChatsAndMessages(context.Context, *DeleteAllChatsAndMessagesRequest) (*DeleteAllChatsAndMessagesResponse, error)
 	DeleteChatAndMessages(context.Context, *DeleteChatAndMessagesRequest) (*DeleteChatAndMessagesResponse, error)
 	UpdateChatIsEnd(context.Context, *UpdateChatIsEndRequest) (*ChatResponse, error)
-	UpdateChatIsBooked(context.Context, *UpdateChatIsBookedRequest) (*ChatResponse, error)
-	UpdateChatIsReviewed(context.Context, *UpdateChatIsReviewedRequest) (*ChatResponse, error)
-	GetUnreviewedActiveChats(context.Context, *GetUnreviewedActiveChatsRequest) (*ChatsResponse, error)
 	GetPeriodMetrics(context.Context, *GetPeriodMetricsRequest) (*GetPeriodMetricsResponse, error)
 	GetPeriodChats(context.Context, *GetPeriodChatsRequest) (*GetPeriodChatsResponse, error)
 	GetWeeklyChatsStarted(context.Context, *GetWeeklyChatsStartedRequest) (*GetWeeklyChatsStartedResponse, error)
 	IsCustomerBlocked(context.Context, *IsCustomerBlockedRequest) (*IsCustomerBlockedResponse, error)
-	UpsertGoogleSyncToken(context.Context, *UpsertGoogleSyncTokenRequest) (*GoogleSyncTokenResponse, error)
-	GetGoogleSyncToken(context.Context, *GetGoogleSyncTokenRequest) (*GoogleSyncTokenResponse, error)
-	CreateAppointment(context.Context, *CreateAppointmentRequest) (*AppointmentResponse, error)
-	GetAppointmentByGoogleEventID(context.Context, *GetAppointmentByGoogleEventIDRequest) (*AppointmentResponse, error)
-	CountAppointmentsBySlot(context.Context, *CountAppointmentsBySlotRequest) (*CountAppointmentsBySlotResponse, error)
 	BlockCustomer(context.Context, *BlockCustomerRequest) (*BlockCustomerResponse, error)
 	GetAllBlockedCustomers(context.Context, *GetAllBlockedCustomersRequest) (*GetAllBlockedCustomersResponse, error)
-	GetUnsyncedCampusloginAppointments(context.Context, *GetUnsyncedCampusloginAppointmentsRequest) (*AppointmentsResponse, error)
-	UpdateAppointmentCampusloginStatus(context.Context, *UpdateAppointmentCampusloginStatusRequest) (*AppointmentResponse, error)
-	GetAppointmentByID(context.Context, *GetAppointmentByIDRequest) (*AppointmentResponse, error)
-	UpdateChatIsTutor(context.Context, *UpdateChatIsTutorRequest) (*ChatResponse, error)
-	UpdateChatTutorState(context.Context, *UpdateChatTutorStateRequest) (*ChatResponse, error)
-	GetActiveTutorChats(context.Context, *GetActiveTutorChatsRequest) (*ChatsResponse, error)
-	DeleteTutorMessagesByChat(context.Context, *DeleteTutorMessagesByChatRequest) (*DeleteMessageResponse, error)
-	SaveTutorMessage(context.Context, *SaveMessageRequest) (*MessageResponse, error)
-	GetTutorChatMessages(context.Context, *GetChatMessagesRequest) (*MessagesResponse, error)
-	GetAllTutorChatMessages(context.Context, *GetAllChatMessagesRequest) (*MessagesResponse, error)
 	mustEmbedUnimplementedDatabaseServiceServer()
 }
 
@@ -933,12 +582,6 @@ type DatabaseServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedDatabaseServiceServer struct{}
 
-func (UnimplementedDatabaseServiceServer) GetAnalytics(context.Context, *AnalyticsRequest) (*AnalyticsResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method GetAnalytics not implemented")
-}
-func (UnimplementedDatabaseServiceServer) GetAnalyticsByAssistant(context.Context, *AnalyticsByAssistantRequest) (*AnalyticsResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method GetAnalyticsByAssistant not implemented")
-}
 func (UnimplementedDatabaseServiceServer) CreateUser(context.Context, *CreateUserRequest) (*UserResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateUser not implemented")
 }
@@ -1038,41 +681,11 @@ func (UnimplementedDatabaseServiceServer) GetTwilioConfig(context.Context, *GetT
 func (UnimplementedDatabaseServiceServer) DeleteTwilioConfig(context.Context, *DeleteTwilioConfigRequest) (*DeleteTwilioConfigResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method DeleteTwilioConfig not implemented")
 }
-func (UnimplementedDatabaseServiceServer) GetChatsForFollowup(context.Context, *GetChatsForFollowupRequest) (*ChatsResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method GetChatsForFollowup not implemented")
-}
-func (UnimplementedDatabaseServiceServer) UpdateChatFollowupStage(context.Context, *UpdateChatFollowupStageRequest) (*ChatResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method UpdateChatFollowupStage not implemented")
-}
-func (UnimplementedDatabaseServiceServer) GetCampusloginByUserId(context.Context, *CampusloginRequest) (*CampusloginResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method GetCampusloginByUserId not implemented")
-}
-func (UnimplementedDatabaseServiceServer) GetCampusloginByPhone(context.Context, *CampusloginPhoneRequest) (*CampusloginResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method GetCampusloginByPhone not implemented")
-}
-func (UnimplementedDatabaseServiceServer) UpsertCampuslogin(context.Context, *UpsertCampusloginRequest) (*UpsertCampusloginResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method UpsertCampuslogin not implemented")
-}
-func (UnimplementedDatabaseServiceServer) SetCampusloginFlags(context.Context, *SetCampusloginFlagsRequest) (*SetCampusloginFlagsResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method SetCampusloginFlags not implemented")
-}
-func (UnimplementedDatabaseServiceServer) DeleteAllChatsAndMessages(context.Context, *DeleteAllChatsAndMessagesRequest) (*DeleteAllChatsAndMessagesResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method DeleteAllChatsAndMessages not implemented")
-}
 func (UnimplementedDatabaseServiceServer) DeleteChatAndMessages(context.Context, *DeleteChatAndMessagesRequest) (*DeleteChatAndMessagesResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method DeleteChatAndMessages not implemented")
 }
 func (UnimplementedDatabaseServiceServer) UpdateChatIsEnd(context.Context, *UpdateChatIsEndRequest) (*ChatResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateChatIsEnd not implemented")
-}
-func (UnimplementedDatabaseServiceServer) UpdateChatIsBooked(context.Context, *UpdateChatIsBookedRequest) (*ChatResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method UpdateChatIsBooked not implemented")
-}
-func (UnimplementedDatabaseServiceServer) UpdateChatIsReviewed(context.Context, *UpdateChatIsReviewedRequest) (*ChatResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method UpdateChatIsReviewed not implemented")
-}
-func (UnimplementedDatabaseServiceServer) GetUnreviewedActiveChats(context.Context, *GetUnreviewedActiveChatsRequest) (*ChatsResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method GetUnreviewedActiveChats not implemented")
 }
 func (UnimplementedDatabaseServiceServer) GetPeriodMetrics(context.Context, *GetPeriodMetricsRequest) (*GetPeriodMetricsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetPeriodMetrics not implemented")
@@ -1086,56 +699,11 @@ func (UnimplementedDatabaseServiceServer) GetWeeklyChatsStarted(context.Context,
 func (UnimplementedDatabaseServiceServer) IsCustomerBlocked(context.Context, *IsCustomerBlockedRequest) (*IsCustomerBlockedResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method IsCustomerBlocked not implemented")
 }
-func (UnimplementedDatabaseServiceServer) UpsertGoogleSyncToken(context.Context, *UpsertGoogleSyncTokenRequest) (*GoogleSyncTokenResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method UpsertGoogleSyncToken not implemented")
-}
-func (UnimplementedDatabaseServiceServer) GetGoogleSyncToken(context.Context, *GetGoogleSyncTokenRequest) (*GoogleSyncTokenResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method GetGoogleSyncToken not implemented")
-}
-func (UnimplementedDatabaseServiceServer) CreateAppointment(context.Context, *CreateAppointmentRequest) (*AppointmentResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method CreateAppointment not implemented")
-}
-func (UnimplementedDatabaseServiceServer) GetAppointmentByGoogleEventID(context.Context, *GetAppointmentByGoogleEventIDRequest) (*AppointmentResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method GetAppointmentByGoogleEventID not implemented")
-}
-func (UnimplementedDatabaseServiceServer) CountAppointmentsBySlot(context.Context, *CountAppointmentsBySlotRequest) (*CountAppointmentsBySlotResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method CountAppointmentsBySlot not implemented")
-}
 func (UnimplementedDatabaseServiceServer) BlockCustomer(context.Context, *BlockCustomerRequest) (*BlockCustomerResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method BlockCustomer not implemented")
 }
 func (UnimplementedDatabaseServiceServer) GetAllBlockedCustomers(context.Context, *GetAllBlockedCustomersRequest) (*GetAllBlockedCustomersResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetAllBlockedCustomers not implemented")
-}
-func (UnimplementedDatabaseServiceServer) GetUnsyncedCampusloginAppointments(context.Context, *GetUnsyncedCampusloginAppointmentsRequest) (*AppointmentsResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method GetUnsyncedCampusloginAppointments not implemented")
-}
-func (UnimplementedDatabaseServiceServer) UpdateAppointmentCampusloginStatus(context.Context, *UpdateAppointmentCampusloginStatusRequest) (*AppointmentResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method UpdateAppointmentCampusloginStatus not implemented")
-}
-func (UnimplementedDatabaseServiceServer) GetAppointmentByID(context.Context, *GetAppointmentByIDRequest) (*AppointmentResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method GetAppointmentByID not implemented")
-}
-func (UnimplementedDatabaseServiceServer) UpdateChatIsTutor(context.Context, *UpdateChatIsTutorRequest) (*ChatResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method UpdateChatIsTutor not implemented")
-}
-func (UnimplementedDatabaseServiceServer) UpdateChatTutorState(context.Context, *UpdateChatTutorStateRequest) (*ChatResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method UpdateChatTutorState not implemented")
-}
-func (UnimplementedDatabaseServiceServer) GetActiveTutorChats(context.Context, *GetActiveTutorChatsRequest) (*ChatsResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method GetActiveTutorChats not implemented")
-}
-func (UnimplementedDatabaseServiceServer) DeleteTutorMessagesByChat(context.Context, *DeleteTutorMessagesByChatRequest) (*DeleteMessageResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method DeleteTutorMessagesByChat not implemented")
-}
-func (UnimplementedDatabaseServiceServer) SaveTutorMessage(context.Context, *SaveMessageRequest) (*MessageResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method SaveTutorMessage not implemented")
-}
-func (UnimplementedDatabaseServiceServer) GetTutorChatMessages(context.Context, *GetChatMessagesRequest) (*MessagesResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method GetTutorChatMessages not implemented")
-}
-func (UnimplementedDatabaseServiceServer) GetAllTutorChatMessages(context.Context, *GetAllChatMessagesRequest) (*MessagesResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method GetAllTutorChatMessages not implemented")
 }
 func (UnimplementedDatabaseServiceServer) mustEmbedUnimplementedDatabaseServiceServer() {}
 func (UnimplementedDatabaseServiceServer) testEmbeddedByValue()                         {}
@@ -1156,42 +724,6 @@ func RegisterDatabaseServiceServer(s grpc.ServiceRegistrar, srv DatabaseServiceS
 		t.testEmbeddedByValue()
 	}
 	s.RegisterService(&DatabaseService_ServiceDesc, srv)
-}
-
-func _DatabaseService_GetAnalytics_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AnalyticsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(DatabaseServiceServer).GetAnalytics(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: DatabaseService_GetAnalytics_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DatabaseServiceServer).GetAnalytics(ctx, req.(*AnalyticsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _DatabaseService_GetAnalyticsByAssistant_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AnalyticsByAssistantRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(DatabaseServiceServer).GetAnalyticsByAssistant(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: DatabaseService_GetAnalyticsByAssistant_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DatabaseServiceServer).GetAnalyticsByAssistant(ctx, req.(*AnalyticsByAssistantRequest))
-	}
-	return interceptor(ctx, in, info, handler)
 }
 
 func _DatabaseService_CreateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -1788,132 +1320,6 @@ func _DatabaseService_DeleteTwilioConfig_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DatabaseService_GetChatsForFollowup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetChatsForFollowupRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(DatabaseServiceServer).GetChatsForFollowup(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: DatabaseService_GetChatsForFollowup_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DatabaseServiceServer).GetChatsForFollowup(ctx, req.(*GetChatsForFollowupRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _DatabaseService_UpdateChatFollowupStage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateChatFollowupStageRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(DatabaseServiceServer).UpdateChatFollowupStage(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: DatabaseService_UpdateChatFollowupStage_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DatabaseServiceServer).UpdateChatFollowupStage(ctx, req.(*UpdateChatFollowupStageRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _DatabaseService_GetCampusloginByUserId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CampusloginRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(DatabaseServiceServer).GetCampusloginByUserId(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: DatabaseService_GetCampusloginByUserId_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DatabaseServiceServer).GetCampusloginByUserId(ctx, req.(*CampusloginRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _DatabaseService_GetCampusloginByPhone_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CampusloginPhoneRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(DatabaseServiceServer).GetCampusloginByPhone(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: DatabaseService_GetCampusloginByPhone_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DatabaseServiceServer).GetCampusloginByPhone(ctx, req.(*CampusloginPhoneRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _DatabaseService_UpsertCampuslogin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpsertCampusloginRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(DatabaseServiceServer).UpsertCampuslogin(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: DatabaseService_UpsertCampuslogin_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DatabaseServiceServer).UpsertCampuslogin(ctx, req.(*UpsertCampusloginRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _DatabaseService_SetCampusloginFlags_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SetCampusloginFlagsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(DatabaseServiceServer).SetCampusloginFlags(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: DatabaseService_SetCampusloginFlags_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DatabaseServiceServer).SetCampusloginFlags(ctx, req.(*SetCampusloginFlagsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _DatabaseService_DeleteAllChatsAndMessages_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteAllChatsAndMessagesRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(DatabaseServiceServer).DeleteAllChatsAndMessages(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: DatabaseService_DeleteAllChatsAndMessages_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DatabaseServiceServer).DeleteAllChatsAndMessages(ctx, req.(*DeleteAllChatsAndMessagesRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _DatabaseService_DeleteChatAndMessages_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteChatAndMessagesRequest)
 	if err := dec(in); err != nil {
@@ -1946,60 +1352,6 @@ func _DatabaseService_UpdateChatIsEnd_Handler(srv interface{}, ctx context.Conte
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(DatabaseServiceServer).UpdateChatIsEnd(ctx, req.(*UpdateChatIsEndRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _DatabaseService_UpdateChatIsBooked_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateChatIsBookedRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(DatabaseServiceServer).UpdateChatIsBooked(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: DatabaseService_UpdateChatIsBooked_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DatabaseServiceServer).UpdateChatIsBooked(ctx, req.(*UpdateChatIsBookedRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _DatabaseService_UpdateChatIsReviewed_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateChatIsReviewedRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(DatabaseServiceServer).UpdateChatIsReviewed(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: DatabaseService_UpdateChatIsReviewed_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DatabaseServiceServer).UpdateChatIsReviewed(ctx, req.(*UpdateChatIsReviewedRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _DatabaseService_GetUnreviewedActiveChats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetUnreviewedActiveChatsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(DatabaseServiceServer).GetUnreviewedActiveChats(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: DatabaseService_GetUnreviewedActiveChats_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DatabaseServiceServer).GetUnreviewedActiveChats(ctx, req.(*GetUnreviewedActiveChatsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -2076,96 +1428,6 @@ func _DatabaseService_IsCustomerBlocked_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DatabaseService_UpsertGoogleSyncToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpsertGoogleSyncTokenRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(DatabaseServiceServer).UpsertGoogleSyncToken(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: DatabaseService_UpsertGoogleSyncToken_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DatabaseServiceServer).UpsertGoogleSyncToken(ctx, req.(*UpsertGoogleSyncTokenRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _DatabaseService_GetGoogleSyncToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetGoogleSyncTokenRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(DatabaseServiceServer).GetGoogleSyncToken(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: DatabaseService_GetGoogleSyncToken_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DatabaseServiceServer).GetGoogleSyncToken(ctx, req.(*GetGoogleSyncTokenRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _DatabaseService_CreateAppointment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateAppointmentRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(DatabaseServiceServer).CreateAppointment(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: DatabaseService_CreateAppointment_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DatabaseServiceServer).CreateAppointment(ctx, req.(*CreateAppointmentRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _DatabaseService_GetAppointmentByGoogleEventID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetAppointmentByGoogleEventIDRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(DatabaseServiceServer).GetAppointmentByGoogleEventID(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: DatabaseService_GetAppointmentByGoogleEventID_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DatabaseServiceServer).GetAppointmentByGoogleEventID(ctx, req.(*GetAppointmentByGoogleEventIDRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _DatabaseService_CountAppointmentsBySlot_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CountAppointmentsBySlotRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(DatabaseServiceServer).CountAppointmentsBySlot(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: DatabaseService_CountAppointmentsBySlot_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DatabaseServiceServer).CountAppointmentsBySlot(ctx, req.(*CountAppointmentsBySlotRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _DatabaseService_BlockCustomer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(BlockCustomerRequest)
 	if err := dec(in); err != nil {
@@ -2202,186 +1464,6 @@ func _DatabaseService_GetAllBlockedCustomers_Handler(srv interface{}, ctx contex
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DatabaseService_GetUnsyncedCampusloginAppointments_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetUnsyncedCampusloginAppointmentsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(DatabaseServiceServer).GetUnsyncedCampusloginAppointments(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: DatabaseService_GetUnsyncedCampusloginAppointments_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DatabaseServiceServer).GetUnsyncedCampusloginAppointments(ctx, req.(*GetUnsyncedCampusloginAppointmentsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _DatabaseService_UpdateAppointmentCampusloginStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateAppointmentCampusloginStatusRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(DatabaseServiceServer).UpdateAppointmentCampusloginStatus(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: DatabaseService_UpdateAppointmentCampusloginStatus_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DatabaseServiceServer).UpdateAppointmentCampusloginStatus(ctx, req.(*UpdateAppointmentCampusloginStatusRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _DatabaseService_GetAppointmentByID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetAppointmentByIDRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(DatabaseServiceServer).GetAppointmentByID(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: DatabaseService_GetAppointmentByID_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DatabaseServiceServer).GetAppointmentByID(ctx, req.(*GetAppointmentByIDRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _DatabaseService_UpdateChatIsTutor_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateChatIsTutorRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(DatabaseServiceServer).UpdateChatIsTutor(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: DatabaseService_UpdateChatIsTutor_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DatabaseServiceServer).UpdateChatIsTutor(ctx, req.(*UpdateChatIsTutorRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _DatabaseService_UpdateChatTutorState_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateChatTutorStateRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(DatabaseServiceServer).UpdateChatTutorState(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: DatabaseService_UpdateChatTutorState_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DatabaseServiceServer).UpdateChatTutorState(ctx, req.(*UpdateChatTutorStateRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _DatabaseService_GetActiveTutorChats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetActiveTutorChatsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(DatabaseServiceServer).GetActiveTutorChats(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: DatabaseService_GetActiveTutorChats_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DatabaseServiceServer).GetActiveTutorChats(ctx, req.(*GetActiveTutorChatsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _DatabaseService_DeleteTutorMessagesByChat_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteTutorMessagesByChatRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(DatabaseServiceServer).DeleteTutorMessagesByChat(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: DatabaseService_DeleteTutorMessagesByChat_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DatabaseServiceServer).DeleteTutorMessagesByChat(ctx, req.(*DeleteTutorMessagesByChatRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _DatabaseService_SaveTutorMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SaveMessageRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(DatabaseServiceServer).SaveTutorMessage(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: DatabaseService_SaveTutorMessage_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DatabaseServiceServer).SaveTutorMessage(ctx, req.(*SaveMessageRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _DatabaseService_GetTutorChatMessages_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetChatMessagesRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(DatabaseServiceServer).GetTutorChatMessages(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: DatabaseService_GetTutorChatMessages_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DatabaseServiceServer).GetTutorChatMessages(ctx, req.(*GetChatMessagesRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _DatabaseService_GetAllTutorChatMessages_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetAllChatMessagesRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(DatabaseServiceServer).GetAllTutorChatMessages(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: DatabaseService_GetAllTutorChatMessages_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DatabaseServiceServer).GetAllTutorChatMessages(ctx, req.(*GetAllChatMessagesRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // DatabaseService_ServiceDesc is the grpc.ServiceDesc for DatabaseService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -2389,14 +1471,6 @@ var DatabaseService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "database.DatabaseService",
 	HandlerType: (*DatabaseServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "GetAnalytics",
-			Handler:    _DatabaseService_GetAnalytics_Handler,
-		},
-		{
-			MethodName: "GetAnalyticsByAssistant",
-			Handler:    _DatabaseService_GetAnalyticsByAssistant_Handler,
-		},
 		{
 			MethodName: "CreateUser",
 			Handler:    _DatabaseService_CreateUser_Handler,
@@ -2530,52 +1604,12 @@ var DatabaseService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _DatabaseService_DeleteTwilioConfig_Handler,
 		},
 		{
-			MethodName: "GetChatsForFollowup",
-			Handler:    _DatabaseService_GetChatsForFollowup_Handler,
-		},
-		{
-			MethodName: "UpdateChatFollowupStage",
-			Handler:    _DatabaseService_UpdateChatFollowupStage_Handler,
-		},
-		{
-			MethodName: "GetCampusloginByUserId",
-			Handler:    _DatabaseService_GetCampusloginByUserId_Handler,
-		},
-		{
-			MethodName: "GetCampusloginByPhone",
-			Handler:    _DatabaseService_GetCampusloginByPhone_Handler,
-		},
-		{
-			MethodName: "UpsertCampuslogin",
-			Handler:    _DatabaseService_UpsertCampuslogin_Handler,
-		},
-		{
-			MethodName: "SetCampusloginFlags",
-			Handler:    _DatabaseService_SetCampusloginFlags_Handler,
-		},
-		{
-			MethodName: "DeleteAllChatsAndMessages",
-			Handler:    _DatabaseService_DeleteAllChatsAndMessages_Handler,
-		},
-		{
 			MethodName: "DeleteChatAndMessages",
 			Handler:    _DatabaseService_DeleteChatAndMessages_Handler,
 		},
 		{
 			MethodName: "UpdateChatIsEnd",
 			Handler:    _DatabaseService_UpdateChatIsEnd_Handler,
-		},
-		{
-			MethodName: "UpdateChatIsBooked",
-			Handler:    _DatabaseService_UpdateChatIsBooked_Handler,
-		},
-		{
-			MethodName: "UpdateChatIsReviewed",
-			Handler:    _DatabaseService_UpdateChatIsReviewed_Handler,
-		},
-		{
-			MethodName: "GetUnreviewedActiveChats",
-			Handler:    _DatabaseService_GetUnreviewedActiveChats_Handler,
 		},
 		{
 			MethodName: "GetPeriodMetrics",
@@ -2594,72 +1628,12 @@ var DatabaseService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _DatabaseService_IsCustomerBlocked_Handler,
 		},
 		{
-			MethodName: "UpsertGoogleSyncToken",
-			Handler:    _DatabaseService_UpsertGoogleSyncToken_Handler,
-		},
-		{
-			MethodName: "GetGoogleSyncToken",
-			Handler:    _DatabaseService_GetGoogleSyncToken_Handler,
-		},
-		{
-			MethodName: "CreateAppointment",
-			Handler:    _DatabaseService_CreateAppointment_Handler,
-		},
-		{
-			MethodName: "GetAppointmentByGoogleEventID",
-			Handler:    _DatabaseService_GetAppointmentByGoogleEventID_Handler,
-		},
-		{
-			MethodName: "CountAppointmentsBySlot",
-			Handler:    _DatabaseService_CountAppointmentsBySlot_Handler,
-		},
-		{
 			MethodName: "BlockCustomer",
 			Handler:    _DatabaseService_BlockCustomer_Handler,
 		},
 		{
 			MethodName: "GetAllBlockedCustomers",
 			Handler:    _DatabaseService_GetAllBlockedCustomers_Handler,
-		},
-		{
-			MethodName: "GetUnsyncedCampusloginAppointments",
-			Handler:    _DatabaseService_GetUnsyncedCampusloginAppointments_Handler,
-		},
-		{
-			MethodName: "UpdateAppointmentCampusloginStatus",
-			Handler:    _DatabaseService_UpdateAppointmentCampusloginStatus_Handler,
-		},
-		{
-			MethodName: "GetAppointmentByID",
-			Handler:    _DatabaseService_GetAppointmentByID_Handler,
-		},
-		{
-			MethodName: "UpdateChatIsTutor",
-			Handler:    _DatabaseService_UpdateChatIsTutor_Handler,
-		},
-		{
-			MethodName: "UpdateChatTutorState",
-			Handler:    _DatabaseService_UpdateChatTutorState_Handler,
-		},
-		{
-			MethodName: "GetActiveTutorChats",
-			Handler:    _DatabaseService_GetActiveTutorChats_Handler,
-		},
-		{
-			MethodName: "DeleteTutorMessagesByChat",
-			Handler:    _DatabaseService_DeleteTutorMessagesByChat_Handler,
-		},
-		{
-			MethodName: "SaveTutorMessage",
-			Handler:    _DatabaseService_SaveTutorMessage_Handler,
-		},
-		{
-			MethodName: "GetTutorChatMessages",
-			Handler:    _DatabaseService_GetTutorChatMessages_Handler,
-		},
-		{
-			MethodName: "GetAllTutorChatMessages",
-			Handler:    _DatabaseService_GetAllTutorChatMessages_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

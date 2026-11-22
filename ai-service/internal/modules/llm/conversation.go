@@ -2,533 +2,67 @@ package llm
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
-	"log"
-	"net/url"
+	"errors"
 	"strings"
-	"time"
-
-	"diaxel/internal/constants"
 
 	"github.com/sashabaranov/go-openai"
 )
 
-type ConversationOption func(*conversationOptions)
-
-type conversationOptions struct {
-	SystemMessage string
-}
-
-func WithSystemMessage(msg string) ConversationOption {
-	return func(o *conversationOptions) {
-		o.SystemMessage = msg
+func (c *Client) Conversation(ctx context.Context, customerID, assistantID, text string) (string, error) {
+	if customerID == "" || assistantID == "" || strings.TrimSpace(text) == "" {
+		return "", errors.New("customer, assistant and message are required")
 	}
-}
-
-func (c *Client) Conversation(ctx context.Context, userId, assistantId, userMessage string, opts ...ConversationOption) (string, error) {
-	var optsConfig conversationOptions
-	for _, opt := range opts {
-		opt(&optsConfig)
-	}
-
-	if optsConfig.SystemMessage != "" {
-		log.Printf("[LLM Trigger] Системный промпт для пользователя %s: %s", userId, optsConfig.SystemMessage)
-	} else {
-		log.Printf("Сообщение от пользователя %s: %s", userId, userMessage)
-	}
-
-	messages, err := c.GetMessages(assistantId, userId)
+	assistant, err := c.db.GetAssistant(assistantID)
 	if err != nil {
 		return "", err
 	}
-
-	if optsConfig.SystemMessage != "" {
-		c.AddMessage(&messages, openai.ChatMessageRoleSystem, optsConfig.SystemMessage)
-	} else {
-		c.AddMessage(&messages, openai.ChatMessageRoleUser, userMessage)
+	prompt := assistant.GetConfiguration()
+	if strings.TrimSpace(prompt) == "" {
+		prompt = "You are a helpful assistant."
 	}
+	messages := []openai.ChatCompletionMessage{{Role: openai.ChatMessageRoleSystem, Content: prompt}}
 
-	response, err := c.GetAnswer(ctx, assistantId, messages)
+	chat, err := c.db.GetLatestChatByCustomer(assistantID, customerID)
 	if err != nil {
 		return "", err
 	}
-
-	var fullResponseBuilder strings.Builder
-	brokeEarly := false
-
-	for len(response.Choices) > 0 && len(response.Choices[0].Message.ToolCalls) > 0 {
-		assistantMsg := response.Choices[0].Message
-
-		if strings.TrimSpace(assistantMsg.Content) != "" {
-			if fullResponseBuilder.Len() > 0 {
-				fullResponseBuilder.WriteString("\n\n")
-			}
-			fullResponseBuilder.WriteString(strings.TrimSpace(assistantMsg.Content))
-		}
-
-		if assistantMsg.Content == "" && len(assistantMsg.ToolCalls) > 0 {
-			assistantMsg.Content = " "
-		}
-		messages = append(messages, assistantMsg)
-
-		shouldCloseConversation := false
-
-		for _, toolCall := range assistantMsg.ToolCalls {
-			log.Printf("Функция вызвана: %s", toolCall.Function.Name)
-			log.Printf("Аргументы: %s", toolCall.Function.Arguments)
-
-			if toolCall.Function.Name == "close_conversation" {
-				shouldCloseConversation = true
-			}
-
-			result, err := c.executeFunction(ctx, toolCall.Function.Name, toolCall.Function.Arguments, userId, assistantId)
-			if err != nil {
-				log.Printf("Ошибка выполнения функции %s: %v", toolCall.Function.Name, err)
-				result = fmt.Sprintf("Error executing function: %s", err.Error())
-			}
-
-			log.Printf("Результат функции %s: %s", toolCall.Function.Name, result)
-
-			messages = append(messages, openai.ChatCompletionMessage{
-				Role:       openai.ChatMessageRoleTool,
-				Content:    result,
-				ToolCallID: toolCall.ID,
-			})
-		}
-
-		if shouldCloseConversation {
-			brokeEarly = true
-			break
-		}
-
-		response, err = c.GetAnswer(ctx, assistantId, messages)
+	chatID := chat.GetId()
+	if chatID != "" {
+		history, err := c.db.GetAllChatMessages(chatID)
 		if err != nil {
 			return "", err
 		}
-	}
-
-	if !brokeEarly {
-		assistantResponse := response.Choices[0].Message.Content
-		if assistantResponse != "" {
-			log.Printf("Ответ пользователю %s от ИИ: %s\n", userId, assistantResponse)
-			c.AddMessage(&messages, "assistant", assistantResponse)
-
-			if strings.TrimSpace(assistantResponse) != "" {
-				if fullResponseBuilder.Len() > 0 {
-					fullResponseBuilder.WriteString("\n\n")
-				}
-				fullResponseBuilder.WriteString(strings.TrimSpace(assistantResponse))
+		for _, entry := range history {
+			if entry.Role == openai.ChatMessageRoleUser || entry.Role == openai.ChatMessageRoleAssistant {
+				messages = append(messages, openai.ChatCompletionMessage{Role: entry.Role, Content: entry.Content})
 			}
 		}
 	}
-
-	finalResponseText := fullResponseBuilder.String()
-
-	err = c.SaveMessages(assistantId, userId, messages)
+	messages = append(messages, openai.ChatCompletionMessage{Role: openai.ChatMessageRoleUser, Content: text})
+	response, err := c.client.CreateChatCompletion(ctx, openai.ChatCompletionRequest{
+		Model:    c.model,
+		Messages: messages,
+	})
 	if err != nil {
 		return "", err
 	}
-
-	log.Println("Конец запроса")
-	return finalResponseText, nil
-}
-
-// AnalyzeTranscript sends a transcript to the LLM purely to trigger tool calls
-// (mark_grade_11_or_lower, mark_international_student, close_conversation, send_summary).
-// It does NOT load or save messages from/to the DB — it is a standalone, fire-and-forget call.
-func (c *Client) AnalyzeTranscript(ctx context.Context, userId, assistantId, transcript string) error {
-	systemPrompt := `You are an analysis bot. You will receive a chat transcript between the AI assistant "Ally from Aveda" and a user.
-Your ONLY job is to call the appropriate tools based on what happened in the conversation:
-- If the user mentioned they are in Grade 11 or lower, call mark_grade_11_or_lower.
-- If the user confirmed they are an international student or on a visa, call mark_international_student.
-- If the conversation was concluded or ended naturally, call close_conversation.
-Do NOT output any text messages. ONLY call tools if needed.
-If none of the tools apply, do nothing.`
-
-	messages := []openai.ChatCompletionMessage{
-		{Role: openai.ChatMessageRoleSystem, Content: systemPrompt},
-		{Role: openai.ChatMessageRoleUser, Content: transcript},
+	if len(response.Choices) == 0 || strings.TrimSpace(response.Choices[0].Message.Content) == "" {
+		return "", errors.New("model returned an empty response")
 	}
-
-	response, err := c.GetAnswer(ctx, assistantId, messages)
-	if err != nil {
-		return fmt.Errorf("LLM analyze error: %w", err)
-	}
-
-	// Process tool calls in a loop
-	for len(response.Choices) > 0 && len(response.Choices[0].Message.ToolCalls) > 0 {
-		assistantMsg := response.Choices[0].Message
-		if assistantMsg.Content == "" && len(assistantMsg.ToolCalls) > 0 {
-			assistantMsg.Content = " "
-		}
-		messages = append(messages, assistantMsg)
-
-		for _, toolCall := range assistantMsg.ToolCalls {
-			log.Printf("[AnalyzeTranscript] Tool called: %s, args: %s", toolCall.Function.Name, toolCall.Function.Arguments)
-
-			result, execErr := c.executeFunction(ctx, toolCall.Function.Name, toolCall.Function.Arguments, userId, assistantId)
-			if execErr != nil {
-				log.Printf("[AnalyzeTranscript] Tool exec error for %s: %v", toolCall.Function.Name, execErr)
-				result = fmt.Sprintf("Error: %s", execErr.Error())
-			} else {
-				log.Printf("[AnalyzeTranscript] Tool result for %s: %s", toolCall.Function.Name, result)
-			}
-
-			messages = append(messages, openai.ChatCompletionMessage{
-				Role:       openai.ChatMessageRoleTool,
-				Content:    result,
-				ToolCallID: toolCall.ID,
-			})
-		}
-
-		response, err = c.GetAnswer(ctx, assistantId, messages)
+	answer := response.Choices[0].Message.Content
+	platform := assistant.GetType()
+	if chatID == "" {
+		chat, err = c.db.CreateChat(assistantID, customerID, platform)
 		if err != nil {
-			return fmt.Errorf("LLM analyze follow-up error: %w", err)
+			return "", err
 		}
+		chatID = chat.GetId()
 	}
-
-	return nil
-}
-
-func (c *Client) executeFunction(ctx context.Context, functionName, argsJSON, userId, assistantId string) (string, error) {
-	switch functionName {
-	case "get_available_slots":
-		return c.handleCheckCampusAppointment(ctx, argsJSON)
-	case "create_booking":
-		return c.handleCreateCampusAppointment(ctx, argsJSON, userId)
-	case "send_summary":
-		return c.handleSendSummary(ctx, argsJSON, userId, assistantId)
-	case "mark_grade_11_or_lower":
-		return c.handleMarkGrade11OrLower(ctx, userId)
-	case "mark_international_student":
-		return c.handleMarkInternationalStudent(ctx, userId)
-	case "google_calendar_get_slots":
-		return c.handleGoogleCalendarGetSlots(ctx, argsJSON)
-	case "google_calendar_create_event":
-		return c.handleGoogleCalendarCreateEvent(ctx, argsJSON, userId, assistantId)
-	case "close_conversation":
-		return c.handleCloseConversation(ctx, userId, assistantId)
-	case "bookcampussansfrancisco", "bookcampussansjose":
-		return c.handleBookCampusSinta(ctx, functionName, userId, assistantId)
-	case "select_tutor_program":
-		return c.handleSelectTutorProgram(ctx, argsJSON, userId, assistantId)
-	case "start_tutoring":
-		return c.handleStartTutoring(ctx, userId, assistantId)
-	case "get_current_tutor_question":
-		return c.handleGetCurrentTutorQuestion(ctx, userId, assistantId)
-	case "submit_tutor_answer":
-		return c.handleSubmitTutorAnswer(ctx, argsJSON, userId, assistantId)
-	case "continue_tutor_today":
-		return c.handleContinueTutorToday(ctx, userId, assistantId)
-	case "finish_tutor_for_today":
-		return c.handleFinishTutorForToday(ctx, userId, assistantId)
-	default:
-		return "", fmt.Errorf("unknown function: %s", functionName)
-	}
-}
-
-// func (c *Client) handleGetAvailableSlots(ctx context.Context, argsJSON string) (string, error) {
-// 	var args struct {
-// 		Date string `json:"date"`
-// 	}
-// 	if err := json.Unmarshal([]byte(argsJSON), &args); err != nil {
-// 		return "", fmt.Errorf("failed to parse arguments: %w", err)
-// 	}
-
-// 	if args.Date == "" {
-// 		return "Error: date parameter is required in YYYY-MM-DD format", nil
-// 	}
-
-// 	slots, err := c.calcom.GetAvailableSlots(ctx, args.Date, constants.DefaultTimezone)
-// 	if err != nil {
-// 		return "", fmt.Errorf("failed to get slots from Cal.com: %w", err)
-// 	}
-
-// 	if len(slots) == 0 {
-// 		return fmt.Sprintf("No available slots found for %s. Please suggest another date.", args.Date), nil
-// 	}
-
-// 	return fmt.Sprintf("Available time slots for %s:\n%s", args.Date, strings.Join(slots, "\n")), nil
-// }
-
-// func (c *Client) handleCreateBooking(ctx context.Context, argsJSON string) (string, error) {
-// 	var args struct {
-// 		StartTime     string `json:"start_time"`
-// 		AttendeeName  string `json:"attendee_name"`
-// 		AttendeeEmail string `json:"attendee_email"`
-// 	}
-// 	if err := json.Unmarshal([]byte(argsJSON), &args); err != nil {
-// 		return "", fmt.Errorf("failed to parse arguments: %w", err)
-// 	}
-
-// 	if args.StartTime == "" || args.AttendeeName == "" || args.AttendeeEmail == "" {
-// 		return "Error: start_time, attendee_name, and attendee_email are all required", nil
-// 	}
-
-// 	booking, err := c.calcom.CreateBooking(ctx, args.StartTime, args.AttendeeName, args.AttendeeEmail, constants.DefaultTimezone)
-// 	if err != nil {
-// 		return "", fmt.Errorf("failed to create booking on Cal.com: %w", err)
-// 	}
-
-// 	return fmt.Sprintf("Booking confirmed! Details:\n- ID: %d\n- Title: %s\n- Status: %s\n- Start: %s\n- End: %s",
-// 		booking.ID, booking.Title, booking.Status, booking.Start, booking.End), nil
-// }
-
-func (c *Client) handleCheckCampusAppointment(ctx context.Context, argsJSON string) (string, error) {
-	// Stub implementation as requested by user
-	return "Available time slots: Any time from 6 AM to 8 PM is free.", nil
-}
-
-func (c *Client) handleCreateCampusAppointment(ctx context.Context, argsJSON, userId string) (string, error) {
-	var args struct {
-		StartTime   string `json:"start_time"`
-		EndTime     string `json:"end_time"`
-		Description string `json:"description"`
-	}
-	if err := json.Unmarshal([]byte(argsJSON), &args); err != nil {
-		return "", fmt.Errorf("failed to parse arguments: %w", err)
-	}
-
-	if args.StartTime == "" || args.EndTime == "" {
-		return "Error: start_time and end_time are both required", nil
-	}
-
-	err := c.createCampusLoginAppointmentInternal(ctx, args.StartTime, args.EndTime, args.Description, userId)
-	if err != nil {
-		return "", fmt.Errorf("failed to create appointment on CampusLogin: %w", err)
-	}
-
-	return "Appointment successfully created on CampusLogin.", nil
-}
-
-func (c *Client) handleSendSummary(ctx context.Context, argsJSON, userId, assistantId string) (string, error) {
-	var args struct {
-		Summary string `json:"summary"`
-	}
-	if err := json.Unmarshal([]byte(argsJSON), &args); err != nil {
-		return "", fmt.Errorf("failed to parse arguments: %w", err)
-	}
-
-	if args.Summary == "" {
-		return "Error: summary parameter is required", nil
-	}
-
-	campusRecord, err := c.db.GetCampusloginByUserId(userId)
-	var contactID int
-	if err != nil {
-		log.Printf("Failed to get ContactID for user %s: %v", userId, err)
-		contactID = 5972449 // default fallback
-	} else {
-		contactID = int(campusRecord.ContactId)
-	}
-
-	err = c.campuslogin.AddNewNote(ctx, contactID, args.Summary)
-	if err != nil {
-		return "", fmt.Errorf("failed to add new note on CampusLogin: %w", err)
-	}
-
-	return "Summary successfully sent to CampusLogin.", nil
-}
-
-func (c *Client) handleCloseConversation(ctx context.Context, userId, assistantId string) (string, error) {
-	chat, err := c.db.GetLatestChatByCustomer(assistantId, userId)
-	if err == nil && chat != nil {
-		_, err = c.db.UpdateChatIsEnd(chat.Id, true)
-		if err != nil {
-			log.Printf("Failed to update chat is_end for chat %s: %v", chat.Id, err)
-		}
-	} else {
-		log.Printf("Failed to get latest chat for customer %s to set isEnd: %v", userId, err)
-	}
-
-	return "Conversation closed.", nil
-}
-
-func (c *Client) handleMarkGrade11OrLower(ctx context.Context, userId string) (string, error) {
-	// Let's fetch it first.
-	record, err := c.db.GetCampusloginByUserId(userId)
-	if err != nil {
-		log.Printf("Failed to get campuslogin for user %s: %v", userId, err)
-		return "Failed to mark grade 11 or lower.", err
-	}
-
-	err = c.db.SetCampusloginFlags(userId, true, record.IsInternationalStudent)
-	if err != nil {
-		log.Printf("Failed to set campuslogin flags for user %s: %v", userId, err)
-		return "Failed to mark grade 11 or lower.", err
-	}
-	return "Successfully marked user as in Grade 11 or lower. The user is now disqualified from certain follow-ups.", nil
-}
-
-func (c *Client) handleMarkInternationalStudent(ctx context.Context, userId string) (string, error) {
-	record, err := c.db.GetCampusloginByUserId(userId)
-	if err != nil {
-		log.Printf("Failed to get campuslogin for user %s: %v", userId, err)
-		return "Failed to mark international student.", err
-	}
-
-	err = c.db.SetCampusloginFlags(userId, record.IsGrade11OrLower, true)
-	if err != nil {
-		log.Printf("Failed to set campuslogin flags for user %s: %v", userId, err)
-		return "Failed to mark international student.", err
-	}
-	return "Successfully marked user as an international student or on a visa. The user is now disqualified from certain follow-ups.", nil
-}
-
-func (c *Client) handleGoogleCalendarGetSlots(ctx context.Context, argsJSON string) (string, error) {
-	var args struct {
-		Date string `json:"date"`
-	}
-	if err := json.Unmarshal([]byte(argsJSON), &args); err != nil {
-		return "", fmt.Errorf("failed to parse arguments: %w", err)
-	}
-
-	loc, err := time.LoadLocation(constants.DefaultTimezone)
-	if err != nil {
-		return "", fmt.Errorf("failed to load timezone: %w", err)
-	}
-
-	// Parse date in YYYY-MM-DD
-	tMin, err := time.ParseInLocation("2006-01-02", args.Date, loc)
-	if err != nil {
-		return "Error: date must be in YYYY-MM-DD format", nil
-	}
-
-	tMax := tMin.Add(24 * time.Hour)
-
-	resp, err := c.gc.GetFreeBusy("", tMin, tMax)
-	if err != nil {
-		return "", fmt.Errorf("failed to get free/busy from Google Calendar: %w", err)
-	}
-
-	freeSlots := make([]string, 0)
-	startOfDay := time.Date(tMin.Year(), tMin.Month(), tMin.Day(), 8, 0, 0, 0, loc)
-	endOfDay := time.Date(tMin.Year(), tMin.Month(), tMin.Day(), 18, 0, 0, 0, loc)
-
-	for current := startOfDay; current.Before(endOfDay); current = current.Add(30 * time.Minute) {
-		slotStart := current
-		slotEnd := current.Add(30 * time.Minute)
-		isBusy := false
-
-		if cal, ok := resp.Calendars["primary"]; ok {
-			for _, busy := range cal.Busy {
-				bStart, err1 := time.Parse(time.RFC3339, busy.Start)
-				bEnd, err2 := time.Parse(time.RFC3339, busy.End)
-				if err1 == nil && err2 == nil {
-					// Check if the 30-min slot overlaps with the busy period
-					if slotStart.Before(bEnd) && bStart.Before(slotEnd) {
-						isBusy = true
-						break
-					}
-				}
-			}
-		}
-
-		if !isBusy {
-			freeSlots = append(freeSlots, slotStart.Format("15:04"))
-		}
-	}
-
-	slotsJSON, _ := json.Marshal(freeSlots)
-	return "free slots: " + string(slotsJSON), nil
-}
-
-func (c *Client) handleGoogleCalendarCreateEvent(ctx context.Context, argsJSON, userId, assistantId string) (string, error) {
-	var args struct {
-		Title       string `json:"title"`
-		Start       string `json:"start"`
-		Description string `json:"description"`
-	}
-	if err := json.Unmarshal([]byte(argsJSON), &args); err != nil {
-		return "", fmt.Errorf("failed to parse arguments: %w", err)
-	}
-
-	winnipegLoc, err := time.LoadLocation("America/Winnipeg")
-	if err != nil {
-		log.Printf("Failed to load America/Winnipeg timezone: %v", err)
-		winnipegLoc = time.FixedZone("CST", -6*3600)
-	}
-
-	tMin, err := time.Parse(time.RFC3339, args.Start)
-	if err != nil {
-		return "Error: start must be in RFC3339 format", nil
-	}
-
-	// Force Winnipeg timezone. Treat the provided clock time as local Winnipeg time.
-	tMin = time.Date(tMin.Year(), tMin.Month(), tMin.Day(), tMin.Hour(), tMin.Minute(), tMin.Second(), 0, winnipegLoc)
-	tMax := tMin.Add(30 * time.Minute)
-
-	// Fetch campuslogin to get email for calendar invite
-	campusRecord, err := c.db.GetCampusloginByUserId(userId)
-	var customerEmail string
-	if err == nil && campusRecord != nil {
-		customerEmail = campusRecord.Email
-	}
-
-	eventLink, err := c.createGoogleCalendarEventInternal(args.Title, tMin, tMax, customerEmail)
-	if err != nil {
-		return "", fmt.Errorf("failed to create google calendar event: %w", err)
-	}
-
-	// Format without timezone offset for CampusLogin, which assumes local time
-	err = c.createCampusLoginAppointmentInternal(ctx, tMin.Format("2006-01-02T15:04:05"), tMax.Format("2006-01-02T15:04:05"), args.Description, userId)
-	var warningMsg string
-	if err != nil {
-		log.Printf("Warning: failed to create campus login appointment for user %s: %v", userId, err)
-		warningMsg = " (Note: CampusLogin sync failed)"
-	}
-
-	chat, chatErr := c.db.GetLatestChatByCustomer(assistantId, userId)
-	if chatErr == nil && chat != nil {
-		_, chatErr = c.db.UpdateChatIsEnd(chat.Id, true)
-		if chatErr != nil {
-			log.Printf("Failed to update chat is_end for chat %s: %v", chat.Id, chatErr)
-		}
-		_, chatErr = c.db.UpdateChatIsBooked(chat.Id, true)
-		if chatErr != nil {
-			log.Printf("Failed to update chat is_booked for chat %s: %v", chat.Id, chatErr)
-		}
-	} else {
-		log.Printf("Failed to get latest chat for customer %s to set isEnd: %v", userId, chatErr)
-	}
-
-	if warningMsg != "" {
-		return fmt.Sprintf("Event created successfully! Link: %s%s", eventLink, warningMsg), nil
-	}
-	return fmt.Sprintf("Event and appointment created successfully! Link: %s", eventLink), nil
-}
-
-func (c *Client) createGoogleCalendarEventInternal(title string, start, end time.Time, customerEmail string) (string, error) {
-	event, err := c.gc.CreateSimpleEvent(title, start, end, customerEmail)
-	if err != nil {
+	if _, err := c.db.SaveMessage(chatID, openai.ChatMessageRoleUser, text, platform); err != nil {
 		return "", err
 	}
-	return event.HtmlLink, nil
-}
-
-func (c *Client) createCampusLoginAppointmentInternal(ctx context.Context, startTime, endTime, description, userId string) error {
-	campusRecord, err := c.db.GetCampusloginByUserId(userId)
-	var contactID int
-	var programID int
-	if err != nil {
-		log.Printf("Failed to get ContactID/ProgramID for user %s: %v", userId, err)
-		contactID = 5972449 // using the default one for fallback just in case
-		programID = 1
-	} else {
-		contactID = int(campusRecord.ContactId)
-		programID = int(campusRecord.ProgramId)
+	if _, err := c.db.SaveMessage(chatID, openai.ChatMessageRoleAssistant, answer, platform); err != nil {
+		return "", err
 	}
-
-	err = c.campuslogin.SendAppointment(ctx, constants.CampusLoginCanadaOrgID, constants.CampusLoginCanadaStaffID, "Campus Tour for "+campusRecord.FirstName, startTime, endTime, contactID, programID, description)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func (c *Client) handleBookCampusSinta(ctx context.Context, functionName, userId, assistantId string) (string, error) {
-	escapedPhone := url.QueryEscape(userId)
-
-	return "Appointment link create, please return that link to the customer to let him book his appointment: : Here is the link to schedule your campus visit in San Francisco:https://cinta.zerde.co/?phone=" + escapedPhone, nil
+	return answer, nil
 }

@@ -143,34 +143,6 @@ func (c *Client) CreateChat(assistantID, customerID, platform string) (*dbpb.Cha
 	return c.DB.CreateChat(ctx, req)
 }
 
-func (c *Client) CreateTutorChat(assistantID, customerID, platform string) (*dbpb.ChatResponse, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	req := &dbpb.CreateChatRequest{
-		AssistantId: assistantID,
-		CustomerId:  customerID,
-		Platform:    platform,
-		IsTutor:     true,
-	}
-
-	return c.DB.CreateChat(ctx, req)
-}
-
-func (c *Client) CreateChatWithTime(assistantID, customerID, platform string, startedAt string) (*dbpb.ChatResponse, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	req := &dbpb.CreateChatRequest{
-		AssistantId: assistantID,
-		CustomerId:  customerID,
-		Platform:    platform,
-		StartedAt:   startedAt,
-	}
-
-	return c.DB.CreateChat(ctx, req)
-}
-
 func (c *Client) GetChat(chatID string) (*dbpb.ChatResponse, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -196,21 +168,6 @@ func (c *Client) SaveMessage(chatID, role, content, platform string) (*dbpb.Mess
 	return c.DB.SaveMessage(ctx, req)
 }
 
-func (c *Client) SaveMessageWithTime(chatID, role, content, platform, msgTime string) (*dbpb.MessageResponse, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	req := &dbpb.SaveMessageRequest{
-		ChatId:   chatID,
-		Role:     role,
-		Content:  content,
-		Platform: platform,
-		Time:     msgTime,
-	}
-
-	return c.DB.SaveMessage(ctx, req)
-}
-
 func (c *Client) GetAllChatMessages(chatID string) ([]*dbpb.MessageResponse, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -230,7 +187,6 @@ func (c *Client) GetAllChatMessages(chatID string) ([]*dbpb.MessageResponse, err
 
 	return resp.Messages, nil
 }
-
 
 func (c *Client) GetLatestChatByCustomer(assistantID, customerID string) (*dbpb.ChatResponse, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -288,14 +244,13 @@ func (c *Client) GetChatPage(assistantID string, page, chatsPerPage int32) ([]*d
 	return resp.Chats, nil
 }
 
-func (c *Client) GetChatPagesCountByUserID(assistantIDs []string, chatsPerPage int32, isTutor bool) (int32, error) {
+func (c *Client) GetChatPagesCountByUserID(assistantIDs []string, chatsPerPage int32) (int32, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	req := &dbpb.GetChatPagesCountByUserIDRequest{
 		AssistantIds: assistantIDs,
 		ChatsPerPage: chatsPerPage,
-		IsTutor:      isTutor,
 	}
 
 	resp, err := c.DB.GetChatPagesCountByUserID(ctx, req)
@@ -306,7 +261,7 @@ func (c *Client) GetChatPagesCountByUserID(assistantIDs []string, chatsPerPage i
 	return resp.PagesCount, nil
 }
 
-func (c *Client) GetChatPageByUserID(assistantIDs []string, page, chatsPerPage int32, isTutor bool) ([]*dbpb.ChatResponse, error) {
+func (c *Client) GetChatPageByUserID(assistantIDs []string, page, chatsPerPage int32) ([]*dbpb.ChatResponse, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -314,7 +269,6 @@ func (c *Client) GetChatPageByUserID(assistantIDs []string, page, chatsPerPage i
 		AssistantIds: assistantIDs,
 		Page:         page,
 		ChatsPerPage: chatsPerPage,
-		IsTutor:      isTutor,
 	}
 
 	resp, err := c.DB.GetChatPageByUserID(ctx, req)
@@ -346,14 +300,13 @@ func (c *Client) GetChatPagesCount(assistantID string, chatsPerPage int32) (int3
 	return resp.PagesCount, nil
 }
 
-func (c *Client) SearchChatsByCustomer(assistantIDs []string, search string, isTutor bool) ([]*dbpb.ChatResponse, int32, error) {
+func (c *Client) SearchChatsByCustomer(assistantIDs []string, search string) ([]*dbpb.ChatResponse, int32, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	req := &dbpb.SearchChatsByCustomerRequest{
 		AssistantIds: assistantIDs,
 		Search:       search,
-		IsTutor:      isTutor,
 	}
 
 	resp, err := c.DB.SearchChatsByCustomer(ctx, req)
@@ -394,65 +347,6 @@ func (c *Client) SaveTwilioConfig(assistantID, userID, twilioNumber, accountSID,
 	return c.DB.SaveTwilioConfig(ctx, req)
 }
 
-func (c *Client) GetCampusloginByUserId(userID string) (*dbpb.CampusloginResponse, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	req := &dbpb.CampusloginRequest{
-		UserId: userID,
-	}
-
-	resp, err := c.DB.GetCampusloginByUserId(ctx, req)
-	if err != nil {
-		return nil, err
-	}
-
-	return resp, nil
-}
-
-func (c *Client) GetCampusloginByPhone(phone string) (*dbpb.CampusloginResponse, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	req := &dbpb.CampusloginPhoneRequest{
-		Phone: phone,
-	}
-
-	resp, err := c.DB.GetCampusloginByPhone(ctx, req)
-	if err != nil {
-		return nil, err
-	}
-
-	return resp, nil
-}
-
-func (c *Client) UpsertCampuslogin(userID string, contactID int, programID int, isGrade11OrLower bool, isInternationalStudent bool, firstName string, email string) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	req := &dbpb.UpsertCampusloginRequest{
-		UserId:                 userID,
-		ContactId:              int32(contactID),
-		ProgramId:              int32(programID),
-		IsGrade11OrLower:       isGrade11OrLower,
-		IsInternationalStudent: isInternationalStudent,
-		FirstName:              firstName,
-		Email:                  email,
-	}
-
-	_, err := c.DB.UpsertCampuslogin(ctx, req)
-	return err
-}
-
-func (c *Client) DeleteAllChatsAndMessages() error {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
-	req := &dbpb.DeleteAllChatsAndMessagesRequest{}
-	_, err := c.DB.DeleteAllChatsAndMessages(ctx, req)
-	return err
-}
-
 func (c *Client) DeleteChatAndMessages(chatID string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -474,84 +368,6 @@ func (c *Client) UpdateChatIsEnd(chatID string, isEnd bool) (*dbpb.ChatResponse,
 	}
 
 	return c.DB.UpdateChatIsEnd(ctx, req)
-}
-
-func (c *Client) UpdateChatIsBooked(chatID string, isBooked bool) (*dbpb.ChatResponse, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	req := &dbpb.UpdateChatIsBookedRequest{
-		Id:       chatID,
-		IsBooked: isBooked,
-	}
-
-	return c.DB.UpdateChatIsBooked(ctx, req)
-}
-
-func (c *Client) UpdateChatIsReviewed(chatID string, isReviewed bool) (*dbpb.ChatResponse, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	req := &dbpb.UpdateChatIsReviewedRequest{
-		Id:         chatID,
-		IsReviewed: isReviewed,
-	}
-
-	return c.DB.UpdateChatIsReviewed(ctx, req)
-}
-
-func (c *Client) GetUnreviewedActiveChats() ([]*dbpb.ChatResponse, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	req := &dbpb.GetUnreviewedActiveChatsRequest{}
-
-	resp, err := c.DB.GetUnreviewedActiveChats(ctx, req)
-	if err != nil {
-		return nil, err
-	}
-
-	return resp.Chats, nil
-}
-
-func (c *Client) GetChatsForFollowup() ([]*dbpb.ChatResponse, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	req := &dbpb.GetChatsForFollowupRequest{}
-
-	resp, err := c.DB.GetChatsForFollowup(ctx, req)
-	if err != nil {
-		return nil, err
-	}
-
-	return resp.Chats, nil
-}
-
-func (c *Client) UpdateChatFollowupStage(chatID string, stage int32) (*dbpb.ChatResponse, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	req := &dbpb.UpdateChatFollowupStageRequest{
-		Id:    chatID,
-		Stage: stage,
-	}
-
-	return c.DB.UpdateChatFollowupStage(ctx, req)
-}
-
-func (c *Client) SetCampusloginFlags(userID string, isGrade11OrLower bool, isInternationalStudent bool) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	req := &dbpb.SetCampusloginFlagsRequest{
-		UserId:                 userID,
-		IsGrade11OrLower:       isGrade11OrLower,
-		IsInternationalStudent: isInternationalStudent,
-	}
-
-	_, err := c.DB.SetCampusloginFlags(ctx, req)
-	return err
 }
 
 func (c *Client) GetPeriodMetrics(assistantID, startTime, endTime string) (*dbpb.GetPeriodMetricsResponse, error) {
@@ -612,62 +428,6 @@ func (c *Client) IsCustomerBlocked(userID string) (bool, error) {
 	return resp.IsBlocked, nil
 }
 
-func (c *Client) UpsertGoogleSyncToken(calendarID, syncToken, channelID, resourceID, expiresAt string) (*dbpb.GoogleSyncTokenResponse, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	req := &dbpb.UpsertGoogleSyncTokenRequest{
-		CalendarId: calendarID,
-		SyncToken:  syncToken,
-		ChannelId:  channelID,
-		ResourceId: resourceID,
-		ExpiresAt:  expiresAt,
-	}
-
-	return c.DB.UpsertGoogleSyncToken(ctx, req)
-}
-
-func (c *Client) GetGoogleSyncToken(calendarID string) (*dbpb.GoogleSyncTokenResponse, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	req := &dbpb.GetGoogleSyncTokenRequest{
-		CalendarId: calendarID,
-	}
-
-	return c.DB.GetGoogleSyncToken(ctx, req)
-}
-
-func (c *Client) CreateAppointment(googleEventID, title, startTime, endTime, status, description, calendarID string, campusLogin bool, createdAt string) (*dbpb.AppointmentResponse, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	req := &dbpb.CreateAppointmentRequest{
-		GoogleEventId: googleEventID,
-		Title:         title,
-		StartTime:     startTime,
-		EndTime:       endTime,
-		Status:        status,
-		Description:   description,
-		CalendarId:    calendarID,
-		CampusLogin:   campusLogin,
-		CreatedAt:     createdAt,
-	}
-
-	return c.DB.CreateAppointment(ctx, req)
-}
-
-func (c *Client) GetAppointmentByGoogleEventID(googleEventID string) (*dbpb.AppointmentResponse, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	req := &dbpb.GetAppointmentByGoogleEventIDRequest{
-		GoogleEventId: googleEventID,
-	}
-
-	return c.DB.GetAppointmentByGoogleEventID(ctx, req)
-}
-
 func (c *Client) BlockCustomer(userID string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -691,162 +451,4 @@ func (c *Client) GetAllBlockedCustomers() ([]string, error) {
 		return nil, err
 	}
 	return resp.UserIds, nil
-}
-
-func (c *Client) CountAppointmentsBySlot(calendarID, startTime string) (int32, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	req := &dbpb.CountAppointmentsBySlotRequest{
-		CalendarId: calendarID,
-		StartTime:  startTime,
-	}
-
-	resp, err := c.DB.CountAppointmentsBySlot(ctx, req)
-	if err != nil {
-		return 0, err
-	}
-
-	return resp.Count, nil
-}
-
-func (c *Client) GetUnsyncedCampusloginAppointments() (*dbpb.AppointmentsResponse, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	req := &dbpb.GetUnsyncedCampusloginAppointmentsRequest{}
-	return c.DB.GetUnsyncedCampusloginAppointments(ctx, req)
-}
-
-func (c *Client) UpdateAppointmentCampusloginStatus(id string, campusLogin bool) (*dbpb.AppointmentResponse, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	req := &dbpb.UpdateAppointmentCampusloginStatusRequest{
-		Id:          id,
-		CampusLogin: campusLogin,
-	}
-	return c.DB.UpdateAppointmentCampusloginStatus(ctx, req)
-}
-
-func (c *Client) GetAppointmentByID(id string) (*dbpb.AppointmentResponse, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	req := &dbpb.GetAppointmentByIDRequest{
-		Id: id,
-	}
-	return c.DB.GetAppointmentByID(ctx, req)
-}
-
-func (c *Client) UpdateChatIsTutor(chatID string, isTutor bool) (*dbpb.ChatResponse, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	req := &dbpb.UpdateChatIsTutorRequest{
-		Id:      chatID,
-		IsTutor: isTutor,
-	}
-
-	return c.DB.UpdateChatIsTutor(ctx, req)
-}
-
-func (c *Client) SaveTutorMessage(chatID, role, content, platform string) (*dbpb.MessageResponse, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	req := &dbpb.SaveMessageRequest{
-		ChatId:   chatID,
-		Role:     role,
-		Content:  content,
-		Platform: platform,
-	}
-
-	return c.DB.SaveTutorMessage(ctx, req)
-}
-
-func (c *Client) GetTutorChatMessages(chatID string, limit, offset int32) ([]*dbpb.MessageResponse, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	req := &dbpb.GetChatMessagesRequest{
-		ChatId: chatID,
-		Limit:  limit,
-		Offset: offset,
-	}
-
-	resp, err := c.DB.GetTutorChatMessages(ctx, req)
-	if err != nil {
-		return nil, err
-	}
-
-	if resp.Messages == nil {
-		return []*dbpb.MessageResponse{}, nil
-	}
-
-	return resp.Messages, nil
-}
-
-func (c *Client) GetAllTutorChatMessages(chatID string) ([]*dbpb.MessageResponse, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	req := &dbpb.GetAllChatMessagesRequest{
-		ChatId: chatID,
-	}
-
-	resp, err := c.DB.GetAllTutorChatMessages(ctx, req)
-	if err != nil {
-		return nil, err
-	}
-
-	if resp.Messages == nil {
-		return []*dbpb.MessageResponse{}, nil
-	}
-
-	return resp.Messages, nil
-}
-
-func (c *Client) UpdateChatTutorState(chatID string, isTuting bool, tutingProgram string, tutorCountPerDay, tutorCount int32) (*dbpb.ChatResponse, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	req := &dbpb.UpdateChatTutorStateRequest{
-		Id:               chatID,
-		IsTuting:         isTuting,
-		TutingProgram:    tutingProgram,
-		TutorCountPerDay: tutorCountPerDay,
-		TutorCount:       tutorCount,
-	}
-
-	return c.DB.UpdateChatTutorState(ctx, req)
-}
-
-func (c *Client) GetActiveTutorChats() ([]*dbpb.ChatResponse, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	req := &dbpb.GetActiveTutorChatsRequest{}
-	resp, err := c.DB.GetActiveTutorChats(ctx, req)
-	if err != nil {
-		return nil, err
-	}
-
-	if resp.Chats == nil {
-		return []*dbpb.ChatResponse{}, nil
-	}
-
-	return resp.Chats, nil
-}
-
-func (c *Client) DeleteTutorMessagesByChat(chatID string) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	req := &dbpb.DeleteTutorMessagesByChatRequest{
-		ChatId: chatID,
-	}
-
-	_, err := c.DB.DeleteTutorMessagesByChat(ctx, req)
-	return err
 }

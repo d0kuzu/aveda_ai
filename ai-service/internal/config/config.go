@@ -13,33 +13,12 @@ type Settings struct {
 
 	OpenaiApiKey string
 
-	TwilioAccountSID string
-	TwilioAuthToken  string
-
 	TelegramWebhookSecret string
 	WebhookBaseURL        string
 	BaseURL               string
 
 	TokenPrefix string
 	TokenLength int
-
-	CampusLoginAPI      string
-	CampusLoginCintaAPI string
-
-	MaxSlotCapacity      int
-	SlotDurationMinutes  int
-	WorkSchedule         string
-	AvedaCalendarSecret  string
-	CalcomAPIKey         string
-
-	// Daily report Telegram notification settings
-	ReportBotToken string
-	ReportChatID   string
-	ReportSendTime string // HH:MM format, Asia/Almaty timezone
-
-	// Cal.com booking Telegram notification settings
-	CalcomNotifyBotToken string
-	CalcomNotifyChatID   string
 }
 
 func LoadConfig() (*Settings, error) {
@@ -55,24 +34,11 @@ func LoadConfig() (*Settings, error) {
 		grpcAddress = "localhost:50051"
 	}
 
-	workSchedule := os.Getenv("WORK_SCHEDULE")
-	if workSchedule == "" {
-		workSchedule = "Tue=09:00-17:00,Wed=11:00-19:00,Thu=11:00-19:00,Fri=09:00-17:00,Sat=09:00-17:00"
-	}
-
-	reportSendTime := os.Getenv("REPORT_SEND_TIME")
-	if reportSendTime == "" {
-		reportSendTime = "21:00"
-	}
-
 	return &Settings{
 		HTTPPort:    httpPort,
 		GRPCAddress: grpcAddress,
 
 		OpenaiApiKey: os.Getenv("OPENAI_API_KEY"),
-
-		TwilioAccountSID: os.Getenv("TWILIO_ACCOUNT_SID"),
-		TwilioAuthToken:  os.Getenv("TWILIO_AUTH_TOKEN"),
 
 		TelegramWebhookSecret: os.Getenv("TELEGRAM_WEBHOOK_SECRET"),
 		WebhookBaseURL:        os.Getenv("WEBHOOK_BASE_URL"),
@@ -80,22 +46,6 @@ func LoadConfig() (*Settings, error) {
 
 		TokenPrefix: os.Getenv("TOKEN_PREFIX"),
 		TokenLength: getEnvAsInt("TOKEN_LENGTH", 32),
-
-		CampusLoginAPI:      os.Getenv("CAMPUSLOGIN_API"),
-		CampusLoginCintaAPI: os.Getenv("CAMPUSLOGIN_CINTA_API"),
-
-		MaxSlotCapacity:     getEnvAsInt("MAX_SLOT_CAPACITY", 10),
-		SlotDurationMinutes: getEnvAsInt("SLOT_DURATION_MINUTES", 60),
-		WorkSchedule:        workSchedule,
-		AvedaCalendarSecret: os.Getenv("AVEDA_CALENDAR_SECRET"),
-		CalcomAPIKey:        os.Getenv("CAL_API_KEY"),
-
-		ReportBotToken: os.Getenv("REPORT_BOT_TOKEN"),
-		ReportChatID:   os.Getenv("REPORT_CHAT_ID"),
-		ReportSendTime: reportSendTime,
-
-		CalcomNotifyBotToken: os.Getenv("CALCOM_NOTIFY_BOT_TOKEN"),
-		CalcomNotifyChatID:   os.Getenv("CALCOM_NOTIFY_CHAT_ID"),
 	}, nil
 }
 
@@ -112,4 +62,3 @@ func getEnvAsInt(name string, defaultVal int) int {
 
 	return value
 }
-

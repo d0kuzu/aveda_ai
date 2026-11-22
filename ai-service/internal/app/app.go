@@ -3,19 +3,10 @@ package app
 import (
 	"diaxel/internal/config"
 	"diaxel/internal/grpc/db"
-	"diaxel/internal/modules/campuslogin"
-	"diaxel/internal/modules/googlecalendar"
 	"diaxel/internal/modules/llm"
 	"diaxel/internal/modules/telegram"
 	"diaxel/internal/modules/twilio"
-	"diaxel/internal/modules/calcom"
 )
-
-type LLM interface {
-}
-
-type Twilio interface {
-}
 
 type App struct {
 	LLM            *llm.Client
@@ -23,9 +14,6 @@ type App struct {
 	Db             *db.Client
 	Cfg            *config.Settings
 	TgOrchestrator *telegram.Orchestrator
-	GoogleCalendar *googlecalendar.Client
-	CampusLogin    *campuslogin.Client
-	Calcom         *calcom.Client
 }
 
 func NewApp(
@@ -34,9 +22,6 @@ func NewApp(
 	db *db.Client,
 	cfg *config.Settings,
 	tgOrch *telegram.Orchestrator,
-	gcClient *googlecalendar.Client,
-	campusLoginClient *campuslogin.Client,
-	calcomClient *calcom.Client,
 ) *App {
 	return &App{
 		LLM:            llmClient,
@@ -44,9 +29,5 @@ func NewApp(
 		Db:             db,
 		Cfg:            cfg,
 		TgOrchestrator: tgOrch,
-		GoogleCalendar: gcClient,
-		CampusLogin:    campusLoginClient,
-		Calcom:         calcomClient,
 	}
 }
-

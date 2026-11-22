@@ -1,96 +1,45 @@
-#Diaxel-analog
+# Шаблон сервиса AI-ассистентов
 
-## Что в репозитории
+В репозитории четыре Go-сервиса. Gateway принимает HTTP-запросы и WebSocket-соединения. Auth отвечает за учётные записи и токены. AI обслуживает ассистентов, диалоги и каналы. Database предоставляет gRPC API поверх PostgreSQL.
 
-- **Frontend**: Next.js + Tailwind, страницы — лендинг, фичи, аналитика с графиками, прайсинг, блог, контакты.
-- **Backend**: микросервисы на Go — API Gateway, Auth Service, AI Service, Database Service, Telegram Service.
-- **Протоколы**: gRPC/protobuf для связи сервисов.
-- **Docker**: `docker-compose.yml` для запуска всего стенда.
+## Запуск через Docker Compose
 
-## Как запустить (после клонирования)
+В корне проекта выполните в PowerShell:
 
-### 1) Фронтенд
-```sh
-cd frontend
-cp .env.example .env.local
-# при желании: NEXT_PUBLIC_API_BASE_URL=http://localhost:8081
-npm install
-npm run dev
-```
-Откроется `http://localhost:3000`.
-
-### 2) Бэкенд (чтобы аналитика работала с реальными данными)
-
-#### а) Установить protoc и плагины (Windows)
 ```powershell
-cd database-service/proto
-.\install-protoc.ps1
-```
-Или скачай protoc с [GitHub releases](https://github.com/protocolbuffers/protobuf/releases) и добавь `bin` в PATH.
-
-#### б) Сгенерировать protobuf
-```powershell
-cd database-service
-protoc --plugin=protoc-gen-go=C:\Users\user\go\bin\protoc-gen-go.exe --plugin=protoc-gen-go-grpc=C:\Users\user\go\bin\protoc-gen-go-grpc.exe --go_out=. --go-grpc_out=. proto/database.proto
-```
-Или:
-```powershell
-.\proto\generate.ps1
+foreach ($service in 'database-service', 'auth-service', 'ai-service', 'api-gateway') {
+    if (!(Test-Path "$service/.env")) { Copy-Item "$service/.env.example" "$service/.env" }
+}
 ```
 
-#### в) Подтянуть Go‑зависимости
+Задайте одинаковый непустой `ACCESS_SECRET` в auth и gateway и отдельный `REFRESH_SECRET` в auth. В AI укажите `OPENAI_API_KEY` для ответов модели. Для Telegram задайте `TELEGRAM_WEBHOOK_SECRET` и публичный HTTPS-адрес gateway в `WEBHOOK_BASE_URL`. Для Twilio тот же адрес задаётся в `BASE_URL`. Номер и учётные данные Twilio передаются при регистрации ассистента.
+
 ```sh
-cd database-service
-go mod tidy
+docker compose up --build
 ```
 
-#### г) Запустить всё через Docker
-```sh
-docker-compose up --build
-```
-API Gateway будет на `http://localhost:8081`.
+Gateway доступен на `http://localhost:8085`, проверка состояния — `GET /health`. Compose собирает приложения из Go-исходников и создаёт отдельный том для базы шаблона.
 
-### 3) Как проверить аналитику
-- Если `NEXT_PUBLIC_API_BASE_URL` не задан — дашборд покажет мок‑данные.
-- Если задан `http://localhost:8081` и бэкенд запущен — пойдут реальные запросы к `/api/analytics/*`.
+Для dev-конфигурации используется один `.env` в корне. Поместите в него `ACCESS_SECRET`, `REFRESH_SECRET` и нужные переменные AI из примера. Команда `docker compose -f docker-compose.dev.yml up --build` поднимает gateway на порту 8080.
 
-## Структура
+## Возможности
 
-```
-frontend/          # Next.js приложение
-database-service/  # Go сервис + protobuf
-api-gateway/       # Проксирование + JWT
-ai-service/        # Логика AI и Telegram
-auth-service/      # JWT‑авторизация
-telegram-service/  # Вебхуки Telegram
-docker-compose.yml # Все сервисы
-```
+| Сценарий | Точка входа через gateway |
+| --- | --- |
+| Регистрация, вход, обновление и завершение сессии | `POST /auth/register`, `/auth/login`, `/auth/refresh`, `/auth/logout` |
+| Создание ассистента для API, Telegram или Twilio | `POST /ai/webhooks/{api,telegram,twilio}/register` |
+| Переписка по API | `POST /webhooks/telegram` с API-токеном ассистента и полем формы `user_message` |
+| Настройки ассистента и список чатов | `/ai/assistants/…`, `/ai/chats/…` |
+| История диалога через WebSocket | `/ai/websocket/get_conversation?chat=<chat_id>` |
+| Список и блокировка контактов для SMS | `GET` и `POST /ai/blocked-customers/` |
+| Статистика по ассистенту | `GET /ai/analytics?assistant_id=<id>` |
 
-## Дальше (что можно улучшить)
+Для кабинета передавайте access-токен в `Authorization: Bearer …`. При регистрации Telegram-ассистента AI устанавливает callback. При регистрации Twilio-ассистента AI возвращает URL, который нужно указать как обработчик входящих SMS у номера Twilio.
 
-### ✅ **Недавно сделано:**
-- **Полная интеграция gRPC**: Database Service теперь предоставляет полный API для работы с чатами и сообщениями
-- **Репозитории**: Созданы `ChatRepository` и `MessageRepository` для работы с PostgreSQL
-- **Telegram Service**: Полностью переведён на gRPC клиенты, убраны прямые подключения к БД
-- **Новые proto методы**: `CreateChat`, `SaveMessage`, `GetChatMessages` для микросервисной архитектуры
+Статистика строится по чатам в PostgreSQL. Она показывает число начатых диалогов, число помеченных завершёнными (`is_end`) и распределение начатых диалогов по дням. Настройки поведения LLM берутся из конфигурации конкретного ассистента.
 
-### 🔄 **Что осталось доделать:**
-- **Тесты Telegram Service**: Обновить тесты для работы с gRPC моками (сейчас используют GORM)
-- **API Gateway**: Добавить эндпоинты `/api/analytics/*` с прокси в database-service через gRPC
-- **Авторизация**: Реализовать полную JWT авторизацию (логин → токен → cookie)
-- **CI/CD**: Настроить автоматические тесты и деплой
-- **Продакшн**: Настроить продакшн окружение
+## База данных и проверки
 
-### 🏗️ **Текущая архитектура:**
-```
-Frontend → API Gateway → Auth Service
-                    → AI Service → gRPC → Database Service → PostgreSQL
-                    → Telegram Service → gRPC → Database Service
-```
+При первом запуске database-service создаёт таблицы пользователей, refresh-токенов, ассистентов, конфигураций Twilio, чатов, сообщений и заблокированных контактов. Для очистки копии старой базы подготовлен отдельный [SQL-скрипт](database-service/migrations/manual/remove_retired_features.sql). Он удаляет данные прежних интеграций и запускается вручную. Штатный запуск применяет только SQL-файлы верхнего уровня `database-service/migrations`.
 
----
-
-**Если что‑то не запускается** — проверь, что:
-- Node.js 20+ и Go 1.22+ установлены.
-- `protoc` и плагины доступны в PATH.
-- `.env.local` создан (можно пустым).
+У каждого сервиса свой `go.mod`. Для проверки выполните `go test ./...` из каталога каждого сервиса. Инструкция по генерации gRPC-контракта находится в [database-service/proto](database-service/proto/README.md).

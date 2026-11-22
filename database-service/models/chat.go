@@ -8,15 +8,7 @@ type Chat struct {
 	AssistantID  string    `json:"assistant_id" db:"assistant_id" gorm:"type:uuid;not null;references:assistants(id)"`
 	CustomerID   *string   `json:"customer_id" db:"customer_id"`
 	MessageCount int32     `json:"message_count" db:"message_count" gorm:"default:0"`
-	IsEnd         bool      `json:"is_end" db:"is_end" gorm:"default:false"`
-	IsBooked      bool      `json:"is_booked" db:"is_booked" gorm:"default:false"`
-	IsReviewed       bool      `json:"is_reviewed" db:"is_reviewed" gorm:"default:false"`
-	IsTutor          bool      `json:"is_tutor" db:"is_tutor" gorm:"default:false"`
-	IsTuting         bool      `json:"is_tuting" db:"is_tuting" gorm:"default:false"`
-	TutingProgram    string    `json:"tuting_program" db:"tuting_program" gorm:"type:varchar(50);default:''"`
-	TutorCountPerDay int32     `json:"tutor_count_per_day" db:"tutor_count_per_day" gorm:"default:0"`
-	TutorCount       int32     `json:"tutor_count" db:"tutor_count" gorm:"default:0"`
-	FollowupStage    int       `json:"followup_stage" db:"followup_stage" gorm:"default:1"`
+	IsEnd        bool      `json:"is_end" db:"is_end" gorm:"default:false"`
 	StartedAt    time.Time `json:"started_at" db:"started_at" gorm:"default:now()"`
 	CreatedAt    time.Time `json:"created_at" db:"created_at" gorm:"default:now()"`
 	UpdatedAt    time.Time `json:"updated_at" db:"updated_at" gorm:"default:now()"`

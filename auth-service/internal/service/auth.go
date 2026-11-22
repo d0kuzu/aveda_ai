@@ -135,31 +135,3 @@ func (s *AuthService) Register(email, password string) (string, string, error) {
 
 	return access, refresh, nil
 }
-
-func (s *AuthService) CreateAssistant(assistantID, botToken string) (bool, error) {
-	// Check if assistant exists, if so update, otherwise create
-	assistant, err := s.db.GetAssistant(assistantID)
-	if err != nil {
-		// Assistant doesn't exist, create new one
-		_, err = s.db.CreateAssistant(assistantID, botToken, "")
-		if err != nil {
-			return false, err
-		}
-		return true, nil
-	}
-
-	// Assistant exists, update bot token
-	_, err = s.db.UpdateAssistant(assistantID, assistant.Name, botToken, assistant.UserId)
-	if err != nil {
-		return false, err
-	}
-	return true, nil
-}
-
-func (s *AuthService) GetBotToken(assistantID string) (string, error) {
-	assistant, err := s.db.GetAssistant(assistantID)
-	if err != nil {
-		return "", err
-	}
-	return assistant.ApiToken, nil
-}

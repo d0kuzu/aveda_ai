@@ -67,14 +67,11 @@ func main() {
 	messageRepo := repository.NewMessageRepository(db)
 	assistantRepo := repository.NewAssistantRepository(db)
 	twilioRepo := repository.NewTwilioRepository(db)
-	campusloginRepo := repository.NewCampusloginRepository(db)
 	blockedCustomerRepo := repository.NewBlockedCustomerRepository(db)
-	googleSyncRepo := repository.NewGoogleSyncRepository(db)
-	appointmentRepo := repository.NewAppointmentRepository(db)
 
 	// Initialize gRPC server
 	grpcServer := grpc.NewServer()
-	databaseServer := server.NewDatabaseServer(userRepo, refreshTokenRepo, chatRepo, messageRepo, assistantRepo, twilioRepo, campusloginRepo, blockedCustomerRepo, googleSyncRepo, appointmentRepo)
+	databaseServer := server.NewDatabaseServer(userRepo, refreshTokenRepo, chatRepo, messageRepo, assistantRepo, twilioRepo, blockedCustomerRepo)
 
 	proto.RegisterDatabaseServiceServer(grpcServer, databaseServer)
 
@@ -124,16 +121,11 @@ func runMigrations(db *gorm.DB) error {
 	err = db.AutoMigrate(
 		&models.User{},
 		&models.RefreshToken{},
-		&models.Analytics{},
 		&models.Assistant{},
 		&models.Chat{},
 		&models.Message{},
-		&models.TutorMessage{},
 		&models.TwilioConfig{},
-		&models.Campuslogin{},
 		&models.BlockedCustomer{},
-		&models.GoogleSync{},
-		&models.Appointment{},
 	)
 	if err != nil {
 		return fmt.Errorf("failed to run AutoMigrate: %w", err)

@@ -1,13 +1,10 @@
-version: "3.9"
-
 networks:
   microservices-net:
-    external: true
+    driver: bridge
 
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: database-postgres
     restart: unless-stopped
     environment:
       POSTGRES_DB: database_service
@@ -16,18 +13,19 @@ services:
     ports:
       - "127.0.0.1:5433:5432"
     volumes:
-      - diaxel_postgres_data:/var/lib/postgresql/data
+      - template_postgres_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d database_service"]
       interval: 3s
       timeout: 3s
       retries: 5
     networks:
-      - microservices-net
+      microservices-net:
+        aliases:
+          - database-postgres
 
   database-service:
     build: ./database-service
-    container_name: database-service
     depends_on:
       postgres:
         condition: service_healthy
@@ -41,7 +39,6 @@ services:
 
   auth-service:
     build: ./auth-service
-    container_name: auth-service
     ports:
       - "8082:8080"
     depends_on:
@@ -54,7 +51,6 @@ services:
 
   ai-service:
     build: ./ai-service
-    container_name: ai-service
     ports:
       - "8081:8080"
     depends_on:
@@ -67,7 +63,6 @@ services:
 
   api-gateway:
     build: ./api-gateway
-    container_name: api-gateway-service
     ports:
       - "8085:8080"
     depends_on:
@@ -81,5 +76,4 @@ services:
       - microservices-net
 
 volumes:
-  diaxel_postgres_data:
-    name: database-service_diaxel_postgres_data
+  template_postgres_data:

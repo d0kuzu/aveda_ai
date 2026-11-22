@@ -23,13 +23,10 @@ type DatabaseServer struct {
 	messageRepo         repository.MessageRepository
 	assistantRepo       repository.AssistantRepository
 	twilioRepo          repository.TwilioRepository
-	campusloginRepo     *repository.CampusloginRepository
 	blockedCustomerRepo repository.BlockedCustomerRepository
-	googleSyncRepo      repository.GoogleSyncRepository
-	appointmentRepo     repository.AppointmentRepository
 }
 
-func NewDatabaseServer(userRepo repository.UserRepository, refreshTokenRepo repository.RefreshTokenRepository, chatRepo repository.ChatRepository, messageRepo repository.MessageRepository, assistantRepo repository.AssistantRepository, twilioRepo repository.TwilioRepository, campusloginRepo *repository.CampusloginRepository, blockedCustomerRepo repository.BlockedCustomerRepository, googleSyncRepo repository.GoogleSyncRepository, appointmentRepo repository.AppointmentRepository) *DatabaseServer {
+func NewDatabaseServer(userRepo repository.UserRepository, refreshTokenRepo repository.RefreshTokenRepository, chatRepo repository.ChatRepository, messageRepo repository.MessageRepository, assistantRepo repository.AssistantRepository, twilioRepo repository.TwilioRepository, blockedCustomerRepo repository.BlockedCustomerRepository) *DatabaseServer {
 	return &DatabaseServer{
 		userRepo:            userRepo,
 		refreshTokenRepo:    refreshTokenRepo,
@@ -37,10 +34,7 @@ func NewDatabaseServer(userRepo repository.UserRepository, refreshTokenRepo repo
 		messageRepo:         messageRepo,
 		assistantRepo:       assistantRepo,
 		twilioRepo:          twilioRepo,
-		campusloginRepo:     campusloginRepo,
 		blockedCustomerRepo: blockedCustomerRepo,
-		googleSyncRepo:      googleSyncRepo,
-		appointmentRepo:     appointmentRepo,
 	}
 }
 
@@ -244,26 +238,6 @@ func (s *DatabaseServer) DeleteRefreshToken(ctx context.Context, req *proto.Dele
 	}, nil
 }
 
-func (s *DatabaseServer) GetAnalytics(ctx context.Context, req *proto.AnalyticsRequest) (*proto.AnalyticsResponse, error) {
-	// TODO: Implement analytics logic
-	return &proto.AnalyticsResponse{
-		AssistantId:    req.AssistantId,
-		TotalChats:     0,
-		ActiveUsers:    0,
-		EngagementRate: 0.0,
-	}, nil
-}
-
-func (s *DatabaseServer) GetAnalyticsByAssistant(ctx context.Context, req *proto.AnalyticsByAssistantRequest) (*proto.AnalyticsResponse, error) {
-	// TODO: Implement analytics by assistant logic
-	return &proto.AnalyticsResponse{
-		AssistantId:    req.AssistantId,
-		TotalChats:     0,
-		ActiveUsers:    0,
-		EngagementRate: 0.0,
-	}, nil
-}
-
 func (s *DatabaseServer) CreateChat(ctx context.Context, req *proto.CreateChatRequest) (*proto.ChatResponse, error) {
 	// Verify that the assistant exists before creating a chat
 	_, err := s.assistantRepo.GetAssistantByID(ctx, req.AssistantId)
@@ -274,13 +248,6 @@ func (s *DatabaseServer) CreateChat(ctx context.Context, req *proto.CreateChatRe
 	chat, err := s.chatRepo.CreateChat(ctx, req.AssistantId, req.CustomerId, req.Platform, req.StartedAt)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to create chat: %v", err)
-	}
-
-	if req.IsTutor {
-		chat, err = s.chatRepo.UpdateChatIsTutor(ctx, chat.ID, true)
-		if err != nil {
-			return nil, status.Errorf(codes.Internal, "failed to update chat tutor mode: %v", err)
-		}
 	}
 
 	return &proto.ChatResponse{
@@ -296,7 +263,6 @@ func (s *DatabaseServer) CreateChat(ctx context.Context, req *proto.CreateChatRe
 		CreatedAt: chat.StartedAt.Format(time.RFC3339),
 		UpdatedAt: chat.StartedAt.Format(time.RFC3339),
 		IsEnd:     chat.IsEnd,
-		IsTutor:   chat.IsTutor,
 	}, nil
 }
 
@@ -315,18 +281,10 @@ func (s *DatabaseServer) GetChat(ctx context.Context, req *proto.GetChatRequest)
 			}
 			return ""
 		}(),
-		CreatedAt:        chat.CreatedAt.Format(time.RFC3339),
-		UpdatedAt:        chat.UpdatedAt.Format(time.RFC3339),
-		MessageCount:     chat.MessageCount,
-		IsEnd:            chat.IsEnd,
-		IsBooked:         chat.IsBooked,
-		IsReviewed:       chat.IsReviewed,
-		IsTutor:          chat.IsTutor,
-		IsTuting:         chat.IsTuting,
-		TutingProgram:    chat.TutingProgram,
-		TutorCountPerDay: chat.TutorCountPerDay,
-		TutorCount:       chat.TutorCount,
-		FollowupStage:    int32(chat.FollowupStage),
+		CreatedAt:    chat.CreatedAt.Format(time.RFC3339),
+		UpdatedAt:    chat.UpdatedAt.Format(time.RFC3339),
+		MessageCount: chat.MessageCount,
+		IsEnd:        chat.IsEnd,
 	}, nil
 }
 
@@ -344,17 +302,13 @@ func (s *DatabaseServer) GetChatsByUser(ctx context.Context, req *proto.GetChats
 		}
 
 		protoChats = append(protoChats, &proto.ChatResponse{
-			Id:            chat.ID,
-			AssistantId:   chat.AssistantID,
-			CustomerId:    customerId,
-			CreatedAt:     chat.CreatedAt.Format(time.RFC3339),
-			UpdatedAt:     chat.UpdatedAt.Format(time.RFC3339),
-			MessageCount:  chat.MessageCount,
-			IsEnd:         chat.IsEnd,
-			IsBooked:      chat.IsBooked,
-			IsReviewed:    chat.IsReviewed,
-			IsTutor:       chat.IsTutor,
-			FollowupStage: int32(chat.FollowupStage),
+			Id:           chat.ID,
+			AssistantId:  chat.AssistantID,
+			CustomerId:   customerId,
+			CreatedAt:    chat.CreatedAt.Format(time.RFC3339),
+			UpdatedAt:    chat.UpdatedAt.Format(time.RFC3339),
+			MessageCount: chat.MessageCount,
+			IsEnd:        chat.IsEnd,
 		})
 	}
 
@@ -378,18 +332,10 @@ func (s *DatabaseServer) UpdateChat(ctx context.Context, req *proto.UpdateChatRe
 			}
 			return ""
 		}(),
-		CreatedAt:        chat.CreatedAt.Format(time.RFC3339),
-		UpdatedAt:        chat.UpdatedAt.Format(time.RFC3339),
-		MessageCount:     chat.MessageCount,
-		IsEnd:            chat.IsEnd,
-		IsReviewed:       chat.IsReviewed,
-		IsBooked:         chat.IsBooked,
-		IsTutor:          chat.IsTutor,
-		IsTuting:         chat.IsTuting,
-		TutingProgram:    chat.TutingProgram,
-		TutorCountPerDay: chat.TutorCountPerDay,
-		TutorCount:       chat.TutorCount,
-		FollowupStage:    int32(chat.FollowupStage),
+		CreatedAt:    chat.CreatedAt.Format(time.RFC3339),
+		UpdatedAt:    chat.UpdatedAt.Format(time.RFC3339),
+		MessageCount: chat.MessageCount,
+		IsEnd:        chat.IsEnd,
 	}, nil
 }
 
@@ -537,14 +483,10 @@ func (s *DatabaseServer) GetChatPage(ctx context.Context, req *proto.GetChatPage
 				}
 				return ""
 			}(),
-			CreatedAt:     chat.CreatedAt.Format(time.RFC3339),
-			UpdatedAt:     chat.UpdatedAt.Format(time.RFC3339),
-			MessageCount:  chat.MessageCount,
-			IsEnd:         chat.IsEnd,
-			IsBooked:      chat.IsBooked,
-			IsReviewed:    chat.IsReviewed,
-			IsTutor:       chat.IsTutor,
-			FollowupStage: int32(chat.FollowupStage),
+			CreatedAt:    chat.CreatedAt.Format(time.RFC3339),
+			UpdatedAt:    chat.UpdatedAt.Format(time.RFC3339),
+			MessageCount: chat.MessageCount,
+			IsEnd:        chat.IsEnd,
 		})
 	}
 
@@ -554,7 +496,7 @@ func (s *DatabaseServer) GetChatPage(ctx context.Context, req *proto.GetChatPage
 }
 
 func (s *DatabaseServer) GetChatPagesCountByUserID(ctx context.Context, req *proto.GetChatPagesCountByUserIDRequest) (*proto.ChatPagesCountResponse, error) {
-	pagesCount, err := s.chatRepo.GetChatPagesCountByUserID(ctx, req.AssistantIds, req.ChatsPerPage, req.IsTutor)
+	pagesCount, err := s.chatRepo.GetChatPagesCountByUserID(ctx, req.AssistantIds, req.ChatsPerPage)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to get chat pages count by user: %v", err)
 	}
@@ -565,8 +507,8 @@ func (s *DatabaseServer) GetChatPagesCountByUserID(ctx context.Context, req *pro
 }
 
 func (s *DatabaseServer) GetChatPageByUserID(ctx context.Context, req *proto.GetChatPageByUserIDRequest) (*proto.ChatsResponse, error) {
-	log.Printf("[gRPC] GetChatPageByUserID: AssistantIds=%v, Page=%d, ChatsPerPage=%d, IsTutor=%v", req.AssistantIds, req.Page, req.ChatsPerPage, req.IsTutor)
-	chats, err := s.chatRepo.GetChatPageByUserID(ctx, req.AssistantIds, req.Page, req.ChatsPerPage, req.IsTutor)
+	log.Printf("[gRPC] GetChatPageByUserID: AssistantIds=%v, Page=%d, ChatsPerPage=%d", req.AssistantIds, req.Page, req.ChatsPerPage)
+	chats, err := s.chatRepo.GetChatPageByUserID(ctx, req.AssistantIds, req.Page, req.ChatsPerPage)
 	if err != nil {
 		log.Printf("[gRPC] GetChatPageByUserID Error: %v", err)
 		return nil, status.Errorf(codes.Internal, "failed to get chat page by user: %v", err)
@@ -582,22 +524,14 @@ func (s *DatabaseServer) GetChatPageByUserID(ctx context.Context, req *proto.Get
 		}
 
 		protoChats = append(protoChats, &proto.ChatResponse{
-			Id:               chat.ID,
-			AssistantId:      chat.AssistantID,
-			CustomerId:       customerId,
-			Platform:         "", // Platform not stored in chat model
-			CreatedAt:        chat.CreatedAt.Format(time.RFC3339),
-			UpdatedAt:        chat.UpdatedAt.Format(time.RFC3339),
-			MessageCount:     chat.MessageCount,
-			IsEnd:            chat.IsEnd,
-			IsBooked:         chat.IsBooked,
-			IsReviewed:       chat.IsReviewed,
-			IsTutor:          chat.IsTutor,
-			IsTuting:         chat.IsTuting,
-			TutingProgram:    chat.TutingProgram,
-			TutorCountPerDay: chat.TutorCountPerDay,
-			TutorCount:       chat.TutorCount,
-			FollowupStage:    int32(chat.FollowupStage),
+			Id:           chat.ID,
+			AssistantId:  chat.AssistantID,
+			CustomerId:   customerId,
+			Platform:     "", // Platform not stored in chat model
+			CreatedAt:    chat.CreatedAt.Format(time.RFC3339),
+			UpdatedAt:    chat.UpdatedAt.Format(time.RFC3339),
+			MessageCount: chat.MessageCount,
+			IsEnd:        chat.IsEnd,
 		})
 	}
 
@@ -607,7 +541,7 @@ func (s *DatabaseServer) GetChatPageByUserID(ctx context.Context, req *proto.Get
 }
 
 func (s *DatabaseServer) SearchChatsByCustomer(ctx context.Context, req *proto.SearchChatsByCustomerRequest) (*proto.SearchChatsByCustomerResponse, error) {
-	chats, totalCount, err := s.chatRepo.SearchChatsByCustomer(ctx, req.AssistantIds, req.Search, req.IsTutor)
+	chats, totalCount, err := s.chatRepo.SearchChatsByCustomer(ctx, req.AssistantIds, req.Search)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to search chats: %v", err)
 	}
@@ -620,22 +554,14 @@ func (s *DatabaseServer) SearchChatsByCustomer(ctx context.Context, req *proto.S
 		}
 
 		protoChats = append(protoChats, &proto.ChatResponse{
-			Id:               chat.ID,
-			AssistantId:      chat.AssistantID,
-			CustomerId:       customerId,
-			Platform:         "", // Platform not stored in chat model
-			CreatedAt:        chat.CreatedAt.Format(time.RFC3339),
-			UpdatedAt:        chat.UpdatedAt.Format(time.RFC3339),
-			MessageCount:     chat.MessageCount,
-			IsEnd:            chat.IsEnd,
-			IsBooked:         chat.IsBooked,
-			IsReviewed:       chat.IsReviewed,
-			IsTutor:          chat.IsTutor,
-			IsTuting:         chat.IsTuting,
-			TutingProgram:    chat.TutingProgram,
-			TutorCountPerDay: chat.TutorCountPerDay,
-			TutorCount:       chat.TutorCount,
-			FollowupStage:    int32(chat.FollowupStage),
+			Id:           chat.ID,
+			AssistantId:  chat.AssistantID,
+			CustomerId:   customerId,
+			Platform:     "", // Platform not stored in chat model
+			CreatedAt:    chat.CreatedAt.Format(time.RFC3339),
+			UpdatedAt:    chat.UpdatedAt.Format(time.RFC3339),
+			MessageCount: chat.MessageCount,
+			IsEnd:        chat.IsEnd,
 		})
 	}
 
@@ -757,18 +683,10 @@ func (s *DatabaseServer) GetLatestChatByCustomer(ctx context.Context, req *proto
 			}
 			return ""
 		}(),
-		CreatedAt:        chat.CreatedAt.Format(time.RFC3339),
-		UpdatedAt:        chat.UpdatedAt.Format(time.RFC3339),
-		MessageCount:     chat.MessageCount,
-		IsEnd:            chat.IsEnd,
-		IsReviewed:       chat.IsReviewed,
-		IsBooked:         chat.IsBooked,
-		IsTutor:          chat.IsTutor,
-		IsTuting:         chat.IsTuting,
-		TutingProgram:    chat.TutingProgram,
-		TutorCountPerDay: chat.TutorCountPerDay,
-		TutorCount:       chat.TutorCount,
-		FollowupStage:    int32(chat.FollowupStage),
+		CreatedAt:    chat.CreatedAt.Format(time.RFC3339),
+		UpdatedAt:    chat.UpdatedAt.Format(time.RFC3339),
+		MessageCount: chat.MessageCount,
+		IsEnd:        chat.IsEnd,
 	}, nil
 }
 
@@ -823,82 +741,9 @@ func (s *DatabaseServer) DeleteTwilioConfig(ctx context.Context, req *proto.Dele
 	}, nil
 }
 
-func (s *DatabaseServer) GetCampusloginByUserId(ctx context.Context, req *proto.CampusloginRequest) (*proto.CampusloginResponse, error) {
-	record, err := s.campusloginRepo.GetByUserId(req.UserId)
-	if err != nil {
-		return nil, status.Errorf(codes.NotFound, "campuslogin not found: %v", err)
-	}
-
-	return &proto.CampusloginResponse{
-		UserId:                 record.UserId,
-		ContactId:              int32(record.ContactID),
-		ProgramId:              int32(record.ProgramID),
-		IsGrade11OrLower:       record.IsGrade11OrLower,
-		IsInternationalStudent: record.IsInternationalStudent,
-		FirstName:              record.FirstName,
-		Email:                  record.Email,
-	}, nil
-}
-
-func (s *DatabaseServer) GetCampusloginByPhone(ctx context.Context, req *proto.CampusloginPhoneRequest) (*proto.CampusloginResponse, error) {
-	record, err := s.campusloginRepo.GetByPhone(req.Phone)
-	if err != nil {
-		return nil, status.Errorf(codes.NotFound, "campuslogin not found by phone: %v", err)
-	}
-
-	return &proto.CampusloginResponse{
-		UserId:                 record.UserId,
-		ContactId:              int32(record.ContactID),
-		ProgramId:              int32(record.ProgramID),
-		IsGrade11OrLower:       record.IsGrade11OrLower,
-		IsInternationalStudent: record.IsInternationalStudent,
-		FirstName:              record.FirstName,
-		Email:                  record.Email,
-	}, nil
-}
-
-func (s *DatabaseServer) UpsertCampuslogin(ctx context.Context, req *proto.UpsertCampusloginRequest) (*proto.UpsertCampusloginResponse, error) {
-	campuslogin := &models.Campuslogin{
-		UserId:                 req.UserId,
-		ContactID:              int(req.ContactId),
-		ProgramID:              int(req.ProgramId),
-		IsGrade11OrLower:       req.IsGrade11OrLower,
-		IsInternationalStudent: req.IsInternationalStudent,
-		FirstName:              req.FirstName,
-		Email:                  req.Email,
-	}
-
-	if err := s.campusloginRepo.Upsert(campuslogin); err != nil {
-		return nil, status.Errorf(codes.Internal, "failed to upsert campuslogin: %v", err)
-	}
-
-	return &proto.UpsertCampusloginResponse{
-		Success: true,
-	}, nil
-}
-
-func (s *DatabaseServer) DeleteAllChatsAndMessages(ctx context.Context, req *proto.DeleteAllChatsAndMessagesRequest) (*proto.DeleteAllChatsAndMessagesResponse, error) {
-	if err := s.messageRepo.DeleteAllMessages(ctx); err != nil {
-		return nil, status.Errorf(codes.Internal, "failed to delete all messages: %w", err)
-	}
-	if err := s.messageRepo.DeleteAllTutorMessages(ctx); err != nil {
-		return nil, status.Errorf(codes.Internal, "failed to delete all tutor messages: %w", err)
-	}
-	if err := s.chatRepo.DeleteAllChats(ctx); err != nil {
-		return nil, status.Errorf(codes.Internal, "failed to delete all chats: %w", err)
-	}
-
-	return &proto.DeleteAllChatsAndMessagesResponse{
-		Success: true,
-	}, nil
-}
-
 func (s *DatabaseServer) DeleteChatAndMessages(ctx context.Context, req *proto.DeleteChatAndMessagesRequest) (*proto.DeleteChatAndMessagesResponse, error) {
 	if err := s.messageRepo.DeleteMessagesByChatID(ctx, req.ChatId); err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to delete messages for chat %s: %v", req.ChatId, err)
-	}
-	if err := s.messageRepo.DeleteTutorMessagesByChatID(ctx, req.ChatId); err != nil {
-		return nil, status.Errorf(codes.Internal, "failed to delete tutor messages for chat %s: %v", req.ChatId, err)
 	}
 	if err := s.chatRepo.DeleteChat(ctx, req.ChatId); err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to delete chat %s: %v", req.ChatId, err)
@@ -928,34 +773,6 @@ func (s *DatabaseServer) UpdateChatIsEnd(ctx context.Context, req *proto.UpdateC
 		UpdatedAt:    chat.UpdatedAt.Format(time.RFC3339),
 		MessageCount: chat.MessageCount,
 		IsEnd:        chat.IsEnd,
-		IsReviewed:   chat.IsReviewed,
-		IsBooked:     chat.IsBooked,
-		IsTutor:      chat.IsTutor,
-	}, nil
-}
-
-func (s *DatabaseServer) UpdateChatIsBooked(ctx context.Context, req *proto.UpdateChatIsBookedRequest) (*proto.ChatResponse, error) {
-	chat, err := s.chatRepo.UpdateChatIsBooked(ctx, req.Id, req.IsBooked)
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "failed to update chat is_booked: %v", err)
-	}
-
-	return &proto.ChatResponse{
-		Id:          chat.ID,
-		AssistantId: chat.AssistantID,
-		CustomerId: func() string {
-			if chat.CustomerID != nil {
-				return *chat.CustomerID
-			}
-			return ""
-		}(),
-		CreatedAt:    chat.CreatedAt.Format(time.RFC3339),
-		UpdatedAt:    chat.UpdatedAt.Format(time.RFC3339),
-		MessageCount: chat.MessageCount,
-		IsEnd:        chat.IsEnd,
-		IsReviewed:   chat.IsReviewed,
-		IsBooked:     chat.IsBooked,
-		IsTutor:      chat.IsTutor,
 	}, nil
 }
 
@@ -969,20 +786,14 @@ func (s *DatabaseServer) GetPeriodMetrics(ctx context.Context, req *proto.GetPer
 		return nil, status.Errorf(codes.InvalidArgument, "invalid end_time: %v", err)
 	}
 
-	started, completed, _, err := s.chatRepo.GetPeriodMetrics(ctx, req.AssistantId, startTime, endTime)
+	started, completed, err := s.chatRepo.GetPeriodMetrics(ctx, req.AssistantId, startTime, endTime)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to get period metrics: %v", err)
 	}
 
-	booked, err := s.appointmentRepo.CountByDateRange(ctx, startTime, endTime)
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "failed to get booked appointments count: %v", err)
-	}
-
 	return &proto.GetPeriodMetricsResponse{
-		StartedChats: started,
+		StartedChats:   started,
 		CompletedChats: completed,
-		BookedChats: booked,
 	}, nil
 }
 
@@ -1009,18 +820,15 @@ func (s *DatabaseServer) GetPeriodChats(ctx context.Context, req *proto.GetPerio
 		}
 
 		protoChats = append(protoChats, &proto.ChatResponse{
-			Id:            chat.ID,
-			AssistantId:   chat.AssistantID,
-			CustomerId:    customerId,
-			Platform:      "",
-			CreatedAt:     chat.CreatedAt.Format(time.RFC3339),
-			UpdatedAt:     chat.UpdatedAt.Format(time.RFC3339),
-			StartedAt:     chat.StartedAt.Format(time.RFC3339),
-			MessageCount:  chat.MessageCount,
-			IsEnd:         chat.IsEnd,
-			IsBooked:      chat.IsBooked,
-			IsReviewed:    chat.IsReviewed,
-			FollowupStage: int32(chat.FollowupStage),
+			Id:           chat.ID,
+			AssistantId:  chat.AssistantID,
+			CustomerId:   customerId,
+			Platform:     "",
+			CreatedAt:    chat.CreatedAt.Format(time.RFC3339),
+			UpdatedAt:    chat.UpdatedAt.Format(time.RFC3339),
+			StartedAt:    chat.StartedAt.Format(time.RFC3339),
+			MessageCount: chat.MessageCount,
+			IsEnd:        chat.IsEnd,
 		})
 	}
 
@@ -1058,495 +866,3 @@ func (s *DatabaseServer) GetWeeklyChatsStarted(ctx context.Context, req *proto.G
 		Days: protoDays,
 	}, nil
 }
-
-func (s *DatabaseServer) UpdateChatIsReviewed(ctx context.Context, req *proto.UpdateChatIsReviewedRequest) (*proto.ChatResponse, error) {
-	chat, err := s.chatRepo.UpdateChatIsReviewed(ctx, req.Id, req.IsReviewed)
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "failed to update chat is_reviewed: %v", err)
-	}
-
-	return &proto.ChatResponse{
-		Id:          chat.ID,
-		AssistantId: chat.AssistantID,
-		CustomerId: func() string {
-			if chat.CustomerID != nil {
-				return *chat.CustomerID
-			}
-			return ""
-		}(),
-		CreatedAt:    chat.CreatedAt.Format(time.RFC3339),
-		UpdatedAt:    chat.UpdatedAt.Format(time.RFC3339),
-		MessageCount: chat.MessageCount,
-		IsEnd:        chat.IsEnd,
-		IsReviewed:   chat.IsReviewed,
-	}, nil
-}
-
-func (s *DatabaseServer) SetCampusloginFlags(ctx context.Context, req *proto.SetCampusloginFlagsRequest) (*proto.SetCampusloginFlagsResponse, error) {
-	if err := s.campusloginRepo.SetFlags(req.UserId, req.IsGrade11OrLower, req.IsInternationalStudent); err != nil {
-		return nil, status.Errorf(codes.Internal, "failed to set campuslogin flags: %v", err)
-	}
-
-	return &proto.SetCampusloginFlagsResponse{
-		Success: true,
-	}, nil
-}
-
-func (s *DatabaseServer) UpdateChatFollowupStage(ctx context.Context, req *proto.UpdateChatFollowupStageRequest) (*proto.ChatResponse, error) {
-	chat, err := s.chatRepo.UpdateChatFollowupStage(ctx, req.Id, int(req.Stage))
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "failed to update chat followup stage: %v", err)
-	}
-
-	return &proto.ChatResponse{
-		Id:          chat.ID,
-		AssistantId: chat.AssistantID,
-		CustomerId: func() string {
-			if chat.CustomerID != nil {
-				return *chat.CustomerID
-			}
-			return ""
-		}(),
-		CreatedAt:     chat.CreatedAt.Format(time.RFC3339),
-		UpdatedAt:     chat.UpdatedAt.Format(time.RFC3339),
-		MessageCount:  chat.MessageCount,
-		IsEnd:         chat.IsEnd,
-		FollowupStage: int32(chat.FollowupStage),
-	}, nil
-}
-
-func (s *DatabaseServer) GetChatsForFollowup(ctx context.Context, req *proto.GetChatsForFollowupRequest) (*proto.ChatsResponse, error) {
-	chats, err := s.chatRepo.GetChatsForFollowup(ctx)
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "failed to get chats for followup: %v", err)
-	}
-
-	var protoChats []*proto.ChatResponse
-	for _, chat := range chats {
-		customerId := ""
-		if chat.CustomerID != nil {
-			customerId = *chat.CustomerID
-		}
-
-		protoChats = append(protoChats, &proto.ChatResponse{
-			Id:            chat.ID,
-			AssistantId:   chat.AssistantID,
-			CustomerId:    customerId,
-			CreatedAt:     chat.CreatedAt.Format(time.RFC3339),
-			UpdatedAt:     chat.UpdatedAt.Format(time.RFC3339),
-			MessageCount:  chat.MessageCount,
-			IsEnd:         chat.IsEnd,
-			FollowupStage: int32(chat.FollowupStage),
-		})
-	}
-
-	return &proto.ChatsResponse{
-		Chats: protoChats,
-	}, nil
-}
-
-func (s *DatabaseServer) GetUnreviewedActiveChats(ctx context.Context, req *proto.GetUnreviewedActiveChatsRequest) (*proto.ChatsResponse, error) {
-	chats, err := s.chatRepo.GetUnreviewedActiveChats(ctx)
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "failed to get unreviewed active chats: %v", err)
-	}
-
-	var protoChats []*proto.ChatResponse
-	for _, chat := range chats {
-		customerId := ""
-		if chat.CustomerID != nil {
-			customerId = *chat.CustomerID
-		}
-
-		protoChats = append(protoChats, &proto.ChatResponse{
-			Id:            chat.ID,
-			AssistantId:   chat.AssistantID,
-			CustomerId:    customerId,
-			CreatedAt:     chat.CreatedAt.Format(time.RFC3339),
-			UpdatedAt:     chat.UpdatedAt.Format(time.RFC3339),
-			MessageCount:  chat.MessageCount,
-			IsEnd:         chat.IsEnd,
-			FollowupStage: int32(chat.FollowupStage),
-			IsReviewed:    chat.IsReviewed,
-		})
-	}
-
-	return &proto.ChatsResponse{
-		Chats: protoChats,
-	}, nil
-}
-
-func (s *DatabaseServer) UpsertGoogleSyncToken(ctx context.Context, req *proto.UpsertGoogleSyncTokenRequest) (*proto.GoogleSyncTokenResponse, error) {
-	sync := &models.GoogleSync{
-		CalendarID: req.CalendarId,
-		SyncToken:  req.SyncToken,
-		ChannelID:  req.ChannelId,
-		ResourceID: req.ResourceId,
-	}
-	if req.ExpiresAt != "" {
-		if t, err := time.Parse(time.RFC3339, req.ExpiresAt); err == nil {
-			sync.ExpiresAt = t
-		}
-	}
-
-	if err := s.googleSyncRepo.Upsert(sync); err != nil {
-		return nil, status.Errorf(codes.Internal, "failed to upsert google sync token: %v", err)
-	}
-
-	expiresAtStr := ""
-	if !sync.ExpiresAt.IsZero() {
-		expiresAtStr = sync.ExpiresAt.Format(time.RFC3339)
-	}
-
-	return &proto.GoogleSyncTokenResponse{
-		CalendarId: sync.CalendarID,
-		SyncToken:  sync.SyncToken,
-		ChannelId:  sync.ChannelID,
-		ResourceId: sync.ResourceID,
-		UpdatedAt:  sync.UpdatedAt.Format(time.RFC3339),
-		ExpiresAt:  expiresAtStr,
-	}, nil
-}
-
-func (s *DatabaseServer) GetGoogleSyncToken(ctx context.Context, req *proto.GetGoogleSyncTokenRequest) (*proto.GoogleSyncTokenResponse, error) {
-	sync, err := s.googleSyncRepo.GetByCalendarID(req.CalendarId)
-	if err != nil {
-		return nil, status.Errorf(codes.NotFound, "google sync token not found: %v", err)
-	}
-
-	expiresAtStr := ""
-	if !sync.ExpiresAt.IsZero() {
-		expiresAtStr = sync.ExpiresAt.Format(time.RFC3339)
-	}
-
-	return &proto.GoogleSyncTokenResponse{
-		CalendarId: sync.CalendarID,
-		SyncToken:  sync.SyncToken,
-		ChannelId:  sync.ChannelID,
-		ResourceId: sync.ResourceID,
-		UpdatedAt:  sync.UpdatedAt.Format(time.RFC3339),
-		ExpiresAt:  expiresAtStr,
-	}, nil
-}
-
-func (s *DatabaseServer) CreateAppointment(ctx context.Context, req *proto.CreateAppointmentRequest) (*proto.AppointmentResponse, error) {
-	startTime, err := time.Parse(time.RFC3339, req.StartTime)
-	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "invalid start_time format: %v", err)
-	}
-
-	endTime, err := time.Parse(time.RFC3339, req.EndTime)
-	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "invalid end_time format: %v", err)
-	}
-
-	createdAt := time.Now()
-	if req.CreatedAt != "" {
-		if t, err := time.Parse(time.RFC3339, req.CreatedAt); err == nil {
-			createdAt = t
-		} else {
-			log.Printf("Failed to parse created_at '%s', falling back to time.Now(): %v", req.CreatedAt, err)
-		}
-	}
-
-	appointment := &models.Appointment{
-		GoogleEventID: req.GoogleEventId,
-		Title:         req.Title,
-		StartTime:     startTime,
-		EndTime:       endTime,
-		Status:        req.Status,
-		Description:   req.Description,
-		CalendarID:    req.CalendarId,
-		CampusLogin:   req.CampusLogin,
-		CreatedAt:     createdAt,
-	}
-
-	if err := s.appointmentRepo.Create(appointment); err != nil {
-		return nil, status.Errorf(codes.Internal, "failed to create appointment: %v", err)
-	}
-
-	return &proto.AppointmentResponse{
-		Id:            appointment.ID,
-		GoogleEventId: appointment.GoogleEventID,
-		Title:         appointment.Title,
-		StartTime:     appointment.StartTime.Format(time.RFC3339),
-		EndTime:       appointment.EndTime.Format(time.RFC3339),
-		Status:        appointment.Status,
-		Description:   appointment.Description,
-		CalendarId:    appointment.CalendarID,
-		CampusLogin:   appointment.CampusLogin,
-		CreatedAt:     appointment.CreatedAt.Format(time.RFC3339),
-	}, nil
-}
-
-func (s *DatabaseServer) GetAppointmentByGoogleEventID(ctx context.Context, req *proto.GetAppointmentByGoogleEventIDRequest) (*proto.AppointmentResponse, error) {
-	appointment, err := s.appointmentRepo.GetByGoogleEventID(req.GoogleEventId)
-	if err != nil {
-		return nil, status.Errorf(codes.NotFound, "appointment not found: %v", err)
-	}
-
-	return &proto.AppointmentResponse{
-		Id:            appointment.ID,
-		GoogleEventId: appointment.GoogleEventID,
-		Title:         appointment.Title,
-		StartTime:     appointment.StartTime.Format(time.RFC3339),
-		EndTime:       appointment.EndTime.Format(time.RFC3339),
-		Status:        appointment.Status,
-		Description:   appointment.Description,
-		CalendarId:    appointment.CalendarID,
-		CampusLogin:   appointment.CampusLogin,
-		CreatedAt:     appointment.CreatedAt.Format(time.RFC3339),
-	}, nil
-}
-
-func (s *DatabaseServer) CountAppointmentsBySlot(ctx context.Context, req *proto.CountAppointmentsBySlotRequest) (*proto.CountAppointmentsBySlotResponse, error) {
-	startTime, err := time.Parse(time.RFC3339, req.StartTime)
-	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "invalid start_time format: %v", err)
-	}
-
-	count, err := s.appointmentRepo.CountBySlot(ctx, req.CalendarId, startTime)
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "failed to count appointments by slot: %v", err)
-	}
-
-	return &proto.CountAppointmentsBySlotResponse{Count: count}, nil
-}
-
-
-func (s *DatabaseServer) GetUnsyncedCampusloginAppointments(ctx context.Context, req *proto.GetUnsyncedCampusloginAppointmentsRequest) (*proto.AppointmentsResponse, error) {
-	appointments, err := s.appointmentRepo.GetUnsyncedCampusloginAppointments(ctx)
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "failed to get unsynced appointments: %v", err)
-	}
-
-	var pbAppointments []*proto.AppointmentResponse
-	for _, app := range appointments {
-		pbAppointments = append(pbAppointments, &proto.AppointmentResponse{
-			Id:            app.ID,
-			GoogleEventId: app.GoogleEventID,
-			Title:         app.Title,
-			StartTime:     app.StartTime.Format(time.RFC3339),
-			EndTime:       app.EndTime.Format(time.RFC3339),
-			Status:        app.Status,
-			Description:   app.Description,
-			CalendarId:    app.CalendarID,
-			CampusLogin:   app.CampusLogin,
-			CreatedAt:     app.CreatedAt.Format(time.RFC3339),
-		})
-	}
-
-	return &proto.AppointmentsResponse{Appointments: pbAppointments}, nil
-}
-
-func (s *DatabaseServer) UpdateAppointmentCampusloginStatus(ctx context.Context, req *proto.UpdateAppointmentCampusloginStatusRequest) (*proto.AppointmentResponse, error) {
-	app, err := s.appointmentRepo.UpdateAppointmentCampusloginStatus(ctx, req.Id, req.CampusLogin)
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "failed to update appointment campus login status: %v", err)
-	}
-
-	return &proto.AppointmentResponse{
-		Id:            app.ID,
-		GoogleEventId: app.GoogleEventID,
-		Title:         app.Title,
-		StartTime:     app.StartTime.Format(time.RFC3339),
-		EndTime:       app.EndTime.Format(time.RFC3339),
-		Status:        app.Status,
-		Description:   app.Description,
-		CalendarId:    app.CalendarID,
-		CampusLogin:   app.CampusLogin,
-		CreatedAt:     app.CreatedAt.Format(time.RFC3339),
-	}, nil
-}
-
-func (s *DatabaseServer) GetAppointmentByID(ctx context.Context, req *proto.GetAppointmentByIDRequest) (*proto.AppointmentResponse, error) {
-	appointment, err := s.appointmentRepo.GetByID(req.Id)
-	if err != nil {
-		return nil, status.Errorf(codes.NotFound, "appointment not found: %v", err)
-	}
-
-	return &proto.AppointmentResponse{
-		Id:            appointment.ID,
-		GoogleEventId: appointment.GoogleEventID,
-		Title:         appointment.Title,
-		StartTime:     appointment.StartTime.Format(time.RFC3339),
-		EndTime:       appointment.EndTime.Format(time.RFC3339),
-		Status:        appointment.Status,
-		Description:   appointment.Description,
-		CalendarId:    appointment.CalendarID,
-		CampusLogin:   appointment.CampusLogin,
-		CreatedAt:     appointment.CreatedAt.Format(time.RFC3339),
-	}, nil
-}
-
-func (s *DatabaseServer) UpdateChatIsTutor(ctx context.Context, req *proto.UpdateChatIsTutorRequest) (*proto.ChatResponse, error) {
-	chat, err := s.chatRepo.UpdateChatIsTutor(ctx, req.Id, req.IsTutor)
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "failed to update chat is_tutor: %v", err)
-	}
-
-	return &proto.ChatResponse{
-		Id:          chat.ID,
-		AssistantId: chat.AssistantID,
-		CustomerId: func() string {
-			if chat.CustomerID != nil {
-				return *chat.CustomerID
-			}
-			return ""
-		}(),
-		CreatedAt:        chat.CreatedAt.Format(time.RFC3339),
-		UpdatedAt:        chat.UpdatedAt.Format(time.RFC3339),
-		MessageCount:     chat.MessageCount,
-		IsEnd:            chat.IsEnd,
-		IsReviewed:       chat.IsReviewed,
-		IsBooked:         chat.IsBooked,
-		IsTutor:          chat.IsTutor,
-		IsTuting:         chat.IsTuting,
-		TutingProgram:    chat.TutingProgram,
-		TutorCountPerDay: chat.TutorCountPerDay,
-		TutorCount:       chat.TutorCount,
-		FollowupStage:    int32(chat.FollowupStage),
-	}, nil
-}
-
-func (s *DatabaseServer) SaveTutorMessage(ctx context.Context, req *proto.SaveMessageRequest) (*proto.MessageResponse, error) {
-	message, err := s.messageRepo.SaveTutorMessage(ctx, req.GetChatId(), req.GetRole(), req.GetContent(), req.GetPlatform(), req.GetTime())
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "failed to save tutor message: %v", err)
-	}
-
-	// Update message count and updated_at for the chat
-	if err := s.chatRepo.UpdateMessageCount(ctx, req.GetChatId()); err != nil {
-		log.Printf("Warning: failed to update message count after saving tutor message: %v", err)
-	}
-
-	return &proto.MessageResponse{
-		Id:        fmt.Sprintf("%d", message.ID),
-		ChatId:    message.ChatID,
-		Role:      message.Role,
-		Content:   message.Content,
-		Platform:  req.GetPlatform(),
-		CreatedAt: message.Time.Format(time.RFC3339),
-	}, nil
-}
-
-func (s *DatabaseServer) GetTutorChatMessages(ctx context.Context, req *proto.GetChatMessagesRequest) (*proto.MessagesResponse, error) {
-	messages, err := s.messageRepo.GetTutorMessagesByChatID(ctx, req.GetChatId(), req.GetLimit(), req.GetOffset())
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "failed to get tutor messages: %v", err)
-	}
-
-	var protoMessages []*proto.MessageResponse
-	for _, msg := range messages {
-		protoMessages = append(protoMessages, &proto.MessageResponse{
-			Id:        fmt.Sprintf("%d", msg.ID),
-			ChatId:    msg.ChatID,
-			Role:      msg.Role,
-			Content:   msg.Content,
-			Platform:  "",
-			CreatedAt: msg.Time.Format(time.RFC3339),
-		})
-	}
-
-	return &proto.MessagesResponse{
-		Messages: protoMessages,
-	}, nil
-}
-
-func (s *DatabaseServer) GetAllTutorChatMessages(ctx context.Context, req *proto.GetAllChatMessagesRequest) (*proto.MessagesResponse, error) {
-	messages, err := s.messageRepo.GetAllTutorChatMessages(ctx, req.ChatId)
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "failed to get all tutor messages: %v", err)
-	}
-
-	var protoMessages []*proto.MessageResponse
-	for _, msg := range messages {
-		protoMessages = append(protoMessages, &proto.MessageResponse{
-			Id:        fmt.Sprintf("%d", msg.ID),
-			ChatId:    msg.ChatID,
-			Role:      msg.Role,
-			Content:   msg.Content,
-			Platform:  "",
-			CreatedAt: msg.Time.Format(time.RFC3339),
-		})
-	}
-
-	return &proto.MessagesResponse{
-		Messages: protoMessages,
-	}, nil
-}
-
-func (s *DatabaseServer) UpdateChatTutorState(ctx context.Context, req *proto.UpdateChatTutorStateRequest) (*proto.ChatResponse, error) {
-	chat, err := s.chatRepo.UpdateChatTutorState(ctx, req.Id, req.IsTuting, req.TutingProgram, req.TutorCountPerDay, req.TutorCount)
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "failed to update chat tutor state: %v", err)
-	}
-
-	return &proto.ChatResponse{
-		Id:          chat.ID,
-		AssistantId: chat.AssistantID,
-		CustomerId: func() string {
-			if chat.CustomerID != nil {
-				return *chat.CustomerID
-			}
-			return ""
-		}(),
-		CreatedAt:        chat.CreatedAt.Format(time.RFC3339),
-		UpdatedAt:        chat.UpdatedAt.Format(time.RFC3339),
-		MessageCount:     chat.MessageCount,
-		IsEnd:            chat.IsEnd,
-		IsReviewed:       chat.IsReviewed,
-		IsBooked:         chat.IsBooked,
-		IsTutor:          chat.IsTutor,
-		IsTuting:         chat.IsTuting,
-		TutingProgram:    chat.TutingProgram,
-		TutorCountPerDay: chat.TutorCountPerDay,
-		TutorCount:       chat.TutorCount,
-		FollowupStage:    int32(chat.FollowupStage),
-	}, nil
-}
-
-func (s *DatabaseServer) GetActiveTutorChats(ctx context.Context, req *proto.GetActiveTutorChatsRequest) (*proto.ChatsResponse, error) {
-	chats, err := s.chatRepo.GetActiveTutorChats(ctx)
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "failed to get active tutor chats: %v", err)
-	}
-
-	var protoChats []*proto.ChatResponse
-	for _, chat := range chats {
-		customerId := ""
-		if chat.CustomerID != nil {
-			customerId = *chat.CustomerID
-		}
-
-		protoChats = append(protoChats, &proto.ChatResponse{
-			Id:               chat.ID,
-			AssistantId:      chat.AssistantID,
-			CustomerId:       customerId,
-			CreatedAt:        chat.CreatedAt.Format(time.RFC3339),
-			UpdatedAt:        chat.UpdatedAt.Format(time.RFC3339),
-			MessageCount:     chat.MessageCount,
-			IsEnd:            chat.IsEnd,
-			IsReviewed:       chat.IsReviewed,
-			IsBooked:         chat.IsBooked,
-			IsTutor:          chat.IsTutor,
-			IsTuting:         chat.IsTuting,
-			TutingProgram:    chat.TutingProgram,
-			TutorCountPerDay: chat.TutorCountPerDay,
-			TutorCount:       chat.TutorCount,
-			FollowupStage:    int32(chat.FollowupStage),
-		})
-	}
-
-	return &proto.ChatsResponse{
-		Chats: protoChats,
-	}, nil
-}
-
-func (s *DatabaseServer) DeleteTutorMessagesByChat(ctx context.Context, req *proto.DeleteTutorMessagesByChatRequest) (*proto.DeleteMessageResponse, error) {
-	if err := s.messageRepo.DeleteTutorMessagesByChatID(ctx, req.ChatId); err != nil {
-		return nil, status.Errorf(codes.Internal, "failed to delete tutor messages: %v", err)
-	}
-	return &proto.DeleteMessageResponse{Success: true}, nil
-}
-

@@ -20,24 +20,15 @@ type ChatRepository interface {
 	GetChatsByUserID(ctx context.Context, assistantIDs []string, limit, offset int32) ([]*models.Chat, error)
 	UpdateChat(ctx context.Context, id, assistantID, customerID string) (*models.Chat, error)
 	UpdateChatIsEnd(ctx context.Context, id string, isEnd bool) (*models.Chat, error)
-	UpdateChatIsBooked(ctx context.Context, id string, isBooked bool) (*models.Chat, error)
-	UpdateChatIsReviewed(ctx context.Context, id string, isReviewed bool) (*models.Chat, error)
-	UpdateChatIsTutor(ctx context.Context, id string, isTutor bool) (*models.Chat, error)
-	UpdateChatTutorState(ctx context.Context, id string, isTuting bool, tutingProgram string, tutorCountPerDay, tutorCount int32) (*models.Chat, error)
-	GetActiveTutorChats(ctx context.Context) ([]*models.Chat, error)
-	GetUnreviewedActiveChats(ctx context.Context) ([]*models.Chat, error)
 	DeleteChat(ctx context.Context, id string) error
-	DeleteAllChats(ctx context.Context) error
 	GetChatPagesCount(ctx context.Context, assistantID string, chatsPerPage int32) (int32, error)
 	GetChatPage(ctx context.Context, assistantID string, page, chatsPerPage int32) ([]*models.Chat, error)
-	GetChatPagesCountByUserID(ctx context.Context, assistantIDs []string, chatsPerPage int32, isTutor bool) (int32, error)
-	GetChatPageByUserID(ctx context.Context, assistantIDs []string, page, chatsPerPage int32, isTutor bool) ([]*models.Chat, error)
-	SearchChatsByCustomer(ctx context.Context, assistantIDs []string, search string, isTutor bool) ([]*models.Chat, int32, error)
+	GetChatPagesCountByUserID(ctx context.Context, assistantIDs []string, chatsPerPage int32) (int32, error)
+	GetChatPageByUserID(ctx context.Context, assistantIDs []string, page, chatsPerPage int32) ([]*models.Chat, error)
+	SearchChatsByCustomer(ctx context.Context, assistantIDs []string, search string) ([]*models.Chat, int32, error)
 	GetLatestChatByCustomer(ctx context.Context, assistantID, customerID string) (*models.Chat, error)
 	UpdateMessageCount(ctx context.Context, chatID string) error
-	GetChatsForFollowup(ctx context.Context) ([]*models.Chat, error)
-	UpdateChatFollowupStage(ctx context.Context, id string, stage int) (*models.Chat, error)
-	GetPeriodMetrics(ctx context.Context, assistantID string, startTime, endTime time.Time) (int32, int32, int32, error)
+	GetPeriodMetrics(ctx context.Context, assistantID string, startTime, endTime time.Time) (int32, int32, error)
 	GetPeriodChats(ctx context.Context, assistantID string, startTime, endTime time.Time, category string, limit, offset int32) ([]*models.Chat, int64, error)
 	GetWeeklyChatsStarted(ctx context.Context, assistantID string, startTime time.Time, timezone string) ([]DailyCount, error)
 }
@@ -134,16 +125,13 @@ func (r *chatRepository) GetChatPage(ctx context.Context, assistantID string, pa
 	return chats, nil
 }
 
-func (r *chatRepository) GetChatPagesCountByUserID(ctx context.Context, assistantIDs []string, chatsPerPage int32, isTutor bool) (int32, error) {
+func (r *chatRepository) GetChatPagesCountByUserID(ctx context.Context, assistantIDs []string, chatsPerPage int32) (int32, error) {
 	if len(assistantIDs) == 0 {
 		return 0, nil
 	}
-	log.Printf("GetChatPagesCountByUserID: assistantIDs=%v, chatsPerPage=%d, isTutor=%v", assistantIDs, chatsPerPage, isTutor)
+	log.Printf("GetChatPagesCountByUserID: assistantIDs=%v, chatsPerPage=%d", assistantIDs, chatsPerPage)
 	var count int64
 	query := r.db.WithContext(ctx).Debug().Model(&models.Chat{}).Where("assistant_id IN ?", assistantIDs)
-	if isTutor {
-		query = query.Where("is_tutor = ?", true)
-	}
 
 	if err := query.Count(&count).Error; err != nil {
 		return 0, fmt.Errorf("failed to count chats by user id: %w", err)
@@ -157,7 +145,7 @@ func (r *chatRepository) GetChatPagesCountByUserID(ctx context.Context, assistan
 	return pagesCount, nil
 }
 
-func (r *chatRepository) GetChatPageByUserID(ctx context.Context, assistantIDs []string, page, chatsPerPage int32, isTutor bool) ([]*models.Chat, error) {
+func (r *chatRepository) GetChatPageByUserID(ctx context.Context, assistantIDs []string, page, chatsPerPage int32) ([]*models.Chat, error) {
 	if len(assistantIDs) == 0 {
 		return []*models.Chat{}, nil
 	}
@@ -170,13 +158,10 @@ func (r *chatRepository) GetChatPageByUserID(ctx context.Context, assistantIDs [
 
 	offset := (page - 1) * chatsPerPage
 
-	log.Printf("GetChatPageByUserID: assistantIDs=%v, page=%d, chatsPerPage=%d, offset=%d, isTutor=%v", assistantIDs, page, chatsPerPage, offset, isTutor)
+	log.Printf("GetChatPageByUserID: assistantIDs=%v, page=%d, chatsPerPage=%d, offset=%d", assistantIDs, page, chatsPerPage, offset)
 
 	var chats []*models.Chat
 	query := r.db.WithContext(ctx).Debug().Where("assistant_id IN ?", assistantIDs)
-	if isTutor {
-		query = query.Where("is_tutor = ?", true)
-	}
 
 	if err := query.Order("created_at DESC").Limit(int(chatsPerPage)).Offset(int(offset)).Find(&chats).Error; err != nil {
 		return nil, fmt.Errorf("failed to get chat page by user id: %w", err)
@@ -187,7 +172,7 @@ func (r *chatRepository) GetChatPageByUserID(ctx context.Context, assistantIDs [
 	return chats, nil
 }
 
-func (r *chatRepository) SearchChatsByCustomer(ctx context.Context, assistantIDs []string, search string, isTutor bool) ([]*models.Chat, int32, error) {
+func (r *chatRepository) SearchChatsByCustomer(ctx context.Context, assistantIDs []string, search string) ([]*models.Chat, int32, error) {
 	if len(assistantIDs) == 0 {
 		return []*models.Chat{}, 0, nil
 	}
@@ -195,9 +180,6 @@ func (r *chatRepository) SearchChatsByCustomer(ctx context.Context, assistantIDs
 	var count int64
 
 	query := r.db.WithContext(ctx).Model(&models.Chat{}).Where("assistant_id IN ?", assistantIDs)
-	if isTutor {
-		query = query.Where("is_tutor = ?", true)
-	}
 
 	// If search term is provided, search by customer_id
 	if search != "" {
@@ -235,20 +217,9 @@ func (r *chatRepository) GetLatestChatByCustomer(ctx context.Context, assistantI
 }
 
 func (r *chatRepository) UpdateMessageCount(ctx context.Context, chatID string) error {
-	var chat models.Chat
-	if err := r.db.WithContext(ctx).Select("id", "is_tutor").Where("id = ?", chatID).First(&chat).Error; err != nil {
-		return fmt.Errorf("failed to find chat for message count update: %w", err)
-	}
-
 	var messageCount int64
-	if chat.IsTutor {
-		if err := r.db.WithContext(ctx).Model(&models.TutorMessage{}).Where("chat_id = ?", chatID).Count(&messageCount).Error; err != nil {
-			return fmt.Errorf("failed to count tutor messages: %w", err)
-		}
-	} else {
-		if err := r.db.WithContext(ctx).Model(&models.Message{}).Where("chat_id = ?", chatID).Count(&messageCount).Error; err != nil {
-			return fmt.Errorf("failed to count messages: %w", err)
-		}
+	if err := r.db.WithContext(ctx).Model(&models.Message{}).Where("chat_id = ?", chatID).Count(&messageCount).Error; err != nil {
+		return fmt.Errorf("failed to count messages: %w", err)
 	}
 
 	// Update the message count in the chat
@@ -315,14 +286,6 @@ func (r *chatRepository) DeleteChat(ctx context.Context, id string) error {
 	return nil
 }
 
-func (r *chatRepository) DeleteAllChats(ctx context.Context) error {
-	result := r.db.WithContext(ctx).Session(&gorm.Session{AllowGlobalUpdate: true}).Delete(&models.Chat{})
-	if result.Error != nil {
-		return fmt.Errorf("failed to delete all chats: %w", result.Error)
-	}
-	return nil
-}
-
 func (r *chatRepository) UpdateChatIsEnd(ctx context.Context, id string, isEnd bool) (*models.Chat, error) {
 	var chat models.Chat
 	if err := r.db.WithContext(ctx).Where("id = ?", id).First(&chat).Error; err != nil {
@@ -342,157 +305,9 @@ func (r *chatRepository) UpdateChatIsEnd(ctx context.Context, id string, isEnd b
 	return &chat, nil
 }
 
-func (r *chatRepository) UpdateChatIsBooked(ctx context.Context, id string, isBooked bool) (*models.Chat, error) {
-	var chat models.Chat
-	if err := r.db.WithContext(ctx).Where("id = ?", id).First(&chat).Error; err != nil {
-		if err == gorm.ErrRecordNotFound {
-			return nil, fmt.Errorf("chat not found")
-		}
-		return nil, fmt.Errorf("failed to get chat: %w", err)
-	}
-
-	chat.IsBooked = isBooked
-	chat.UpdatedAt = time.Now()
-
-	if err := r.db.WithContext(ctx).Save(&chat).Error; err != nil {
-		return nil, fmt.Errorf("failed to update chat is_booked: %w", err)
-	}
-
-	return &chat, nil
-}
-
-func (r *chatRepository) UpdateChatIsReviewed(ctx context.Context, id string, isReviewed bool) (*models.Chat, error) {
-	var chat models.Chat
-	if err := r.db.WithContext(ctx).Where("id = ?", id).First(&chat).Error; err != nil {
-		if err == gorm.ErrRecordNotFound {
-			return nil, fmt.Errorf("chat not found")
-		}
-		return nil, fmt.Errorf("failed to get chat: %w", err)
-	}
-
-	chat.IsReviewed = isReviewed
-	chat.UpdatedAt = time.Now()
-
-	if err := r.db.WithContext(ctx).Save(&chat).Error; err != nil {
-		return nil, fmt.Errorf("failed to update chat is_reviewed: %w", err)
-	}
-
-	return &chat, nil
-}
-
-func (r *chatRepository) UpdateChatIsTutor(ctx context.Context, id string, isTutor bool) (*models.Chat, error) {
-	var chat models.Chat
-	if err := r.db.WithContext(ctx).Where("id = ?", id).First(&chat).Error; err != nil {
-		if err == gorm.ErrRecordNotFound {
-			return nil, fmt.Errorf("chat not found")
-		}
-		return nil, fmt.Errorf("failed to get chat: %w", err)
-	}
-
-	if isTutor {
-		// Clear any previous tutor messages when (re-)triggering tutor mode
-		if err := r.db.WithContext(ctx).Where("chat_id = ?", id).Delete(&models.TutorMessage{}).Error; err != nil {
-			return nil, fmt.Errorf("failed to clear previous tutor messages: %w", err)
-		}
-		chat.IsEnd = false
-		chat.IsTuting = false
-		chat.TutingProgram = ""
-		chat.TutorCountPerDay = 0
-		chat.TutorCount = 0
-		chat.MessageCount = 0
-	}
-	chat.IsTutor = isTutor
-	chat.UpdatedAt = time.Now()
-
-	if err := r.db.WithContext(ctx).Save(&chat).Error; err != nil {
-		return nil, fmt.Errorf("failed to update chat is_tutor: %w", err)
-	}
-
-	return &chat, nil
-}
-
-func (r *chatRepository) UpdateChatTutorState(ctx context.Context, id string, isTuting bool, tutingProgram string, tutorCountPerDay, tutorCount int32) (*models.Chat, error) {
-	var chat models.Chat
-	if err := r.db.WithContext(ctx).Where("id = ?", id).First(&chat).Error; err != nil {
-		if err == gorm.ErrRecordNotFound {
-			return nil, fmt.Errorf("chat not found")
-		}
-		return nil, fmt.Errorf("failed to get chat: %w", err)
-	}
-
-	chat.IsTuting = isTuting
-	chat.TutingProgram = tutingProgram
-	chat.TutorCountPerDay = tutorCountPerDay
-	chat.TutorCount = tutorCount
-	chat.UpdatedAt = time.Now()
-
-	if err := r.db.WithContext(ctx).Save(&chat).Error; err != nil {
-		return nil, fmt.Errorf("failed to update chat tutor state: %w", err)
-	}
-
-	return &chat, nil
-}
-
-func (r *chatRepository) GetActiveTutorChats(ctx context.Context) ([]*models.Chat, error) {
-	var chats []*models.Chat
-
-	if err := r.db.WithContext(ctx).
-		Where("is_tutor = ? AND is_end = ?", true, false).
-		Order("updated_at ASC").
-		Find(&chats).Error; err != nil {
-		return nil, fmt.Errorf("failed to get active tutor chats: %w", err)
-	}
-
-	return chats, nil
-}
-
-func (r *chatRepository) GetUnreviewedActiveChats(ctx context.Context) ([]*models.Chat, error) {
-	var chats []*models.Chat
-
-	if err := r.db.WithContext(ctx).
-		Where("is_end = ? AND is_reviewed = ? AND is_tutor = ?", false, false, false).
-		Order("updated_at ASC").
-		Find(&chats).Error; err != nil {
-		return nil, fmt.Errorf("failed to get unreviewed active chats: %w", err)
-	}
-
-	return chats, nil
-}
-
-func (r *chatRepository) GetChatsForFollowup(ctx context.Context) ([]*models.Chat, error) {
-	var chats []*models.Chat
-
-	if err := r.db.WithContext(ctx).
-		Where("is_end = ? AND is_tutor = ?", false, false).
-		Order("updated_at ASC").
-		Find(&chats).Error; err != nil {
-		return nil, fmt.Errorf("failed to get chats for followup: %w", err)
-	}
-
-	return chats, nil
-}
-
-func (r *chatRepository) UpdateChatFollowupStage(ctx context.Context, id string, stage int) (*models.Chat, error) {
-	var chat models.Chat
-	if err := r.db.WithContext(ctx).Where("id = ?", id).First(&chat).Error; err != nil {
-		if err == gorm.ErrRecordNotFound {
-			return nil, fmt.Errorf("chat not found")
-		}
-		return nil, fmt.Errorf("failed to get chat: %w", err)
-	}
-
-	chat.FollowupStage = stage
-	if err := r.db.WithContext(ctx).Save(&chat).Error; err != nil {
-		return nil, fmt.Errorf("failed to update chat followup stage: %w", err)
-	}
-
-	return &chat, nil
-}
-
-func (r *chatRepository) GetPeriodMetrics(ctx context.Context, assistantID string, startTime, endTime time.Time) (int32, int32, int32, error) {
+func (r *chatRepository) GetPeriodMetrics(ctx context.Context, assistantID string, startTime, endTime time.Time) (int32, int32, error) {
 	var startedCount int64
 	var completedCount int64
-	var bookedCount int64
 
 	query := r.db.WithContext(ctx).Model(&models.Chat{}).Where("started_at >= ? AND started_at < ?", startTime, endTime)
 	if assistantID != "" {
@@ -500,7 +315,7 @@ func (r *chatRepository) GetPeriodMetrics(ctx context.Context, assistantID strin
 	}
 
 	if err := query.Count(&startedCount).Error; err != nil {
-		return 0, 0, 0, fmt.Errorf("failed to get started chats count: %w", err)
+		return 0, 0, fmt.Errorf("failed to get started chats count: %w", err)
 	}
 
 	// Use a fresh query for completed Count since the previous Where might mutate
@@ -509,13 +324,10 @@ func (r *chatRepository) GetPeriodMetrics(ctx context.Context, assistantID strin
 		completedQuery = completedQuery.Where("assistant_id = ?", assistantID)
 	}
 	if err := completedQuery.Where("is_end = ?", true).Count(&completedCount).Error; err != nil {
-		return 0, 0, 0, fmt.Errorf("failed to get completed chats count: %w", err)
+		return 0, 0, fmt.Errorf("failed to get completed chats count: %w", err)
 	}
 
-	// bookedQuery removed as bookings are now calculated from the appointments table
-	bookedCount = 0
-
-	return int32(startedCount), int32(completedCount), int32(bookedCount), nil
+	return int32(startedCount), int32(completedCount), nil
 }
 
 type DailyCount struct {
@@ -602,8 +414,6 @@ func (r *chatRepository) GetPeriodChats(ctx context.Context, assistantID string,
 	switch category {
 	case "completed":
 		query = query.Where("is_end = ?", true)
-	case "booked":
-		query = query.Where("is_booked = ?", true)
 	case "started", "all", "":
 		// no additional filter
 	}
@@ -626,4 +436,3 @@ func (r *chatRepository) GetPeriodChats(ctx context.Context, assistantID string,
 
 	return chats, totalCount, nil
 }
-

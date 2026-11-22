@@ -6,20 +6,11 @@ import (
 
 	"diaxel/internal/api"
 	appModule "diaxel/internal/app"
-	"diaxel/internal/cleanup"
 	"diaxel/internal/config"
 	"diaxel/internal/grpc/db"
-	"diaxel/internal/modules/campuslogin"
-	"diaxel/internal/modules/dailyreport"
-	"diaxel/internal/modules/followup"
-	"diaxel/internal/modules/googlecalendar"
 	"diaxel/internal/modules/llm"
-	"diaxel/internal/modules/summary"
 	"diaxel/internal/modules/telegram"
-	"diaxel/internal/modules/tgnotifier"
-	"diaxel/internal/modules/tutor"
 	"diaxel/internal/modules/twilio"
-	"diaxel/internal/modules/calcom"
 )
 
 func main() {
@@ -30,51 +21,17 @@ func main() {
 
 	grpcClient, err := db.New(settings.GRPCAddress)
 	if err != nil {
-		return
+		log.Fatal(err)
 	}
+	defer grpcClient.Close()
 
-	campusloginClient := campuslogin.NewClient(settings.CampusLoginAPI)
-
-	gcClient, err := googlecalendar.NewClient("credentials.json", "token.json")
-	if err != nil {
-		log.Fatalf("Failed to initialize Google Calendar client: %v", err)
-	}
-
-	llmClient := llm.InitClient(settings.OpenaiApiKey, grpcClient, campusloginClient, gcClient)
-
+	llmClient := llm.InitClient(settings.OpenaiApiKey, grpcClient, "")
 	twilioClient := twilio.InitClient()
+	tgOrchestrator := telegram.NewOrchestrator(llmClient, 5, 1000)
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	go tgOrchestrator.Start(ctx)
 
-	tgOrchestrator := telegram.NewOrchestrator(llmClient, grpcClient, 5, 1000)
-	// go tgOrchestrator.Start(context.Background())
-
-	cm := &cleanup.CleanupManager{}
-	go cm.Start()
-
-	followupListener := followup.NewListener(grpcClient, twilioClient)
-	go followupListener.Start(context.Background())
-
-	abandonedSummarizer := summary.NewAbandonedSummarizer(grpcClient, campusloginClient, llmClient)
-	go abandonedSummarizer.Start(context.Background())
-
-	tutorWorker := tutor.NewWorker(grpcClient, twilioClient)
-	go tutorWorker.Start(context.Background())
-
-	// webhookURL := settings.WebhookBaseURL + "/google/webhook"
-	// webhookWorker := googlecalendar.NewWebhookWorker(gcClient, grpcClient, "primary", webhookURL)
-	// go webhookWorker.Start(context.Background())
-
-	// Daily report to Telegram channel
-	if settings.ReportBotToken != "" && settings.ReportChatID != "" {
-		reportNotifier := tgnotifier.New(settings.ReportBotToken, settings.ReportChatID)
-		reportWorker := dailyreport.NewWorker(grpcClient, reportNotifier, settings.ReportSendTime)
-		go reportWorker.Start(context.Background())
-	} else {
-		log.Println("[DailyReport] REPORT_BOT_TOKEN or REPORT_CHAT_ID not set, skipping daily report worker.")
-	}
-
-	calcomClient := calcom.New(settings.CalcomAPIKey, 0)
-
-	app := appModule.NewApp(llmClient, twilioClient, grpcClient, settings, tgOrchestrator, gcClient, campusloginClient, calcomClient)
-
+	app := appModule.NewApp(llmClient, twilioClient, grpcClient, settings, tgOrchestrator)
 	api.RouterStart(app)
 }

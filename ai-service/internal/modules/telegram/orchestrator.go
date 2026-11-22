@@ -2,7 +2,6 @@ package telegram
 
 import (
 	"context"
-	"diaxel/internal/grpc/db"
 	"diaxel/internal/modules/llm"
 	"log"
 	"sync"
@@ -20,14 +19,13 @@ type TelegramTask struct {
 
 type Orchestrator struct {
 	llm     *llm.Client
-	db      *db.Client
 	sender  *Sender
 	queue   chan TelegramTask
 	seen    sync.Map
 	workers int
 }
 
-func NewOrchestrator(llmClient *llm.Client, dbClient *db.Client, workers int, queueSize int) *Orchestrator {
+func NewOrchestrator(llmClient *llm.Client, workers int, queueSize int) *Orchestrator {
 	if workers <= 0 {
 		workers = 5
 	}
@@ -37,7 +35,6 @@ func NewOrchestrator(llmClient *llm.Client, dbClient *db.Client, workers int, qu
 
 	return &Orchestrator{
 		llm:     llmClient,
-		db:      dbClient,
 		sender:  NewSender(),
 		queue:   make(chan TelegramTask, queueSize),
 		workers: workers,
@@ -85,11 +82,7 @@ func (o *Orchestrator) worker(ctx context.Context, id int) {
 }
 
 func (o *Orchestrator) processTask(ctx context.Context, workerID int, task TelegramTask) {
-	if _, loaded := o.seen.LoadOrStore(task.UpdateID, time.Now()); loaded {
-		return
-	}
-
-	aiCtx, aiCancel := context.WithTimeout(context.Background(), 2*time.Minute)
+	aiCtx, aiCancel := context.WithTimeout(ctx, 2*time.Minute)
 	defer aiCancel()
 
 	log.Printf("[Telegram Worker %d] Processing update %d for user %s", workerID, task.UpdateID, task.UserID)
@@ -108,16 +101,21 @@ func (o *Orchestrator) processTask(ctx context.Context, workerID int, task Teleg
 	}
 }
 
-func (o *Orchestrator) Enqueue(task TelegramTask) {
-	if _, loaded := o.seen.LoadOrStore(task.UpdateID, time.Now()); loaded {
-		log.Printf("[Telegram Orchestrator] Warning: update %d already processing/processed, skipping.", task.UpdateID)
-		return
+func (o *Orchestrator) Enqueue(task TelegramTask) bool {
+	// Telegram assigns update IDs independently to each bot.
+	key := struct {
+		assistantID string
+		updateID    int64
+	}{task.AssistantID, task.UpdateID}
+	if _, loaded := o.seen.LoadOrStore(key, time.Now()); loaded {
+		return true
 	}
 
 	select {
 	case o.queue <- task:
+		return true
 	default:
-		log.Printf("[Telegram Orchestrator] Warning: queue is full, dropping update %d!", task.UpdateID)
-		o.seen.Delete(task.UpdateID)
+		o.seen.Delete(key)
+		return false
 	}
 }

@@ -1,16 +1,13 @@
 package api
 
 import (
+	"diaxel/internal/api/analytics"
 	"diaxel/internal/api/assistant"
+	"diaxel/internal/api/blockedcustomers"
 	"diaxel/internal/api/chat"
-	"diaxel/internal/api/campuslogin"
-	"diaxel/internal/api/google"
 	"diaxel/internal/api/twilio"
 	"diaxel/internal/api/webhook"
 	"diaxel/internal/api/ws"
-	"diaxel/internal/api/analytics"
-	"diaxel/internal/api/blockedcustomers"
-	"diaxel/internal/api/test"
 	appModule "diaxel/internal/app"
 	"log"
 
@@ -27,10 +24,7 @@ func RouterStart(app *appModule.App) {
 	ws.WSRoutes(r, app)
 	chat.ChatRoutes(r, app)
 	assistant.AssistantRoutes(r, app)
-	campuslogin.CampusLoginRoutes(r, app)
 	analytics.AnalyticsRoutes(r, app)
-	test.TestRoutes(r, app)
-	google.GoogleRoutes(r, app)
 	blockedcustomers.BlockedCustomersRoutes(r, app)
 
 	err := r.Run(":" + app.Cfg.HTTPPort)
@@ -38,4 +32,3 @@ func RouterStart(app *appModule.App) {
 		log.Fatal("Router start error", err)
 	}
 }
-

@@ -1,14 +1,13 @@
 package ws
 
 import (
-	dbpb "diaxel/proto/db"
 	"encoding/json"
 	"log"
 	"strings"
 	"time"
 )
 
-func (c *Client) PollLocalDB(chatID string, isTutor bool) {
+func (c *Client) PollLocalDB(chatID string) {
 	var lastMessageCount int
 
 	for {
@@ -18,13 +17,7 @@ func (c *Client) PollLocalDB(chatID string, isTutor bool) {
 		default:
 		}
 
-		var messages []*dbpb.MessageResponse
-		var err error
-		if isTutor {
-			messages, err = c.Db.GetTutorChatMessages(chatID, 50, int32(lastMessageCount))
-		} else {
-			messages, err = c.Db.GetChatMessages(chatID, 50, int32(lastMessageCount))
-		}
+		messages, err := c.Db.GetChatMessages(chatID, 50, int32(lastMessageCount))
 		if err != nil {
 			log.Println("DB fetch error:", err)
 			select {
@@ -49,19 +42,7 @@ func (c *Client) PollLocalDB(chatID string, isTutor bool) {
 					continue
 				}
 
-				body := msg.Content
-
-				// Если это JSON ответа с вызовом функции (assistant с tool_calls)
-				if author == "bot" && strings.HasPrefix(body, "{") && strings.Contains(body, "\"tool_calls\"") {
-					var extMsg struct {
-						Content string `json:"content"`
-					}
-					if err := json.Unmarshal([]byte(body), &extMsg); err == nil {
-						body = extMsg.Content
-					}
-				}
-
-				body = strings.TrimSpace(body)
+				body := strings.TrimSpace(msg.Content)
 				if body == "" {
 					continue
 				}

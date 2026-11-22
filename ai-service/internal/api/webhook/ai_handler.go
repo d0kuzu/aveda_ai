@@ -4,10 +4,8 @@ import (
 	"bytes"
 	"diaxel/internal/config"
 	"diaxel/internal/grpc/db"
-	"diaxel/internal/modules/campuslogin"
 	"diaxel/internal/modules/llm"
 	"diaxel/internal/modules/telegram"
-	"diaxel/internal/modules/tgnotifier"
 	"diaxel/internal/modules/token"
 	"encoding/json"
 	"fmt"
@@ -22,22 +20,14 @@ type AIHandler struct {
 	LLM          *llm.Client
 	db           *db.Client
 	orchestrator *telegram.Orchestrator
-	campusLogin  *campuslogin.Client
-	tgNotifier   *tgnotifier.Client
 }
 
-func NewAIHandler(cfg *config.Settings, llmClient *llm.Client, db *db.Client, tgOrch *telegram.Orchestrator, campusLogin *campuslogin.Client) *AIHandler {
-	var notifier *tgnotifier.Client
-	if cfg.CalcomNotifyBotToken != "" && cfg.CalcomNotifyChatID != "" {
-		notifier = tgnotifier.New(cfg.CalcomNotifyBotToken, cfg.CalcomNotifyChatID)
-	}
+func NewAIHandler(cfg *config.Settings, llmClient *llm.Client, db *db.Client, tgOrch *telegram.Orchestrator) *AIHandler {
 	return &AIHandler{
 		cfg:          cfg,
 		LLM:          llmClient,
 		db:           db,
 		orchestrator: tgOrch,
-		campusLogin:  campusLogin,
-		tgNotifier:   notifier,
 	}
 }
 
@@ -231,25 +221,23 @@ func (h *AIHandler) HandleTelegramWebhook(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"status": "ok"})
-
-	if update.Message.Text == "" {
+	if update.Message.Text == "" || update.Message.From.ID == 0 {
+		c.JSON(http.StatusOK, gin.H{"status": "ignored"})
 		return
 	}
 
 	userIdString := strconv.FormatInt(update.Message.From.ID, 10)
-	if userIdString == "0" {
-		return
-	}
 
 	assistant, err := h.db.GetAssistant(assistantId)
 	if err != nil {
 		fmt.Printf("HandleTelegramWebhook: Failed to get assistant: %v\n", err)
+		c.JSON(http.StatusServiceUnavailable, gin.H{"error": "assistant unavailable"})
 		return
 	}
 
 	if assistant.TelegramBotToken == "" {
 		fmt.Printf("HandleTelegramWebhook: Assistant %s does not have a telegram bot token configured\n", assistantId)
+		c.JSON(http.StatusOK, gin.H{"status": "ignored"})
 		return
 	}
 
@@ -262,7 +250,11 @@ func (h *AIHandler) HandleTelegramWebhook(c *gin.Context) {
 		UpdateID:    update.UpdateID,
 	}
 
-	h.orchestrator.Enqueue(task)
+	if !h.orchestrator.Enqueue(task) {
+		c.JSON(http.StatusServiceUnavailable, gin.H{"error": "telegram queue full"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"status": "ok"})
 }
 
 func (h *AIHandler) SendMessage(c *gin.Context) {

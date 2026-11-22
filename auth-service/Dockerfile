@@ -1,17 +1,16 @@
-# Use a lightweight Alpine base
-FROM alpine:latest
+FROM golang:1.25-alpine AS build
+WORKDIR /src
+COPY go.mod go.sum ./
+RUN go mod download
+COPY main.go ./
+COPY internal ./internal
+COPY grpc ./grpc
+COPY proto/db ./proto/db
+RUN CGO_ENABLED=0 go build -o /out/auth-service .
 
+FROM alpine:3.22
+RUN apk add --no-cache ca-certificates
 WORKDIR /app
-
-# Install CA certificates for HTTPS requests
-RUN apk --no-cache add ca-certificates
-
-# Copy the pre-built auth-service binary into the image
-COPY auth-service .
-
-# Ensure the binary is executable
-RUN chmod +x auth-service
-
+COPY --from=build /out/auth-service ./
 EXPOSE 8080
-
 CMD ["./auth-service"]

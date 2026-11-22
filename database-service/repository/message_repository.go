@@ -19,12 +19,6 @@ type MessageRepository interface {
 	UpdateMessage(ctx context.Context, id uint, role, content string) (*models.Message, error)
 	DeleteMessage(ctx context.Context, id uint) error
 	DeleteMessagesByChatID(ctx context.Context, chatID string) error
-	DeleteAllMessages(ctx context.Context) error
-	SaveTutorMessage(ctx context.Context, chatID, role, content, platform string, msgTime string) (*models.TutorMessage, error)
-	GetTutorMessagesByChatID(ctx context.Context, chatID string, limit, offset int32) ([]*models.TutorMessage, error)
-	GetAllTutorChatMessages(ctx context.Context, chatID string) ([]*models.TutorMessage, error)
-	DeleteTutorMessagesByChatID(ctx context.Context, chatID string) error
-	DeleteAllTutorMessages(ctx context.Context) error
 }
 
 type messageRepository struct {
@@ -138,76 +132,10 @@ func (r *messageRepository) DeleteMessage(ctx context.Context, id uint) error {
 	return nil
 }
 
-func (r *messageRepository) DeleteAllMessages(ctx context.Context) error {
-	result := r.db.WithContext(ctx).Session(&gorm.Session{AllowGlobalUpdate: true}).Delete(&models.Message{})
-	if result.Error != nil {
-		return fmt.Errorf("failed to delete all messages: %w", result.Error)
-	}
-	return nil
-}
-
 func (r *messageRepository) DeleteMessagesByChatID(ctx context.Context, chatID string) error {
 	result := r.db.WithContext(ctx).Where("chat_id = ?", chatID).Delete(&models.Message{})
 	if result.Error != nil {
 		return fmt.Errorf("failed to delete messages by chat id: %w", result.Error)
-	}
-	return nil
-}
-
-func (r *messageRepository) SaveTutorMessage(ctx context.Context, chatID, role, content, platform string, msgTime string) (*models.TutorMessage, error) {
-	parsedTime := time.Now().UTC()
-	if msgTime != "" {
-		if t, err := time.Parse(time.RFC3339, msgTime); err == nil {
-			parsedTime = t
-		}
-	}
-
-	message := models.TutorMessage{
-		ChatID:    chatID,
-		Role:      role,
-		Content:   content,
-		Time:      parsedTime,
-		CreatedAt: parsedTime,
-		UpdatedAt: parsedTime,
-	}
-
-	if err := r.db.WithContext(ctx).Create(&message).Error; err != nil {
-		return nil, fmt.Errorf("failed to save tutor message: %w", err)
-	}
-
-	return &message, nil
-}
-
-func (r *messageRepository) GetTutorMessagesByChatID(ctx context.Context, chatID string, limit, offset int32) ([]*models.TutorMessage, error) {
-	var messages []*models.TutorMessage
-	if err := r.db.WithContext(ctx).Where("chat_id = ?", chatID).Order("time ASC").Limit(int(limit)).Offset(int(offset)).Find(&messages).Error; err != nil {
-		return nil, fmt.Errorf("failed to get tutor messages: %w", err)
-	}
-
-	return messages, nil
-}
-
-func (r *messageRepository) GetAllTutorChatMessages(ctx context.Context, chatID string) ([]*models.TutorMessage, error) {
-	var messages []*models.TutorMessage
-	if err := r.db.WithContext(ctx).Where("chat_id = ?", chatID).Order("time ASC").Find(&messages).Error; err != nil {
-		return nil, fmt.Errorf("failed to get all tutor messages: %w", err)
-	}
-
-	return messages, nil
-}
-
-func (r *messageRepository) DeleteTutorMessagesByChatID(ctx context.Context, chatID string) error {
-	result := r.db.WithContext(ctx).Where("chat_id = ?", chatID).Delete(&models.TutorMessage{})
-	if result.Error != nil {
-		return fmt.Errorf("failed to delete tutor messages by chat id: %w", result.Error)
-	}
-	return nil
-}
-
-func (r *messageRepository) DeleteAllTutorMessages(ctx context.Context) error {
-	result := r.db.WithContext(ctx).Session(&gorm.Session{AllowGlobalUpdate: true}).Delete(&models.TutorMessage{})
-	if result.Error != nil {
-		return fmt.Errorf("failed to delete all tutor messages: %w", result.Error)
 	}
 	return nil
 }

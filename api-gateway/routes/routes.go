@@ -27,47 +27,7 @@ func SetupRoutes(r *gin.Engine, cfg *config.Config, db *db.Client) {
 			proxy.NewReverseProxy(cfg.AIServiceURL, ""),
 		)
 
-		public.Any("/webhooks/cal/callback/*any",
-			proxy.NewReverseProxy(cfg.AIServiceURL, ""),
-		)
-
 		public.Any("/twilio/webhook/*any",
-			proxy.NewReverseProxy(cfg.AIServiceURL, ""),
-		)
-
-		public.Any("/twilio/recover/*any",
-			proxy.NewReverseProxy(cfg.AIServiceURL, ""),
-		)
-
-		public.Any("/campuslogin/triger-twilio/*any",
-			proxy.NewReverseProxy(cfg.AIServiceURL, ""),
-		)
-
-		public.Any("/campuslogin/trigger-tutor",
-			proxy.NewReverseProxy(cfg.AIServiceURL, ""),
-		)
-
-		public.Any("/campuslogin/trigger-tutor/*any",
-			proxy.NewReverseProxy(cfg.AIServiceURL, ""),
-		)
-
-		public.Any("/campuslogin/triger-tutor/*any",
-			proxy.NewReverseProxy(cfg.AIServiceURL, ""),
-		)
-
-		public.Any("/test/*any",
-			proxy.NewReverseProxy(cfg.AIServiceURL, ""),
-		)
-
-		public.Any("/google/*any",
-			proxy.NewReverseProxy(cfg.AIServiceURL, ""),
-		)
-
-		public.Any("/campuslogin/booking",
-			proxy.NewReverseProxy(cfg.AIServiceURL, ""),
-		)
-
-		public.Any("/campuslogin/booking/*any",
 			proxy.NewReverseProxy(cfg.AIServiceURL, ""),
 		)
 	}
@@ -75,10 +35,6 @@ func SetupRoutes(r *gin.Engine, cfg *config.Config, db *db.Client) {
 	userPrivate := r.Group("/")
 	userPrivate.Use(auth.UserMiddleware([]byte(cfg.AccessSecret)))
 	{
-		userPrivate.Any("/users/*any",
-			proxy.NewReverseProxy(cfg.UserServiceURL, "/users"),
-		)
-
 		userPrivate.Any("/api/analytics/*any",
 			proxy.NewReverseProxy(cfg.AIServiceURL, "/api"),
 		)

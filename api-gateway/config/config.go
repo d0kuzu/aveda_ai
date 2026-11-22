@@ -10,7 +10,6 @@ type Config struct {
 	GatewayPort string
 	GRPCAddress string
 
-	UserServiceURL string
 	AuthServiceURL string
 	AIServiceURL   string
 
@@ -29,7 +28,6 @@ func LoadConfig() (*Config, error) {
 		GatewayPort: os.Getenv("GATEWAY_PORT"),
 		GRPCAddress: grpcAddress,
 
-		UserServiceURL: os.Getenv("USER_SERVICE_URL"),
 		AuthServiceURL: os.Getenv("AUTH_SERVICE_URL"),
 		AIServiceURL:   os.Getenv("AI_SERVICE_URL"),
 

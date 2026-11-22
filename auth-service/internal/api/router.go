@@ -16,8 +16,5 @@ func RegisterRoutes(r *gin.Engine, auth *service.AuthService) {
 		authGroup.POST("/refresh", h.Refresh)
 		authGroup.POST("/logout", h.Logout)
 		authGroup.POST("/register", h.Register)
-		authGroup.POST("/assistant", h.CreateAssistant)
-		authGroup.GET("/assistant/:assistant_id/bot-token", h.GetBotToken)
-		authGroup.GET("/test/bot-registration", h.TestBotRegistration)
 	}
 }

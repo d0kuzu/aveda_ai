@@ -15,8 +15,5 @@ func ChatRoutes(router *gin.Engine, app *appModule.App) {
 		productGroup.GET("/get_chat", h.GetChat)
 		productGroup.GET("/get_pagination", h.GetPagination)
 		productGroup.GET("/search_chat", h.SearchChat)
-		
-		// Test endpoint
-		productGroup.DELETE("/clear_all", h.ClearAll)
 	}
 }

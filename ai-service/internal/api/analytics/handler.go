@@ -1,7 +1,6 @@
 package analytics
 
 import (
-	"context"
 	"log"
 	"net/http"
 	"strconv"
@@ -9,20 +8,15 @@ import (
 	"time"
 
 	"diaxel/internal/app"
-	"diaxel/internal/constants"
 
 	"github.com/gin-gonic/gin"
 )
 
 type PeriodMetrics struct {
-	StartedChats     int32   `json:"started_conversations"`
-	CompletedChats   int32   `json:"completed_conversations"`
-	BookedMeetings   int32   `json:"booked_meetings"`
-	ConversionRate   float64 `json:"conversion_rate"`
-	StartedChange    float64 `json:"started_change_pct"`
-	CompletedChange  float64 `json:"completed_change_pct"`
-	BookedChange     float64 `json:"booked_change_pct"`
-	ConversionChange float64 `json:"conversion_change_pct"`
+	StartedChats    int32   `json:"started_conversations"`
+	CompletedChats  int32   `json:"completed_conversations"`
+	StartedChange   float64 `json:"started_change_pct"`
+	CompletedChange float64 `json:"completed_change_pct"`
 }
 
 type DailyCount struct {
@@ -40,18 +34,15 @@ type AnalyticsResponse struct {
 }
 
 type AnalyticsChatJSON struct {
-	ID            string `json:"id"`
-	AssistantID   string `json:"assistant_id"`
-	CustomerID    string `json:"customer_id"`
-	Platform      string `json:"platform"`
-	CreatedAt     string `json:"created_at"`
-	UpdatedAt     string `json:"updated_at"`
-	StartedAt     string `json:"started_at"`
-	MessageCount  int32  `json:"message_count"`
-	IsEnd         bool   `json:"is_end"`
-	FollowupStage int32  `json:"followup_stage"`
-	IsReviewed    bool   `json:"is_reviewed"`
-	IsBooked      bool   `json:"is_booked"`
+	ID           string `json:"id"`
+	AssistantID  string `json:"assistant_id"`
+	CustomerID   string `json:"customer_id"`
+	Platform     string `json:"platform"`
+	CreatedAt    string `json:"created_at"`
+	UpdatedAt    string `json:"updated_at"`
+	StartedAt    string `json:"started_at"`
+	MessageCount int32  `json:"message_count"`
+	IsEnd        bool   `json:"is_end"`
 }
 
 type AnalyticsChatsResponse struct {
@@ -84,13 +75,8 @@ func GetAnalytics(application *app.App) gin.HandlerFunc {
 			return
 		}
 
-		location, err := time.LoadLocation(constants.DefaultTimezone)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "invalid timezone"})
-			return
-		}
-
-		now := time.Now().In(location)
+		location := time.UTC
+		now := time.Now().UTC()
 
 		getMetrics := func(days int) (PeriodMetrics, error) {
 			startCurrent, endCurrent := CalculatePeriodRange(now, location, days)
@@ -107,50 +93,6 @@ func GetAnalytics(application *app.App) gin.HandlerFunc {
 				return PeriodMetrics{}, err
 			}
 
-			currBookedChats := currentResp.BookedChats
-			prevBookedChats := prevResp.BookedChats
-
-			if assistantID == constants.AvedaSintaAssistantID && application.Calcom != nil {
-				var wg sync.WaitGroup
-				wg.Add(2)
-
-				go func() {
-					defer wg.Done()
-					ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
-					defer cancel()
-					count, err := application.Calcom.GetBookingsCount(ctx, startCurrent, endCurrent)
-					if err == nil {
-						currBookedChats = int32(count)
-					} else {
-						log.Printf("Failed to get calcom bookings for current period: %v", err)
-					}
-				}()
-
-				go func() {
-					defer wg.Done()
-					ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
-					defer cancel()
-					count, err := application.Calcom.GetBookingsCount(ctx, startPrev, endPrev)
-					if err == nil {
-						prevBookedChats = int32(count)
-					} else {
-						log.Printf("Failed to get calcom bookings for previous period: %v", err)
-					}
-				}()
-
-				wg.Wait()
-			}
-
-			currConversion := 0.0
-			if currentResp.StartedChats > 0 {
-				currConversion = float64(currBookedChats) / float64(currentResp.StartedChats) * 100
-			}
-
-			prevConversion := 0.0
-			if prevResp.StartedChats > 0 {
-				prevConversion = float64(prevBookedChats) / float64(prevResp.StartedChats) * 100
-			}
-
 			calcChange := func(curr, prev float64) float64 {
 				if prev == 0 {
 					if curr > 0 {
@@ -162,14 +104,10 @@ func GetAnalytics(application *app.App) gin.HandlerFunc {
 			}
 
 			return PeriodMetrics{
-				StartedChats:     currentResp.StartedChats,
-				CompletedChats:   currentResp.CompletedChats,
-				BookedMeetings:   currBookedChats,
-				ConversionRate:   currConversion,
-				StartedChange:    calcChange(float64(currentResp.StartedChats), float64(prevResp.StartedChats)),
-				CompletedChange:  calcChange(float64(currentResp.CompletedChats), float64(prevResp.CompletedChats)),
-				BookedChange:     calcChange(float64(currBookedChats), float64(prevBookedChats)),
-				ConversionChange: currConversion - prevConversion,
+				StartedChats:    currentResp.StartedChats,
+				CompletedChats:  currentResp.CompletedChats,
+				StartedChange:   calcChange(float64(currentResp.StartedChats), float64(prevResp.StartedChats)),
+				CompletedChange: calcChange(float64(currentResp.CompletedChats), float64(prevResp.CompletedChats)),
 			}, nil
 		}
 
@@ -208,7 +146,7 @@ func GetAnalytics(application *app.App) gin.HandlerFunc {
 		// Weekly chart data — last 7 days starting from 7 days ago
 		y, m, d := now.Date()
 		weekStart := time.Date(y, m, d, 0, 0, 0, 0, location).AddDate(0, 0, -6)
-		weeklyResp, err := application.Db.GetWeeklyChatsStarted(assistantID, weekStart.Format(time.RFC3339), constants.DefaultTimezone)
+		weeklyResp, err := application.Db.GetWeeklyChatsStarted(assistantID, weekStart.Format(time.RFC3339), "UTC")
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
@@ -253,8 +191,8 @@ func GetAnalyticsChatsByCategory(application *app.App, forcedCategory string) gi
 		if category == "" {
 			category = c.Query("category")
 		}
-		if category != "started" && category != "completed" && category != "booked" {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid category: must be started, completed, or booked"})
+		if category != "started" && category != "completed" {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid category: must be started, completed"})
 			return
 		}
 
@@ -274,13 +212,8 @@ func GetAnalyticsChatsByCategory(application *app.App, forcedCategory string) gi
 		}
 		offset := (page - 1) * limit
 
-		location, err := time.LoadLocation(constants.DefaultTimezone)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "invalid timezone"})
-			return
-		}
-
-		now := time.Now().In(location)
+		location := time.UTC
+		now := time.Now().UTC()
 		startCurrent, endCurrent := CalculatePeriodRange(now, location, days)
 
 		resp, err := application.Db.GetPeriodChats(
@@ -299,18 +232,15 @@ func GetAnalyticsChatsByCategory(application *app.App, forcedCategory string) gi
 		chatsJSON := make([]AnalyticsChatJSON, len(resp.Chats))
 		for i, chat := range resp.Chats {
 			chatsJSON[i] = AnalyticsChatJSON{
-				ID:            chat.Id,
-				AssistantID:   chat.AssistantId,
-				CustomerID:    chat.CustomerId,
-				Platform:      chat.Platform,
-				CreatedAt:     chat.CreatedAt,
-				UpdatedAt:     chat.UpdatedAt,
-				StartedAt:     chat.StartedAt,
-				MessageCount:  chat.MessageCount,
-				IsEnd:         chat.IsEnd,
-				FollowupStage: chat.FollowupStage,
-				IsReviewed:    chat.IsReviewed,
-				IsBooked:      chat.IsBooked,
+				ID:           chat.Id,
+				AssistantID:  chat.AssistantId,
+				CustomerID:   chat.CustomerId,
+				Platform:     chat.Platform,
+				CreatedAt:    chat.CreatedAt,
+				UpdatedAt:    chat.UpdatedAt,
+				StartedAt:    chat.StartedAt,
+				MessageCount: chat.MessageCount,
+				IsEnd:        chat.IsEnd,
 			}
 		}
 
@@ -338,8 +268,3 @@ func GetStartedChats(application *app.App) gin.HandlerFunc {
 func GetCompletedChats(application *app.App) gin.HandlerFunc {
 	return GetAnalyticsChatsByCategory(application, "completed")
 }
-
-func GetBookedChats(application *app.App) gin.HandlerFunc {
-	return GetAnalyticsChatsByCategory(application, "booked")
-}
-

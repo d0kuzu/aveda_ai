@@ -1,26 +1,16 @@
-# Protobuf generation
+# Database RPC contract
 
-1) Install protoc for Windows
-   - Download from https://github.com/protocolbuffers/protobuf/releases (win64 zip)
-   - Extract and add `bin` to your PATH
+Edit `database-service/proto/database.proto` and regenerate the Go server and client bindings together. The checked-in bindings use protoc 25.2 and the following Go plugins.
 
-2) Install Go plugins (already done):
-   ```sh
-   go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
-   go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
-   ```
+```sh
+go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.36.5
+go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.6.2
+```
 
-3) Generate Go files
-   ```sh
-   protoc --go_out=. --go-grpc_out=. proto/database.proto
-   ```
-   Or run from database-service folder:
-   ```sh
-   .\proto\generate.ps1
-   ```
+Add the Go binaries directory to `PATH`. From the repository root, run the following in PowerShell.
 
-After generation you should see:
-- `proto/database.pb.go`
-- `proto/database_grpc.pb.go`
+```powershell
+./database-service/proto/generate.ps1
+```
 
-Then run `go mod tidy` to resolve imports.
+The script generates the bindings in place and copies the contract and generated files into each consumer's `proto/db` directory.

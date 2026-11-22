@@ -19,42 +19,26 @@ type ChatHandler struct {
 }
 
 type ChatJSON struct {
-	ID               string `json:"id"`
-	AssistantID      string `json:"assistant_id"`
-	CustomerID       string `json:"customer_id"`
-	Platform         string `json:"platform"`
-	CreatedAt        string `json:"created_at"`
-	UpdatedAt        string `json:"updated_at"`
-	MessageCount     int32  `json:"message_count"`
-	IsEnd            bool   `json:"is_end"`
-	FollowupStage    int32  `json:"followup_stage"`
-	IsReviewed       bool   `json:"is_reviewed"`
-	IsBooked         bool   `json:"is_booked"`
-	IsTutor          bool   `json:"is_tutor"`
-	IsTuting         bool   `json:"is_tuting"`
-	TutingProgram    string `json:"tuting_program"`
-	TutorCountPerDay int32  `json:"tutor_count_per_day"`
-	TutorCount       int32  `json:"tutor_count"`
+	ID           string `json:"id"`
+	AssistantID  string `json:"assistant_id"`
+	CustomerID   string `json:"customer_id"`
+	Platform     string `json:"platform"`
+	CreatedAt    string `json:"created_at"`
+	UpdatedAt    string `json:"updated_at"`
+	MessageCount int32  `json:"message_count"`
+	IsEnd        bool   `json:"is_end"`
 }
 
 func chatToJSON(chat *dbpb.ChatResponse) ChatJSON {
 	return ChatJSON{
-		ID:               chat.Id,
-		AssistantID:      chat.AssistantId,
-		CustomerID:       chat.CustomerId,
-		Platform:         chat.Platform,
-		CreatedAt:        chat.CreatedAt,
-		UpdatedAt:        chat.UpdatedAt,
-		MessageCount:     chat.MessageCount,
-		IsEnd:            chat.IsEnd,
-		FollowupStage:    chat.FollowupStage,
-		IsReviewed:       chat.IsReviewed,
-		IsBooked:         chat.IsBooked,
-		IsTutor:          chat.IsTutor,
-		IsTuting:         chat.IsTuting,
-		TutingProgram:    chat.TutingProgram,
-		TutorCountPerDay: chat.TutorCountPerDay,
-		TutorCount:       chat.TutorCount,
+		ID:           chat.Id,
+		AssistantID:  chat.AssistantId,
+		CustomerID:   chat.CustomerId,
+		Platform:     chat.Platform,
+		CreatedAt:    chat.CreatedAt,
+		UpdatedAt:    chat.UpdatedAt,
+		MessageCount: chat.MessageCount,
+		IsEnd:        chat.IsEnd,
 	}
 }
 
@@ -94,16 +78,6 @@ func (h *ChatHandler) getValidatedAssistantIDs(c *gin.Context, userID string) ([
 	return finalAssistantIDs, nil
 }
 
-func parseIsTutorQuery(c *gin.Context) bool {
-	isTutorParam := c.DefaultQuery("isTutor", c.Query("is_tutor"))
-	if isTutorParam != "" {
-		if parsed, err := strconv.ParseBool(isTutorParam); err == nil {
-			return parsed
-		}
-	}
-	return false
-}
-
 func (h *ChatHandler) GetAllChats(c *gin.Context) {
 	userID := c.GetHeader("X-User-Id")
 	if userID == "" {
@@ -117,8 +91,6 @@ func (h *ChatHandler) GetAllChats(c *gin.Context) {
 		page = 1
 	}
 
-	isTutor := parseIsTutorQuery(c)
-
 	assistantIDs, err := h.getValidatedAssistantIDs(c, userID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to validate assistants", "details": err.Error()})
@@ -131,11 +103,11 @@ func (h *ChatHandler) GetAllChats(c *gin.Context) {
 		return
 	}
 
-	log.Printf("[GetAllChats] Fetching chats for assistants: %v, page: %d, isTutor: %v", assistantIDs, page, isTutor)
+	log.Printf("[GetAllChats] Fetching chats for assistants: %v, page: %d", assistantIDs, page)
 
 	chatsPerPage := int32(10)
 
-	chats, err := h.db.GetChatPageByUserID(assistantIDs, int32(page), chatsPerPage, isTutor)
+	chats, err := h.db.GetChatPageByUserID(assistantIDs, int32(page), chatsPerPage)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch chats", "details": err.Error()})
 		return
@@ -158,8 +130,6 @@ func (h *ChatHandler) GetPagination(c *gin.Context) {
 		return
 	}
 
-	isTutor := parseIsTutorQuery(c)
-
 	assistantIDs, err := h.getValidatedAssistantIDs(c, userID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to validate assistants", "details": err.Error()})
@@ -172,7 +142,7 @@ func (h *ChatHandler) GetPagination(c *gin.Context) {
 	}
 
 	chatsPerPage := int32(10)
-	pagesCount, err := h.db.GetChatPagesCountByUserID(assistantIDs, chatsPerPage, isTutor)
+	pagesCount, err := h.db.GetChatPagesCountByUserID(assistantIDs, chatsPerPage)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch pagination", "details": err.Error()})
 		return
@@ -188,15 +158,7 @@ func (h *ChatHandler) GetChat(c *gin.Context) {
 		return
 	}
 
-	isTutor := parseIsTutorQuery(c)
-
-	var messages []*dbpb.MessageResponse
-	var err error
-	if isTutor {
-		messages, err = h.db.GetAllTutorChatMessages(chatID)
-	} else {
-		messages, err = h.db.GetAllChatMessages(chatID)
-	}
+	messages, err := h.db.GetAllChatMessages(chatID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch chat messages", "details": err.Error()})
 		return
@@ -204,7 +166,6 @@ func (h *ChatHandler) GetChat(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"answer": gin.H{
 		"chat_id":  chatID,
-		"is_tutor": isTutor,
 		"messages": messages,
 		"count":    len(messages),
 	}})
@@ -224,8 +185,6 @@ func (h *ChatHandler) SearchChat(c *gin.Context) {
 		return
 	}
 
-	isTutor := parseIsTutorQuery(c)
-
 	assistantIDs, err := h.getValidatedAssistantIDs(c, userID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to validate assistants", "details": err.Error()})
@@ -237,7 +196,7 @@ func (h *ChatHandler) SearchChat(c *gin.Context) {
 		return
 	}
 
-	chats, totalCount, err := h.db.SearchChatsByCustomer(assistantIDs, searchTerm, isTutor)
+	chats, totalCount, err := h.db.SearchChatsByCustomer(assistantIDs, searchTerm)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to search chats", "details": err.Error()})
 		return
@@ -252,13 +211,4 @@ func (h *ChatHandler) SearchChat(c *gin.Context) {
 		"answer":      result,
 		"total_count": totalCount,
 	})
-}
-
-// ClearAll is a test endpoint to remove all chats and messages
-func (h *ChatHandler) ClearAll(c *gin.Context) {
-	if err := h.db.DeleteAllChatsAndMessages(); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to clear all chats and messages", "details": err.Error()})
-		return
-	}
-	c.JSON(http.StatusOK, gin.H{"status": "success", "message": "all chats and messages have been cleared"})
 }

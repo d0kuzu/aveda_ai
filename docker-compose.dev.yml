@@ -1,28 +1,32 @@
 networks:
-  diaxel_net:
+  template_net:
     driver: bridge
 
 services:
   postgres:
     image: postgres:16
-    container_name: diaxel_postgres
     restart: unless-stopped
     environment:
-      POSTGRES_DB: diaxel
-      POSTGRES_USER: diaxel_user
-      POSTGRES_PASSWORD: diaxel_password
+      POSTGRES_DB: database_service
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d database_service"]
+      interval: 3s
+      timeout: 3s
+      retries: 5
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - template_dev_postgres_data:/var/lib/postgresql/data
     networks:
-      - diaxel_net
+      - template_net
 
   database-service:
     build: ./database-service
-    container_name: database-service
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     ports:
       - "50051:50051"
     env_file:
@@ -30,16 +34,14 @@ services:
     environment:
       - POSTGRES_HOST=postgres
       - POSTGRES_PORT=5432
-      - POSTGRES_USER=diaxel_user
-      - POSTGRES_PASSWORD=diaxel_password
-      - POSTGRES_DB=diaxel
-      - DB_SSL=disable
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=database_service
     networks:
-      - diaxel_net
+      - template_net
 
   ai-service:
     build: ./ai-service
-    container_name: ai-service
     ports:
       - "8081:8080"
     depends_on:
@@ -49,18 +51,11 @@ services:
     environment:
       - HTTP_PORT=8080
       - GRPC_ADDRESS=database-service:50051
-      - DB_HOST=postgres
-      - DB_PORT=5432
-      - DB_USER=diaxel_user
-      - DB_PASSWORD=diaxel_password
-      - DB_NAME=diaxel
-      - DB_SSL=disable
     networks:
-      - diaxel_net
+      - template_net
 
   auth-service:
     build: ./auth-service
-    container_name: auth-service
     ports:
       - "8082:8080"
     depends_on:
@@ -70,40 +65,16 @@ services:
     environment:
       - HTTP_PORT=8080
       - GRPC_ADDRESS=database-service:50051
-      - DB_HOST=postgres
-      - DB_PORT=5432
-      - DB_USER=diaxel_user
-      - DB_PASSWORD=diaxel_password
-      - DB_NAME=diaxel
-      - DB_SSL=disable
     networks:
-      - diaxel_net
-
-  telegram-service:
-    build: ./telegram-service
-    container_name: telegram-service
-    ports:
-      - "8084:8000"
-    depends_on:
-      - database-service
-      - auth-service
-    env_file:
-      - .env
-    environment:
-      - DATABASE_URL=postgresql://diaxel_user:diaxel_password@postgres:5432/diaxel
-      - AUTH_SERVICE_URL=http://auth-service:8080
-    networks:
-      - diaxel_net
+      - template_net
 
   api-gateway:
     build: ./api-gateway
-    container_name: api-gateway
     ports:
       - "8080:8080"
     depends_on:
       - database-service
       - auth-service
-      - telegram-service
       - ai-service
     env_file:
       - .env
@@ -112,23 +83,8 @@ services:
       - GRPC_ADDRESS=database-service:50051
       - AI_SERVICE_URL=http://ai-service:8080
       - AUTH_SERVICE_URL=http://auth-service:8080
-      - TELEGRAM_SERVICE_URL=http://telegram-service:8000
     networks:
-      - diaxel_net
-
-  frontend:
-    build: ./frontend
-    container_name: frontend
-    ports:
-      - "3000:3000"
-    depends_on:
-      - api-gateway
-    env_file:
-      - .env
-    environment:
-      - NEXT_PUBLIC_API_URL=http://localhost:8080
-    networks:
-      - diaxel_net
+      - template_net
 
 volumes:
-  postgres_data:
+  template_dev_postgres_data:

@@ -7,7 +7,7 @@ import (
 )
 
 func WebhookRoutes(router *gin.Engine, app *appModule.App) {
-	aiHandler := NewAIHandler(app.Cfg, app.LLM, app.Db, app.TgOrchestrator, app.CampusLogin)
+	aiHandler := NewAIHandler(app.Cfg, app.LLM, app.Db, app.TgOrchestrator)
 
 	webhookGroup := router.Group("webhooks")
 	{
@@ -18,7 +18,5 @@ func WebhookRoutes(router *gin.Engine, app *appModule.App) {
 		webhookGroup.POST("/twilio/register", aiHandler.RegisterTwilioBot)
 
 		webhookGroup.POST("/telegram/callback/:assistant_id", aiHandler.HandleTelegramWebhook)
-
-		webhookGroup.POST("/cal/callback/:assistant_id", aiHandler.HandleCalWebhook)
 	}
 }
