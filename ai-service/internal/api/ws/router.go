@@ -7,7 +7,7 @@ import (
 )
 
 func WSRoutes(router *gin.Engine, app *appModule.App) {
-	wsHandler := NewWSHandler(app.Cfg, app.Db)
+	wsHandler := NewWSHandler(app.Db, app.Twilio)
 	productGroup := router.Group("websocket")
 	{
 		productGroup.GET("/get_conversation", wsHandler.ChatPolling)

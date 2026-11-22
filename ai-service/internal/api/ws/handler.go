@@ -1,23 +1,25 @@
 package ws
 
 import (
-	"diaxel/internal/config"
-	"diaxel/internal/grpc/db"
-	"diaxel/internal/modules/ws"
 	"log"
 	"net/http"
+
+	"diaxel/internal/api/access"
+	"diaxel/internal/modules/database"
+	"diaxel/internal/modules/twilio"
+	"diaxel/internal/modules/ws"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 )
 
 type WSHandler struct {
-	cfg *config.Settings
-	db  *db.Client
+	db     *database.Store
+	twilio *twilio.Client
 }
 
-func NewWSHandler(cfg *config.Settings, db *db.Client) *WSHandler {
-	return &WSHandler{cfg: cfg, db: db}
+func NewWSHandler(db *database.Store, twilioClient *twilio.Client) *WSHandler {
+	return &WSHandler{db: db, twilio: twilioClient}
 }
 
 var upgrader = websocket.Upgrader{
@@ -31,37 +33,7 @@ func (h *WSHandler) ChatPolling(c *gin.Context) {
 		return
 	}
 
-	userID := c.GetHeader("X-User-Id")
-	if userID == "" {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "X-User-Id header is required"})
-		return
-	}
-
-	// Fetch chat to get assistant_id
-	chatResp, err := h.db.GetChat(chatID)
-	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "chat not found"})
-		return
-	}
-
-	// Fetch user's assistants
-	assistants, err := h.db.GetAssistantsByUserID(userID)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch assistants"})
-		return
-	}
-
-	// Validate ownership
-	isOwner := false
-	for _, a := range assistants {
-		if a.Id == chatResp.AssistantId {
-			isOwner = true
-			break
-		}
-	}
-
-	if !isOwner {
-		c.JSON(http.StatusForbidden, gin.H{"error": "access denied: chat does not belong to user"})
+	if !access.Chat(c, h.db, chatID) {
 		return
 	}
 
@@ -71,11 +43,9 @@ func (h *WSHandler) ChatPolling(c *gin.Context) {
 		return
 	}
 
-	client := ws.NewWSClient(conn, chatID, h.db)
-	ws.RegisterClient(client)
+	client := ws.NewWSClient(c.Request.Context(), conn, chatID, h.db, h.twilio)
 	log.Printf("new client connected to chat %s", chatID)
 
 	go client.PollLocalDB(chatID)
-
-	go client.Listen()
+	client.Listen()
 }

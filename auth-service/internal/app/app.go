@@ -1,42 +1,15 @@
 package app
 
 import (
-	"auth-service/grpc/db"
-	"auth-service/internal/api"
 	"auth-service/internal/config"
-	"auth-service/internal/service"
-
-	"github.com/gin-gonic/gin"
+	"auth-service/internal/modules/auth"
 )
 
 type App struct {
-	router *gin.Engine
-	port   string
+	Cfg  *config.Config
+	Auth *auth.Service
 }
 
-func New(cfg *config.Config) *App {
-	r := gin.New()
-	r.Use(gin.Logger(), gin.Recovery())
-
-	grpcClient, err := db.New(cfg.GRPCAddress)
-	if err != nil {
-		return nil
-	}
-
-	authService := service.NewAuthService(
-		grpcClient,
-		cfg,
-	)
-
-	// http
-	api.RegisterRoutes(r, authService)
-
-	return &App{
-		router: r,
-		port:   cfg.HTTPPort,
-	}
-}
-
-func (a *App) Run() error {
-	return a.router.Run(":" + a.port)
+func New(cfg *config.Config, service *auth.Service) *App {
+	return &App{Cfg: cfg, Auth: service}
 }

@@ -1,23 +1,28 @@
 package main
 
 import (
-	"api-gateway/config"
-	"api-gateway/grpc/db"
-	"api-gateway/server"
 	"log"
+
+	"api-gateway/internal/api"
+	"api-gateway/internal/app"
+	"api-gateway/internal/config"
+	"api-gateway/internal/modules/proxy"
 )
 
 func main() {
 	cfg, err := config.LoadConfig()
 	if err != nil {
-		log.Fatalf("Failed to load config: %v", err)
+		log.Fatal(err)
 	}
-
-	grpcClient, err := db.New(cfg.GRPCAddress)
+	authProxy, err := proxy.New(cfg.AuthServiceURL)
 	if err != nil {
-		log.Fatalf("Failed to create gRPC client: %v", err)
+		log.Fatalf("AUTH_SERVICE_URL: %v", err)
+	}
+	aiProxy, err := proxy.New(cfg.AIServiceURL)
+	if err != nil {
+		log.Fatalf("AI_SERVICE_URL: %v", err)
 	}
 
-	s := server.NewServer(cfg, grpcClient)
-	s.Run()
+	application := &app.App{Cfg: cfg, Auth: authProxy, AI: aiProxy}
+	log.Fatal(api.NewRouter(application).Run(":" + cfg.HTTPPort))
 }

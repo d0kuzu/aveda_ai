@@ -12,23 +12,22 @@ func (c *Client) Conversation(ctx context.Context, customerID, assistantID, text
 	if customerID == "" || assistantID == "" || strings.TrimSpace(text) == "" {
 		return "", errors.New("customer, assistant and message are required")
 	}
-	assistant, err := c.db.GetAssistant(assistantID)
+	assistant, err := c.db.GetAssistant(ctx, assistantID)
 	if err != nil {
 		return "", err
 	}
-	prompt := assistant.GetConfiguration()
+	prompt := assistant.Configuration
 	if strings.TrimSpace(prompt) == "" {
 		prompt = "You are a helpful assistant."
 	}
 	messages := []openai.ChatCompletionMessage{{Role: openai.ChatMessageRoleSystem, Content: prompt}}
 
-	chat, err := c.db.GetLatestChatByCustomer(assistantID, customerID)
+	chat, err := c.db.GetLatestChatByCustomer(ctx, assistantID, customerID)
 	if err != nil {
 		return "", err
 	}
-	chatID := chat.GetId()
-	if chatID != "" {
-		history, err := c.db.GetAllChatMessages(chatID)
+	if chat != nil {
+		history, err := c.db.GetAllChatMessages(ctx, chat.Id)
 		if err != nil {
 			return "", err
 		}
@@ -50,18 +49,7 @@ func (c *Client) Conversation(ctx context.Context, customerID, assistantID, text
 		return "", errors.New("model returned an empty response")
 	}
 	answer := response.Choices[0].Message.Content
-	platform := assistant.GetType()
-	if chatID == "" {
-		chat, err = c.db.CreateChat(assistantID, customerID, platform)
-		if err != nil {
-			return "", err
-		}
-		chatID = chat.GetId()
-	}
-	if _, err := c.db.SaveMessage(chatID, openai.ChatMessageRoleUser, text, platform); err != nil {
-		return "", err
-	}
-	if _, err := c.db.SaveMessage(chatID, openai.ChatMessageRoleAssistant, answer, platform); err != nil {
+	if err := c.db.SaveConversationTurn(ctx, assistantID, customerID, text, answer); err != nil {
 		return "", err
 	}
 	return answer, nil

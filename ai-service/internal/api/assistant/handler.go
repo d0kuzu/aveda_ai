@@ -1,19 +1,21 @@
 package assistant
 
 import (
-	"diaxel/internal/config"
-	"diaxel/internal/grpc/db"
 	"net/http"
+
+	"diaxel/internal/api/access"
+	"diaxel/internal/config"
+	"diaxel/internal/modules/database"
 
 	"github.com/gin-gonic/gin"
 )
 
 type AssistantHandler struct {
 	cfg *config.Settings
-	db  *db.Client
+	db  *database.Store
 }
 
-func NewAssistantHandler(cfg *config.Settings, db *db.Client) *AssistantHandler {
+func NewAssistantHandler(cfg *config.Settings, db *database.Store) *AssistantHandler {
 	return &AssistantHandler{cfg: cfg, db: db}
 }
 
@@ -24,7 +26,7 @@ func (h *AssistantHandler) GetAssistants(c *gin.Context) {
 		return
 	}
 
-	assistants, err := h.db.GetAssistantsByUserID(userId)
+	assistants, err := h.db.GetAssistantsByUserID(c.Request.Context(), userId)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch assistants", "details": err.Error()})
 		return
@@ -42,9 +44,8 @@ func (h *AssistantHandler) GetAssistant(c *gin.Context) {
 		return
 	}
 
-	assistant, err := h.db.GetAssistant(id)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch assistant", "details": err.Error()})
+	assistant, ok := access.Assistant(c, h.db, id)
+	if !ok {
 		return
 	}
 
@@ -70,23 +71,13 @@ func (h *AssistantHandler) UpdateAssistant(c *gin.Context) {
 		return
 	}
 
-	existing, err := h.db.GetAssistant(id)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch existing assistant", "details": err.Error()})
+	userID := access.UserID(c)
+	if userID == "" {
 		return
 	}
 
-	resp, err := h.db.UpdateAssistant(
-		id,
-		req.Name,
-		req.Configuration,
-		existing.ApiToken,
-		existing.TelegramBotToken,
-		existing.Type,
-	)
-
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to update assistant", "details": err.Error()})
+	resp, err := h.db.UpdateAssistantForUser(c.Request.Context(), id, userID, req.Name, req.Configuration)
+	if !access.Found(c, err) {
 		return
 	}
 

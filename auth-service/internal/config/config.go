@@ -1,6 +1,7 @@
 package config
 
 import (
+	"errors"
 	"os"
 	"time"
 
@@ -9,7 +10,7 @@ import (
 
 type Config struct {
 	HTTPPort    string
-	GRPCAddress string
+	DatabaseURL string
 
 	AccessTokenTTL  time.Duration
 	RefreshTokenTTL time.Duration
@@ -18,22 +19,28 @@ type Config struct {
 	RefreshSecret string
 }
 
-func MustLoad() (*Config, error) {
-	godotenv.Load(".env")
-
-	grpcAddress := os.Getenv("GRPC_ADDRESS")
-	if grpcAddress == "" {
-		grpcAddress = "localhost:50051"
+func Load() (*Config, error) {
+	_ = godotenv.Load(".env")
+	port := os.Getenv("HTTP_PORT")
+	if port == "" {
+		port = "8080"
 	}
 
-	return &Config{
-		HTTPPort:    os.Getenv("HTTP_PORT"),
-		GRPCAddress: grpcAddress,
+	cfg := &Config{
+		HTTPPort:    port,
+		DatabaseURL: os.Getenv("DATABASE_URL"),
 
 		AccessTokenTTL:  15 * time.Minute,
 		RefreshTokenTTL: 30 * 24 * time.Hour,
 
 		AccessSecret:  os.Getenv("ACCESS_SECRET"),
 		RefreshSecret: os.Getenv("REFRESH_SECRET"),
-	}, nil
+	}
+	if cfg.DatabaseURL == "" {
+		return nil, errors.New("DATABASE_URL is required")
+	}
+	if cfg.AccessSecret == "" || cfg.RefreshSecret == "" {
+		return nil, errors.New("ACCESS_SECRET and REFRESH_SECRET are required")
+	}
+	return cfg, nil
 }

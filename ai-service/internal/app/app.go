@@ -2,7 +2,7 @@ package app
 
 import (
 	"diaxel/internal/config"
-	"diaxel/internal/grpc/db"
+	"diaxel/internal/modules/database"
 	"diaxel/internal/modules/llm"
 	"diaxel/internal/modules/telegram"
 	"diaxel/internal/modules/twilio"
@@ -11,7 +11,7 @@ import (
 type App struct {
 	LLM            *llm.Client
 	Twilio         *twilio.Client
-	Db             *db.Client
+	Db             *database.Store
 	Cfg            *config.Settings
 	TgOrchestrator *telegram.Orchestrator
 }
@@ -19,7 +19,7 @@ type App struct {
 func NewApp(
 	llmClient *llm.Client,
 	twilioClient *twilio.Client,
-	db *db.Client,
+	db *database.Store,
 	cfg *config.Settings,
 	tgOrch *telegram.Orchestrator,
 ) *App {

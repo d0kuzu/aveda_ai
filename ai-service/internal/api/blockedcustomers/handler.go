@@ -1,19 +1,20 @@
 package blockedcustomers
 
 import (
-	"diaxel/internal/config"
-	"diaxel/internal/grpc/db"
 	"net/http"
+
+	"diaxel/internal/config"
+	"diaxel/internal/modules/database"
 
 	"github.com/gin-gonic/gin"
 )
 
 type BlockedCustomersHandler struct {
 	cfg *config.Settings
-	db  *db.Client
+	db  *database.Store
 }
 
-func NewBlockedCustomersHandler(cfg *config.Settings, db *db.Client) *BlockedCustomersHandler {
+func NewBlockedCustomersHandler(cfg *config.Settings, db *database.Store) *BlockedCustomersHandler {
 	return &BlockedCustomersHandler{cfg: cfg, db: db}
 }
 
@@ -28,7 +29,7 @@ func (h *BlockedCustomersHandler) BlockCustomer(c *gin.Context) {
 		return
 	}
 
-	err := h.db.BlockCustomer(req.UserID)
+	err := h.db.BlockCustomer(c.Request.Context(), req.UserID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to block customer"})
 		return
@@ -38,7 +39,7 @@ func (h *BlockedCustomersHandler) BlockCustomer(c *gin.Context) {
 }
 
 func (h *BlockedCustomersHandler) GetAllBlockedCustomers(c *gin.Context) {
-	userIDs, err := h.db.GetAllBlockedCustomers()
+	userIDs, err := h.db.GetAllBlockedCustomers(c.Request.Context())
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get blocked customers"})
 		return

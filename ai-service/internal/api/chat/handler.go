@@ -1,21 +1,22 @@
 package chat
 
 import (
-	"diaxel/internal/config"
-	"diaxel/internal/grpc/db"
-	dbpb "diaxel/proto/db"
 	"fmt"
 	"log"
 	"net/http"
 	"strconv"
 	"strings"
 
+	"diaxel/internal/api/access"
+	"diaxel/internal/config"
+	"diaxel/internal/modules/database"
+
 	"github.com/gin-gonic/gin"
 )
 
 type ChatHandler struct {
 	cfg *config.Settings
-	db  *db.Client
+	db  *database.Store
 }
 
 type ChatJSON struct {
@@ -29,7 +30,7 @@ type ChatJSON struct {
 	IsEnd        bool   `json:"is_end"`
 }
 
-func chatToJSON(chat *dbpb.ChatResponse) ChatJSON {
+func chatToJSON(chat *database.Chat) ChatJSON {
 	return ChatJSON{
 		ID:           chat.Id,
 		AssistantID:  chat.AssistantId,
@@ -42,12 +43,12 @@ func chatToJSON(chat *dbpb.ChatResponse) ChatJSON {
 	}
 }
 
-func NewChatHandler(cfg *config.Settings, db *db.Client) *ChatHandler {
+func NewChatHandler(cfg *config.Settings, db *database.Store) *ChatHandler {
 	return &ChatHandler{cfg: cfg, db: db}
 }
 
 func (h *ChatHandler) getValidatedAssistantIDs(c *gin.Context, userID string) ([]string, error) {
-	assistants, err := h.db.GetAssistantsByUserID(userID)
+	assistants, err := h.db.GetAssistantsByUserID(c.Request.Context(), userID)
 	if err != nil {
 		log.Printf("[getValidatedAssistantIDs] Error getting assistants for user %s: %v", userID, err)
 		return nil, err
@@ -107,7 +108,7 @@ func (h *ChatHandler) GetAllChats(c *gin.Context) {
 
 	chatsPerPage := int32(10)
 
-	chats, err := h.db.GetChatPageByUserID(assistantIDs, int32(page), chatsPerPage)
+	chats, err := h.db.GetChatPageByUserID(c.Request.Context(), assistantIDs, int32(page), chatsPerPage)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch chats", "details": err.Error()})
 		return
@@ -142,7 +143,7 @@ func (h *ChatHandler) GetPagination(c *gin.Context) {
 	}
 
 	chatsPerPage := int32(10)
-	pagesCount, err := h.db.GetChatPagesCountByUserID(assistantIDs, chatsPerPage)
+	pagesCount, err := h.db.GetChatPagesCountByUserID(c.Request.Context(), assistantIDs, chatsPerPage)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch pagination", "details": err.Error()})
 		return
@@ -158,7 +159,10 @@ func (h *ChatHandler) GetChat(c *gin.Context) {
 		return
 	}
 
-	messages, err := h.db.GetAllChatMessages(chatID)
+	if !access.Chat(c, h.db, chatID) {
+		return
+	}
+	messages, err := h.db.GetAllChatMessages(c.Request.Context(), chatID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch chat messages", "details": err.Error()})
 		return
@@ -196,7 +200,7 @@ func (h *ChatHandler) SearchChat(c *gin.Context) {
 		return
 	}
 
-	chats, totalCount, err := h.db.SearchChatsByCustomer(assistantIDs, searchTerm)
+	chats, totalCount, err := h.db.SearchChatsByCustomer(c.Request.Context(), assistantIDs, searchTerm)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to search chats", "details": err.Error()})
 		return

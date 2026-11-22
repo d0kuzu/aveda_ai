@@ -1,18 +1,18 @@
 package llm
 
 import (
-	"diaxel/internal/grpc/db"
+	"diaxel/internal/modules/database"
 
 	"github.com/sashabaranov/go-openai"
 )
 
 type Client struct {
 	client *openai.Client
-	db     *db.Client
+	db     *database.Store
 	model  string
 }
 
-func InitClient(apiKey string, dbClient *db.Client, model string) *Client {
+func InitClient(apiKey string, dbClient *database.Store, model string) *Client {
 	if model == "" {
 		model = "gpt-4o"
 	}

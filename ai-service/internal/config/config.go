@@ -1,6 +1,7 @@
 package config
 
 import (
+	"errors"
 	"os"
 	"strconv"
 
@@ -9,7 +10,7 @@ import (
 
 type Settings struct {
 	HTTPPort    string
-	GRPCAddress string
+	DatabaseURL string
 
 	OpenaiApiKey string
 
@@ -29,14 +30,14 @@ func LoadConfig() (*Settings, error) {
 		httpPort = "8080"
 	}
 
-	grpcAddress := os.Getenv("GRPC_ADDRESS")
-	if grpcAddress == "" {
-		grpcAddress = "localhost:50051"
+	databaseURL := os.Getenv("DATABASE_URL")
+	if databaseURL == "" {
+		return nil, errors.New("DATABASE_URL is required")
 	}
 
 	return &Settings{
 		HTTPPort:    httpPort,
-		GRPCAddress: grpcAddress,
+		DatabaseURL: databaseURL,
 
 		OpenaiApiKey: os.Getenv("OPENAI_API_KEY"),
 

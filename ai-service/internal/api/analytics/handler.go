@@ -7,6 +7,7 @@ import (
 	"sync"
 	"time"
 
+	"diaxel/internal/api/access"
 	"diaxel/internal/app"
 
 	"github.com/gin-gonic/gin"
@@ -69,12 +70,16 @@ func CalculatePeriodRange(now time.Time, location *time.Location, days int) (sta
 
 func GetAnalytics(application *app.App) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		ctx := c.Request.Context()
 		assistantID := c.Query("assistant_id")
 		if assistantID == "" {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "assistant_id is required"})
 			return
 		}
 
+		if _, ok := access.Assistant(c, application.Db, assistantID); !ok {
+			return
+		}
 		location := time.UTC
 		now := time.Now().UTC()
 
@@ -83,12 +88,12 @@ func GetAnalytics(application *app.App) gin.HandlerFunc {
 			startPrev := startCurrent.AddDate(0, 0, -days)
 			endPrev := startCurrent
 
-			currentResp, err := application.Db.GetPeriodMetrics(assistantID, startCurrent.Format(time.RFC3339), endCurrent.Format(time.RFC3339))
+			currentResp, err := application.Db.GetPeriodMetrics(ctx, assistantID, startCurrent.Format(time.RFC3339), endCurrent.Format(time.RFC3339))
 			if err != nil {
 				return PeriodMetrics{}, err
 			}
 
-			prevResp, err := application.Db.GetPeriodMetrics(assistantID, startPrev.Format(time.RFC3339), endPrev.Format(time.RFC3339))
+			prevResp, err := application.Db.GetPeriodMetrics(ctx, assistantID, startPrev.Format(time.RFC3339), endPrev.Format(time.RFC3339))
 			if err != nil {
 				return PeriodMetrics{}, err
 			}
@@ -146,7 +151,7 @@ func GetAnalytics(application *app.App) gin.HandlerFunc {
 		// Weekly chart data — last 7 days starting from 7 days ago
 		y, m, d := now.Date()
 		weekStart := time.Date(y, m, d, 0, 0, 0, 0, location).AddDate(0, 0, -6)
-		weeklyResp, err := application.Db.GetWeeklyChatsStarted(assistantID, weekStart.Format(time.RFC3339), "UTC")
+		weeklyResp, err := application.Db.GetWeeklyChatsStarted(ctx, assistantID, weekStart.Format(time.RFC3339), "UTC")
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
@@ -170,6 +175,7 @@ func GetAnalytics(application *app.App) gin.HandlerFunc {
 
 func GetAnalyticsChatsByCategory(application *app.App, forcedCategory string) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		ctx := c.Request.Context()
 		assistantID := c.Query("assistant_id")
 		if assistantID == "" {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "assistant_id is required"})
@@ -212,11 +218,14 @@ func GetAnalyticsChatsByCategory(application *app.App, forcedCategory string) gi
 		}
 		offset := (page - 1) * limit
 
+		if _, ok := access.Assistant(c, application.Db, assistantID); !ok {
+			return
+		}
 		location := time.UTC
 		now := time.Now().UTC()
 		startCurrent, endCurrent := CalculatePeriodRange(now, location, days)
 
-		resp, err := application.Db.GetPeriodChats(
+		resp, err := application.Db.GetPeriodChats(ctx,
 			assistantID,
 			startCurrent.Format(time.RFC3339),
 			endCurrent.Format(time.RFC3339),

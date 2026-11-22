@@ -2,69 +2,31 @@ package ws
 
 import (
 	"context"
-	"diaxel/internal/grpc/db"
-	"diaxel/internal/modules/twilio"
 	"log"
-	"sync"
+
+	"diaxel/internal/modules/database"
+	"diaxel/internal/modules/twilio"
 
 	"github.com/gorilla/websocket"
 )
 
 type Client struct {
-	conn *websocket.Conn
-	chat string
-	Db   *db.Client
-	done chan struct{}
+	conn   *websocket.Conn
+	chat   string
+	Db     *database.Store
+	twilio *twilio.Client
+	ctx    context.Context
+	cancel context.CancelFunc
 }
 
-func NewWSClient(conn *websocket.Conn, chatID string, db *db.Client) *Client {
-	return &Client{conn: conn, chat: chatID, Db: db, done: make(chan struct{})}
-}
-
-var (
-	clients   = make(map[*Client]bool)
-	clientsMu sync.Mutex
-)
-
-func RegisterClient(c *Client) {
-	clientsMu.Lock()
-	defer clientsMu.Unlock()
-	clients[c] = true
-}
-
-func UnregisterClient(c *Client) {
-	clientsMu.Lock()
-	defer clientsMu.Unlock()
-	delete(clients, c)
-	c.conn.Close()
-	select {
-	case <-c.done:
-	default:
-		close(c.done)
-	}
-}
-
-func (c *Client) Broadcast(chatID string, msg []byte) {
-	clientsMu.Lock()
-	defer clientsMu.Unlock()
-
-	err := c.conn.WriteMessage(websocket.TextMessage, msg)
-	if err != nil {
-		log.Println("ws message write error:", err)
-		c.conn.Close()
-		delete(clients, c)
-		select {
-		case <-c.done:
-		default:
-			close(c.done)
-		}
-	}
+func NewWSClient(ctx context.Context, conn *websocket.Conn, chatID string, db *database.Store, twilioClient *twilio.Client) *Client {
+	ctx, cancel := context.WithCancel(ctx)
+	return &Client{conn: conn, chat: chatID, Db: db, twilio: twilioClient, ctx: ctx, cancel: cancel}
 }
 
 func (c *Client) Listen() {
-	defer UnregisterClient(c)
-
-	twClient := twilio.InitClient()
+	defer c.conn.Close()
+	defer c.cancel()
 
 	for {
 		_, msg, err := c.conn.ReadMessage()
@@ -73,29 +35,29 @@ func (c *Client) Listen() {
 			return
 		}
 
-		chat, err := c.Db.GetChat(c.chat)
+		chat, err := c.Db.GetChat(c.ctx, c.chat)
 		if err != nil || chat == nil {
 			log.Println("ws listen: failed to get chat:", err)
 			continue
 		}
 
-		assistant, err := c.Db.GetAssistant(chat.AssistantId)
+		assistant, err := c.Db.GetAssistant(c.ctx, chat.AssistantId)
 		if err != nil {
 			log.Println("ws listen: failed to get assistant:", err)
 			continue
 		}
-		if assistant.GetType() == "twilio" {
-			config, err := c.Db.GetTwilioConfig(chat.AssistantId)
+		if assistant.Type == "twilio" {
+			config, err := c.Db.GetTwilioConfig(c.ctx, chat.AssistantId)
 			if err != nil || config == nil {
 				log.Println("ws listen: failed to get Twilio config:", err)
 				continue
 			}
-			if err := twClient.SendMessage(context.Background(), config.AccountSid, config.AuthToken, config.TwilioNumber, chat.CustomerId, string(msg)); err != nil {
+			if err := c.twilio.SendMessage(c.ctx, config.AccountSid, config.AuthToken, config.TwilioNumber, chat.CustomerId, string(msg)); err != nil {
 				log.Println("ws listen: failed to send SMS:", err)
 				continue
 			}
 		}
-		if _, err := c.Db.SaveMessage(c.chat, "assistant", string(msg), assistant.GetType()); err != nil {
+		if _, err := c.Db.SaveMessage(c.ctx, c.chat, "assistant", string(msg), assistant.Type); err != nil {
 			log.Println("ws listen: failed to save message:", err)
 		}
 	}

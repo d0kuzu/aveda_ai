@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 
-	"diaxel/internal/grpc/db"
+	"diaxel/internal/modules/database"
 	"diaxel/internal/modules/llm"
 	twilio2 "diaxel/internal/modules/twilio"
 
@@ -14,10 +14,10 @@ import (
 type TwilioWebhookHandler struct {
 	LLM    *llm.Client
 	twilio *twilio2.Client
-	db     *db.Client
+	db     *database.Store
 }
 
-func NewTwilioWebhookHandler(llmClient *llm.Client, twilioClient *twilio2.Client, dbClient *db.Client) *TwilioWebhookHandler {
+func NewTwilioWebhookHandler(llmClient *llm.Client, twilioClient *twilio2.Client, dbClient *database.Store) *TwilioWebhookHandler {
 	return &TwilioWebhookHandler{LLM: llmClient, twilio: twilioClient, db: dbClient}
 }
 
@@ -28,14 +28,14 @@ func (h *TwilioWebhookHandler) HandleWebhook(c *gin.Context) {
 		return
 	}
 
-	_, err := h.db.GetAssistant(assistantID)
+	_, err := h.db.GetAssistant(c.Request.Context(), assistantID)
 	if err != nil {
 		log.Printf("Error getting assistant %s: %v", assistantID, err)
 		c.JSON(http.StatusNotFound, gin.H{"error": "assistant not found"})
 		return
 	}
 
-	twilioConfig, err := h.db.GetTwilioConfig(assistantID)
+	twilioConfig, err := h.db.GetTwilioConfig(c.Request.Context(), assistantID)
 	if err != nil {
 		log.Printf("Error getting twilio config for assistant %s: %v", assistantID, err)
 		c.JSON(http.StatusNotFound, gin.H{"error": "twilio configuration not found for this assistant"})
@@ -45,7 +45,7 @@ func (h *TwilioWebhookHandler) HandleWebhook(c *gin.Context) {
 	from := c.PostForm("From")
 	body := c.PostForm("Body")
 
-	isBlocked, err := h.db.IsCustomerBlocked(from)
+	isBlocked, err := h.db.IsCustomerBlocked(c.Request.Context(), from)
 	if err != nil {
 		c.JSON(http.StatusServiceUnavailable, gin.H{"error": "could not check blocked contacts"})
 		return
@@ -59,7 +59,7 @@ func (h *TwilioWebhookHandler) HandleWebhook(c *gin.Context) {
 
 	log.Printf("[Twilio Webhook] Received message from %s: %s", from, body)
 
-	chat, err := h.db.GetLatestChatByCustomer(assistantID, from)
+	chat, err := h.db.GetLatestChatByCustomer(c.Request.Context(), assistantID, from)
 	if err != nil {
 		log.Printf("[Twilio Webhook] Error checking chat existence for %s: %v", from, err)
 		c.Header("Content-Type", "text/xml")
@@ -74,7 +74,7 @@ func (h *TwilioWebhookHandler) HandleWebhook(c *gin.Context) {
 		return
 	}
 
-	answer, err := h.LLM.Conversation(c, from, assistantID, body)
+	answer, err := h.LLM.Conversation(c.Request.Context(), from, assistantID, body)
 	if err != nil {
 		log.Printf("LLM Conversation error for assistant %s: %v", assistantID, err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

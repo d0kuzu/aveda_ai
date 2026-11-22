@@ -3,13 +3,7 @@ WORKDIR /src
 COPY go.mod go.sum ./
 RUN go mod download
 COPY main.go ./
-COPY config ./config
-COPY grpc ./grpc
-COPY middleware ./middleware
-COPY proxy ./proxy
-COPY routes ./routes
-COPY server ./server
-COPY proto/db ./proto/db
+COPY internal ./internal
 RUN CGO_ENABLED=0 go build -o /out/api-gateway .
 
 FROM alpine:3.22

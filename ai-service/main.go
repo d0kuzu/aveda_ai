@@ -7,7 +7,7 @@ import (
 	"diaxel/internal/api"
 	appModule "diaxel/internal/app"
 	"diaxel/internal/config"
-	"diaxel/internal/grpc/db"
+	"diaxel/internal/modules/database"
 	"diaxel/internal/modules/llm"
 	"diaxel/internal/modules/telegram"
 	"diaxel/internal/modules/twilio"
@@ -19,19 +19,21 @@ func main() {
 		log.Fatal(err)
 	}
 
-	grpcClient, err := db.New(settings.GRPCAddress)
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	store, err := database.Open(ctx, settings.DatabaseURL)
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer grpcClient.Close()
+	defer store.Close()
 
-	llmClient := llm.InitClient(settings.OpenaiApiKey, grpcClient, "")
+	llmClient := llm.InitClient(settings.OpenaiApiKey, store, "")
 	twilioClient := twilio.InitClient()
 	tgOrchestrator := telegram.NewOrchestrator(llmClient, 5, 1000)
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 	go tgOrchestrator.Start(ctx)
 
-	app := appModule.NewApp(llmClient, twilioClient, grpcClient, settings, tgOrchestrator)
-	api.RouterStart(app)
+	app := appModule.NewApp(llmClient, twilioClient, store, settings, tgOrchestrator)
+	if err := api.NewRouter(app).Run(":" + settings.HTTPPort); err != nil {
+		log.Fatal(err)
+	}
 }

@@ -2,15 +2,18 @@ package webhook
 
 import (
 	"bytes"
-	"diaxel/internal/config"
-	"diaxel/internal/grpc/db"
-	"diaxel/internal/modules/llm"
-	"diaxel/internal/modules/telegram"
-	"diaxel/internal/modules/token"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
+
+	"diaxel/internal/config"
+	"diaxel/internal/modules/database"
+	"diaxel/internal/modules/llm"
+	"diaxel/internal/modules/telegram"
+	"diaxel/internal/modules/token"
 
 	"github.com/gin-gonic/gin"
 )
@@ -18,11 +21,11 @@ import (
 type AIHandler struct {
 	cfg          *config.Settings
 	LLM          *llm.Client
-	db           *db.Client
+	db           *database.Store
 	orchestrator *telegram.Orchestrator
 }
 
-func NewAIHandler(cfg *config.Settings, llmClient *llm.Client, db *db.Client, tgOrch *telegram.Orchestrator) *AIHandler {
+func NewAIHandler(cfg *config.Settings, llmClient *llm.Client, db *database.Store, tgOrch *telegram.Orchestrator) *AIHandler {
 	return &AIHandler{
 		cfg:          cfg,
 		LLM:          llmClient,
@@ -66,7 +69,7 @@ func (h *AIHandler) RegisterTelegramBot(c *gin.Context) {
 		return
 	}
 
-	assistant, err := h.db.CreateAssistant(req.Name, "", userId, req.BotToken, "telegram")
+	assistant, err := h.db.CreateAssistant(c.Request.Context(), req.Name, "", userId, req.BotToken, "telegram")
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create assistant in database"})
 		return
@@ -144,7 +147,7 @@ func (h *AIHandler) RegisterAPIBot(c *gin.Context) {
 		return
 	}
 
-	assistant, err := h.db.CreateAssistant(req.Name, secureToken, userId, "", "api")
+	assistant, err := h.db.CreateAssistant(c.Request.Context(), req.Name, secureToken, userId, "", "api")
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create assistant in database"})
 		return
@@ -171,15 +174,9 @@ func (h *AIHandler) RegisterTwilioBot(c *gin.Context) {
 		return
 	}
 
-	assistant, err := h.db.CreateAssistant(req.Name, "", userId, "", "twilio")
+	assistant, err := h.db.CreateTwilioAssistant(c.Request.Context(), req.Name, userId, req.TwilioNumber, req.AccountSID, req.AuthToken)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create assistant in database"})
-		return
-	}
-
-	_, err = h.db.SaveTwilioConfig(assistant.Id, userId, req.TwilioNumber, req.AccountSID, req.AuthToken)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save Twilio configuration"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to register Twilio assistant"})
 		return
 	}
 
@@ -228,7 +225,7 @@ func (h *AIHandler) HandleTelegramWebhook(c *gin.Context) {
 
 	userIdString := strconv.FormatInt(update.Message.From.ID, 10)
 
-	assistant, err := h.db.GetAssistant(assistantId)
+	assistant, err := h.db.GetAssistant(c.Request.Context(), assistantId)
 	if err != nil {
 		fmt.Printf("HandleTelegramWebhook: Failed to get assistant: %v\n", err)
 		c.JSON(http.StatusServiceUnavailable, gin.H{"error": "assistant unavailable"})
@@ -258,16 +255,27 @@ func (h *AIHandler) HandleTelegramWebhook(c *gin.Context) {
 }
 
 func (h *AIHandler) SendMessage(c *gin.Context) {
-	userId := c.GetHeader("X-User-Id")
-	assistantId := c.GetHeader("X-Assistant-Id")
-	userMessage := c.PostForm("user_message")
-
-	if userId == "" || assistantId == "" {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized request from gateway"})
+	header := c.GetHeader("Authorization")
+	if header == "" {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "missing Authorization header"})
 		return
 	}
-
-	response, err := h.LLM.Conversation(c, userId, assistantId, userMessage)
+	parts := strings.Fields(header)
+	if len(parts) != 2 || !strings.EqualFold(parts[0], "Bearer") {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid Authorization format"})
+		return
+	}
+	ctx := c.Request.Context()
+	assistant, err := h.db.GetAssistantByAPIToken(ctx, parts[1])
+	if errors.Is(err, database.ErrNotFound) {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "token not found"})
+		return
+	}
+	if err != nil {
+		c.JSON(http.StatusServiceUnavailable, gin.H{"error": "could not verify assistant token"})
+		return
+	}
+	response, err := h.LLM.Conversation(ctx, assistant.UserId, assistant.Id, c.PostForm("user_message"))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

@@ -1,90 +1,32 @@
-networks:
-  template_net:
-    driver: bridge
-
 services:
   postgres:
-    image: postgres:16
-    restart: unless-stopped
-    environment:
-      POSTGRES_DB: database_service
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d database_service"]
-      interval: 3s
-      timeout: 3s
-      retries: 5
-    ports:
+    extends:
+      file: docker-compose.yml
+      service: postgres
+    ports: !override
       - "127.0.0.1:5432:5432"
-    volumes:
-      - template_dev_postgres_data:/var/lib/postgresql/data
-    networks:
-      - template_net
-
-  database-service:
-    build: ./database-service
-    depends_on:
-      postgres:
-        condition: service_healthy
-    ports:
-      - "50051:50051"
-    env_file:
-      - .env
-    environment:
-      - POSTGRES_HOST=postgres
-      - POSTGRES_PORT=5432
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=database_service
-    networks:
-      - template_net
-
-  ai-service:
-    build: ./ai-service
-    ports:
-      - "8081:8080"
-    depends_on:
-      - database-service
-    env_file:
-      - .env
-    environment:
-      - HTTP_PORT=8080
-      - GRPC_ADDRESS=database-service:50051
-    networks:
-      - template_net
+    volumes: !override
+      - dev_service_databases:/var/lib/postgresql/data
+      - ./deploy/postgres/01-create-databases.sql:/docker-entrypoint-initdb.d/01-create-databases.sql:ro
 
   auth-service:
-    build: ./auth-service
-    ports:
-      - "8082:8080"
-    depends_on:
-      - database-service
-    env_file:
-      - .env
-    environment:
-      - HTTP_PORT=8080
-      - GRPC_ADDRESS=database-service:50051
-    networks:
-      - template_net
-
+    extends:
+      file: docker-compose.yml
+      service: auth-service
+  ai-service:
+    extends:
+      file: docker-compose.yml
+      service: ai-service
   api-gateway:
-    build: ./api-gateway
-    ports:
+    extends:
+      file: docker-compose.yml
+      service: api-gateway
+    ports: !override
       - "8080:8080"
-    depends_on:
-      - database-service
-      - auth-service
-      - ai-service
-    env_file:
-      - .env
-    environment:
-      - GATEWAY_PORT=8080
-      - GRPC_ADDRESS=database-service:50051
-      - AI_SERVICE_URL=http://ai-service:8080
-      - AUTH_SERVICE_URL=http://auth-service:8080
-    networks:
-      - template_net
+
+networks:
+  services:
+  storage:
 
 volumes:
-  template_dev_postgres_data:
+  dev_service_databases:

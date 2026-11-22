@@ -4,8 +4,6 @@ COPY go.mod go.sum ./
 RUN go mod download
 COPY main.go ./
 COPY internal ./internal
-COPY grpc ./grpc
-COPY proto/db ./proto/db
 RUN CGO_ENABLED=0 go build -o /out/auth-service .
 
 FROM alpine:3.22

@@ -9,12 +9,11 @@ import (
 	"diaxel/internal/api/webhook"
 	"diaxel/internal/api/ws"
 	appModule "diaxel/internal/app"
-	"log"
 
 	"github.com/gin-gonic/gin"
 )
 
-func RouterStart(app *appModule.App) {
+func NewRouter(app *appModule.App) *gin.Engine {
 	r := gin.Default()
 
 	// CORS is handled at API Gateway and Nginx reverse proxy level
@@ -27,8 +26,5 @@ func RouterStart(app *appModule.App) {
 	analytics.AnalyticsRoutes(r, app)
 	blockedcustomers.BlockedCustomersRoutes(r, app)
 
-	err := r.Run(":" + app.Cfg.HTTPPort)
-	if err != nil {
-		log.Fatal("Router start error", err)
-	}
+	return r
 }

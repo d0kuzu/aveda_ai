@@ -7,6 +7,5 @@
 /api-gateway/serverfile
 /auth-service/auth-service
 /auth-service/server
-/database-service/database-service
 .DS_Store
 Thumbs.db
