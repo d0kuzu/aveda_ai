@@ -113,8 +113,6 @@ func (l *Listener) processFollowups(ctx context.Context) {
 		currentStage := int(chat.FollowupStage)
 		stageConfig, hasStage := schedule[currentStage]
 		if !hasStage {
-			l.writeLog("No stage config for stage %d (Program: '%s', Customer: %s). Ending chat.", currentStage, programName, chat.CustomerId)
-			l.dbClient.UpdateChatIsEnd(chat.Id, true)
 			continue
 		}
 		updatedAt, err := time.Parse(time.RFC3339, chat.UpdatedAt)
@@ -146,12 +144,11 @@ func (l *Listener) processFollowups(ctx context.Context) {
 			continue
 		}
 		l.dbClient.SaveMessage(chat.Id, "assistant", stageConfig.Text, "twilio")
+		l.dbClient.UpdateChatFollowupStage(chat.Id, int32(currentStage+1))
 		if _, hasNext := schedule[currentStage+1]; hasNext {
-			l.dbClient.UpdateChatFollowupStage(chat.Id, int32(currentStage+1))
 			l.writeLog("SUCCESS: Sent followup %d to %s. Stage incremented to %d.", currentStage, chat.CustomerId, currentStage+1)
 		} else {
-			l.dbClient.UpdateChatIsEnd(chat.Id, true)
-			l.writeLog("SUCCESS: Sent final followup %d to %s. Chat ended.", currentStage, chat.CustomerId)
+			l.writeLog("SUCCESS: Sent final followup %d to %s. Stage incremented to %d (chat remains open).", currentStage, chat.CustomerId, currentStage+1)
 		}
 	}
 	l.writeLog("Work ended")

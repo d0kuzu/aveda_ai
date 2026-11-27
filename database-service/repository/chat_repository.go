@@ -463,7 +463,7 @@ func (r *chatRepository) GetChatsForFollowup(ctx context.Context) ([]*models.Cha
 	var chats []*models.Chat
 
 	if err := r.db.WithContext(ctx).
-		Where("is_end = ? AND is_tutor = ?", false, false).
+		Where("is_end = ? AND is_tutor = ? AND followup_stage <= ?", false, false, 4).
 		Order("updated_at ASC").
 		Find(&chats).Error; err != nil {
 		return nil, fmt.Errorf("failed to get chats for followup: %w", err)
